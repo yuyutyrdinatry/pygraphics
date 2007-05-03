@@ -1,4 +1,3 @@
-Displays a picture and lets you explore the picture by...
 
 = Picture Explorer =
 
