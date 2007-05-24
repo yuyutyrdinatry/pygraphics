@@ -4,7 +4,7 @@ import os.path
 import sys
 import os
 import fnmatch
-import coverage
+#import coverage
 '''
 Loads all the unit test files from the current directory and executes the test cases in each
 file.
