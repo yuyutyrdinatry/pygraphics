@@ -1,0 +1,42 @@
+#summary Instructions on how to install the pygraphics libraries and dependecies
+#labels Featured
+
+= Introduction =
+
+These are intermediate instructions before the distutils installer is
+available.
+
+
+= Details =
+
+*Step 1:*
+    
+    Install [http://www.python.org/download/ Python 2.5]
+
+*Step 2:*
+
+    Install [http://effbot.org/downloads/#PIL PIL python library for Python 2.5]
+
+*Step 3:*
+
+    Install [http://pygame.org/download.shtml pygame python library for Python 2.5]
+
+*Step 4:*
+
+    Install [http://rene.f0o.com/%7Erene/stuff/Numeric-24.2.win32-py2.5.exe Numeric python library for Python 2.5]
+    (For 2.4 and earlier: http://sourceforge.net/project/showfiles.php?group_id=1369)
+
+*Step 5:*
+
+    Install [http://www.speech.kth.se/snack/ tkSnack]
+    (binary file is for all Python versions...depends on tcl/tk version 8.1-8.4)
+
+*Step 6:*
+
+    Copy the media.py and turtle.py files, available from Source into your python
+    root folder (ie. C:\Python25)
+
+*Step 7:*
+    Start python and type: from media import *
+
+Congradulations! You can now use the PyGraphics library and tools.
