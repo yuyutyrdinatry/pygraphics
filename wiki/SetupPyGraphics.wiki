@@ -37,6 +37,6 @@ available.
     root folder (ie. C:\Python25)
 
 *Step 7:*
-    Start python and type: from media import *
+    Start python and type: from media import \*
 
 Congradulations! You can now use the PyGraphics library and tools.
