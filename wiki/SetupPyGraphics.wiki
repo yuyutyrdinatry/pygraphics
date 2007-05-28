@@ -33,9 +33,9 @@ NOTE: these instructions are specific to the Windows OS
         * Copy the following 4 files from the downloaded .zip archive to your local python directory (substitute the "C:\Python25" with your python root)
 {{{
     C:\Python25\Lib\tkSnack.py
-    C:\Python25\tcl\snack2.2\libsnack.dll
-    C:\Python25\tcl\snack2.2\snack.tcl
-    C:\Python25\tcl\snack2.2\pkgIndex.tcl
+    C:\Python25\tcl\snacklib\libsnack.dll
+    C:\Python25\tcl\snacklib\snack.tcl
+    C:\Python25\tcl\snacklib\pkgIndex.tcl
 }}}
 
 *Step 6:*
@@ -47,7 +47,6 @@ NOTE: these instructions are specific to the Windows OS
     Start python and type: {{{from media import *}}}
 
 Congradulations! You can now use the PyGraphics library and tools.
-
 
 
 
