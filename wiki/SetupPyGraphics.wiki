@@ -29,7 +29,7 @@ NOTE: these instructions are specific to the Windows OS
 
 *Step 5:*
 
-    Install [http://www.speech.kth.se/snack/dist/snack2210-py.zip tkSnack]
+    Install [http://www.speech.kth.se/snack/dist/snack2210-py.zip tkSnack:]
         * Copy the following 4 files from the downloaded .zip archive to your local python directory (substitute the "C:\Python25" with your python root)
 {{{
     C:\Python25\Lib\tkSnack.py
@@ -47,7 +47,6 @@ NOTE: these instructions are specific to the Windows OS
     Start python and type: {{{from media import *}}}
 
 Congradulations! You can now use the PyGraphics library and tools.
-
 
 
 
