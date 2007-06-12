@@ -2,11 +2,13 @@
 
 = Introduction =
 
-The University of Toronto is probably going to only be doing image processing.  The pygame dependency is proving to be a problem; it would be nice to switch to using only PIL.
+The University of Toronto is probably going to only be doing image processing.  The pygame and Tkinter dependencies are proving to be a problem because of the mainloop issue; it would be nice to switch to using only PIL.
+
+Also, it would be nice to switch to using [http://www.python.org/dev/peps/pep-0008/ Guido's style guide].
 
 = Details =
 
 Reformat code to fit [http://www.python.org/dev/peps/pep-0008/ Guido's style guide].  The big changes are:
 
- * Switch to pothole_case.  (As opposed to camelCase.)
+ * Switch to {{{pothole_case}}}.  (As opposed to {{{camelCase}}}.)
  * Switch to 0-based indexing.
