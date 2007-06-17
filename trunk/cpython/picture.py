@@ -6,7 +6,7 @@
 #               dumped wxwindows because it hates threads and really despises pygame
 #               tkinter used as alternative this is python standard for windowing
 #               add PIL as a requirement to allow for easy image export and save to jpeg
-#               converted pickAFile, pickAFolder, pickAColor to TKDialog pop-ups
+#               converted pick_a_file, pick_a_folder, pick_a_color to TKDialog pop-ups
 #               moved initialization out of the class init and into the main import
 #
 # NOTE:
@@ -52,10 +52,10 @@ import user
 ## Global vars -------------------------------------------------------
 ##
 ver = "1.1"
-defaultFrequency = 22050
-defaultSampleSize = -16                 # negative denotes signed number of bits
-defaultNumChannels = 1          # stereo or mono
-pygame.mixer.pre_init(defaultFrequency, defaultSampleSize, (defaultNumChannels > 1))
+default_frequency = 22050
+default_sample_size = -16                 # negative denotes signed number of bits
+default_num_channels = 1          # stereo or mono
+pygame.mixer.pre_init(default_frequency, default_sample_size, (default_num_channels > 1))
 pygame.font.init()
 pygame.mixer.init()
 defaultFont = pygame.font.SysFont("times", 24)
@@ -65,7 +65,7 @@ top.withdraw()
 # set up the tkSnack sound library
 tkSnack.initializeSnack(top)
 
-mediaFolder = user.home + os.sep
+media_folder = user.home + os.sep
 
 ##
 ## Global misc functions -------------------------------------------------------
@@ -74,51 +74,51 @@ def version():
     global ver
     return ver
 
-def setMediaPath():
-    global mediaFolder
-    file = pickAFolder()
-    mediaFolder = file
-    print "New media folder: "+mediaFolder
+def set_media_path():
+    global media_folder
+    file = pick_a_folder()
+    media_folder = file
+    print "New media folder: "+media_folder
 
-def getMediaPath(filename):
-    global mediaFolder
-    file = mediaFolder+filename
+def get_media_path(filename):
+    global media_folder
+    file = media_folder+filename
     if not os.path.isfile(file):
         print "Note: There is no file at "+file
     return file
 
-def pickAFile(**options):
+def pick_a_file(**options):
     global top
     path = tkFileDialog.askopenfilename(parent=top)
     return path
 
-def pickAFolder(**options):
-    global mediaFolder
+def pick_a_folder(**options):
+    global media_folder
     folder = tkFileDialog.askdirectory()
     if folder == '':
-        folder = mediaFolder
+        folder = media_folder
     return folder
 
-def pickAColor(**options):
+def pick_a_color(**options):
     color = tkColorChooser.askcolor()
-    newColor = Color(color[0][0], color[0][1], color[0][2])
-    return newColor
+    new_color = Color(color[0][0], color[0][1], color[0][2])
+    return new_color
 
 #And for those who think of things as folders (5/14/03 AW)
-def setMediaFolder():
-    global mediaFolder
-    file = pickAFolder()
-    mediaFolder = file
-    print "New media folder: "+mediaFolder
+def set_media_folder():
+    global media_folder
+    file = pick_a_folder()
+    media_folder = file
+    print "New media folder: "+media_folder
 
-def getMediaFolder(filename):
-    global mediaFolder
-    file = mediaFolder+filename
+def get_media_folder(filename):
+    global media_folder
+    file = media_folder+filename
     if not os.path.isfile(file) or not os.path.isdir(file):
         print "Note: There is no file at "+file
     return file
 
-def getShortPath(filename):
+def get_short_path(filename):
     dirs = filename.split(os.sep)
     if len(dirs) < 1:       # does split() ever get to this stage?
         return "."
@@ -401,9 +401,9 @@ class Picture:
             self.__initializePicture(pygame.Surface((width, height)), '', 'None')
 
     def loadImage(self,filename):
-        global mediaFolder
+        global media_folder
         if not os.path.isabs(filename):
-            filename = mediaFolder + filename
+            filename = media_folder + filename
         # fail if file does not exist
         if not os.path.isfile(filename):
             raise ValueError(("loadImage(" + filename + "): No such file"))
@@ -414,7 +414,7 @@ class Picture:
             size = image.size
             data = image.tostring()
             # initialize this picture with new properties
-            self.__initializePicture(pygame.image.fromstring(data, size, mode), filename, getShortPath(filename))
+            self.__initializePicture(pygame.image.fromstring(data, size, mode), filename, get_short_path(filename))
 
     def copyFromImage(self, picture, x=1, y=1, width=None, height=None):
     # copies and image from another picture, replacing this one
@@ -555,7 +555,7 @@ class Picture:
             raise AttributeError('setPixels(color): Picture has not yet been initialized.')
     def writeTo(self,filename):
         if not os.path.isabs(filename):
-            filename = mediaFolder + filename
+            filename = media_folder + filename
         #pygame.image.save(self.surf, filename)
         image = self.getImage()
         image.save(filename, None)
