@@ -152,7 +152,7 @@ class Color:
         return Color((self.r+color.r),(self.g+color.g),(self.b+color.b))
 
     def __eq__(self,newcolor):
-        return ((self.get_red() == newcolor.getRed()) and (self.get_green() == newcolor.get_green()) and (self.get_blue() == newcolor.get_blue()))
+        return ((self.get_red() == newcolor.get_red()) and (self.get_green() == newcolor.get_green()) and (self.get_blue() == newcolor.get_blue()))
 
     def __ne__(self,newcolor):
         return (not self.__eq__(newcolor))
@@ -357,7 +357,7 @@ class PictureFrame(Toplevel):
         self.pic = picture
 
     def destroy(self):
-        self.pic.windowInactive()
+        self.pic.window_inactive()
         Toplevel.destroy(self)
 
 ##
@@ -367,16 +367,16 @@ class Picture:
 
     def __init__(self, auto_repaint = False):
         self.title = "Unnamed"
-        self.dispImage = None
-        self.winActive = 0
-        self.__autoRepaint = auto_repaint
-        self.__visibleFrame = False
-        self.__eventBindings = {}
+        self.disp_image = None
+        self.win_active = 0
+        self.__auto_repaint = auto_repaint
+        self.visible_frame = False
+        self.__event_bindings = {}
         # bind the mouse event to show the pixel information
-        #       self.addEventHandler("<Button-1>", self.doPickColor)
-        #       self.addEventHandler("<B1-Motion>", self.doPickColor)
+        #       self.add_event_handler("<Button-1>", self.do_pick_color)
+        #       self.add_event_handler("<B1-Motion>", self.do_pick_color)
 
-    def __initializePicture(self, surface, filename, title):
+    def __initialize_picture(self, surface, filename, title):
         self.surf = surface
         # we get the pixels array from the surface
         self.pixels = pygame.surfarray.pixels3d(self.surf)
@@ -384,29 +384,29 @@ class Picture:
         self.title = title
         self.__update()
 
-    def setAutoRepaint(self, boolean):
-        self.__autoRepaint = boolean
+    def set_auto_repaint(self, boolean):
+        self.__auto_repaint = boolean
         self.__update()
 
-    def windowInactive(self):
-        del self.dispImage, self.item, self.canvas
-        self.winActive = 0
-        self.__visibleFrame = False
+    def window_inactive(self):
+        del self.disp_image, self.item, self.canvas
+        self.win_active = 0
+        self.visible_frame = False
 
-    def createImage(self, width, height):
+    def create_image(self, width, height):
         # fail if dimensions are invalid
         if (width < 0 or height < 0):
-            raise ValueError("createImage(" + str(width) + ", " + str(height) + "): Invalid image dimensions")
+            raise ValueError("create_image(" + str(width) + ", " + str(height) + "): Invalid image dimensions")
         else:
-            self.__initializePicture(pygame.Surface((width, height)), '', 'None')
+            self.__initialize_picture(pygame.Surface((width, height)), '', 'None')
 
-    def loadImage(self,filename):
+    def load_image(self,filename):
         global media_folder
         if not os.path.isabs(filename):
             filename = media_folder + filename
         # fail if file does not exist
         if not os.path.isfile(filename):
-            raise ValueError(("loadImage(" + filename + "): No such file"))
+            raise ValueError(("load_image(" + filename + "): No such file"))
         else:
             from Image import open
             mode = "RGB"
@@ -414,31 +414,31 @@ class Picture:
             size = image.size
             data = image.tostring()
             # initialize this picture with new properties
-            self.__initializePicture(pygame.image.fromstring(data, size, mode), filename, get_short_path(filename))
+            self.__initialize_picture(pygame.image.fromstring(data, size, mode), filename, get_short_path(filename))
 
-    def copyFromImage(self, picture, x=1, y=1, width=None, height=None):
+    def copy_from_image(self, picture, x=1, y=1, width=None, height=None):
     # copies and image from another picture, replacing this one
         # note that the coordinates are one based
         # copy the other picture's image
-        image = picture.getImage().copy()
+        image = picture.get_image().copy()
     # crop to the dimensions specified
-        imageWidth = picture.getWidth()
-        imageHeight = picture.getHeight()
+        image_width = picture.get_width()
+        image_height = picture.get_height()
         # throw exceptions if the values are invalid
-        if (x < 1 or y < 1 or x >= imageWidth or y >= imageHeight):
+        if (x < 1 or y < 1 or x >= image_width or y >= image_height):
             raise ValueError(('Invalid x/y coordinates specified'))
         # width || height < 1 implies a full image copied (maybe with warning)
         if (width == None and height == None):
-            width = imageWidth
-            height = imageHeight
+            width = image_width
+            height = image_height
         # fail if either is None, or they are < 1
         elif (width == None or height == None or width < 1 or height < 1):
             raise ValueError(('Invalid width/height specified'))
         # get/bound the actual image coordinates
         x1 = x-1
         y1 = y-1
-        x2 = x1+min(width, imageWidth-x1)
-        y2 = y1 + min(height, imageHeight-y1)
+        x2 = x1+min(width, image_width-x1)
+        y2 = y1 + min(height, image_height-y1)
         # get the sub image with the dimensions specified [x1,y1,x2,y1)
         box = (x1, y1, x2, y2)
         image = image.crop(box)
@@ -447,15 +447,15 @@ class Picture:
         size = image.size
         data = image.tostring()
         # initialize this picture with new properties
-        self.__initializePicture(pygame.image.fromstring(data, size, mode), picture.filename, picture.title)
+        self.__initialize_picture(pygame.image.fromstring(data, size, mode), picture.filename, picture.title)
 
-    def overlayImage(self, picture, x=0, y=0):
+    def overlay_image(self, picture, x=0, y=0):
         if x == 0:
             # center x
-            x = (self.getWidth()/2)-(picture.getWidth()/2)+1
+            x = (self.get_width()/2)-(picture.get_width()/2)+1
         if y == 0:
             # center y
-            y = (self.getHeight()/2)-(picture.getHeight()/2)+1
+            y = (self.get_height()/2)-(picture.get_height()/2)+1
         # blit the other image
         # note that we must unlock both image surfaces
         self.surf.unlock()
@@ -467,20 +467,20 @@ class Picture:
 
     def clear(self, color=black):
         # clears the picture pixels to black
-        self.setPixels(color)
+        self.set_pixels(color)
 
     def __str__(self):
-        return "Picture, filename "+self.filename+" height "+str(self.getHeight())+" width "+str(self.getWidth())
+        return "Picture, filename "+self.filename+" height "+str(self.get_height())+" width "+str(self.get_width())
 
     def __update(self):
-        if self.__visibleFrame and self.__autoRepaint:
+        if self.visible_frame and self.__auto_repaint:
             self.repaint()
 
     def repaint(self):
-        if self.winActive:
+        if self.win_active:
             self.canvas.delete(self.item)
-            self.dispImage = ImageTk.PhotoImage(self.getImage())
-            self.item = self.canvas.create_image(0, 0, image=self.dispImage, anchor='nw')
+            self.disp_image = ImageTk.PhotoImage(self.get_image())
+            self.item = self.canvas.create_image(0, 0, image=self.disp_image, anchor='nw')
             self.canvas.pack()
             self.canvas.update()
             self.frame.title(self.title)
@@ -488,106 +488,106 @@ class Picture:
             self.show()
 
     def show(self):
-        if not self.winActive:
+        if not self.win_active:
             self.frame = PictureFrame(self)
-            self.canvas = Canvas(self.frame, width=self.getWidth(),
-                height=self.getHeight(), highlightthickness=0)
+            self.canvas = Canvas(self.frame, width=self.get_width(),
+                height=self.get_height(), highlightthickness=0)
 
-            self.dispImage = ImageTk.PhotoImage(self.getImage())
-            self.item = self.canvas.create_image(0, 0, image=self.dispImage, anchor='nw')
+            self.disp_image = ImageTk.PhotoImage(self.get_image())
+            self.item = self.canvas.create_image(0, 0, image=self.disp_image, anchor='nw')
             self.canvas.pack()
-            self.winActive = 1
-            self.__visibleFrame = True
+            self.win_active = 1
+            self.visible_frame = True
             # bind all events
-            for eventStr, callback in self.__eventBindings.items():
-                self.canvas.bind(eventStr, callback)
+            for event_str, callback in self.__event_bindings.items():
+                self.canvas.bind(event_str, callback)
         else:
             self.repaint()
 
-    def doPickColor(self, event):
+    def do_pick_color(self, event):
         x = event.x+1
         y = event.y+1
-        if (0 < x and x <= self.getWidth() and 0 < y and y < self.getHeight()):
-            pixel = self.getPixel(x, y)
+        if (0 < x and x <= self.get_width() and 0 < y and y < self.get_height()):
+            pixel = self.get_pixel(x, y)
             print pixel;
 
     def hide(self):
-        if self.winActive:
+        if self.win_active:
             self.frame.destroy()
 
-    def setTitle(self, title):
+    def set_title(self, title):
         self.title = title
         self.__update()
 
-    def getTitle(self):
+    def get_title(self):
         return self.title
 
-    def getImage(self):
+    def get_image(self):
         # seems to return a PIL image of the same dimensions
         data = pygame.image.tostring(self.surf, "RGB", 0)
-        image = fromstring("RGB", (self.getWidth(), self.getHeight()), data)
+        image = fromstring("RGB", (self.get_width(), self.get_height()), data)
         return image
 
-    def getWidth(self):
+    def get_width(self):
         return self.surf.get_width()
 
-    def getHeight(self):
+    def get_height(self):
         return self.surf.get_height()
 
-    def getPixel(self,x,y):
+    def get_pixel(self,x,y):
         return Pixel(self.pixels,x,y)
 
-    def getPixels(self):
-        collect = []
+    def get_pixels(self):
+        collect = []#TODO: change to 0-based?
         # we want the width and the height inclusive since Pixel() is one based
         # we increase the ranges so that we don't have to add in each iteration
-        for x in range(1,self.getWidth()+1):
-            for y in range(1,self.getHeight()+1):
+        for x in range(1,self.get_width()+1):
+            for y in range(1,self.get_height()+1):
                 collect.append(Pixel(self.pixels,x,y))
         return collect
 
-    def setPixels(self, color):
+    def set_pixels(self, color):
         # set all the pixels in this picture to a given color
         try:
             self.surf.fill(color.get_rgb())
             self.__update()
         except:
-            raise AttributeError('setPixels(color): Picture has not yet been initialized.')
-    def writeTo(self,filename):
+            raise AttributeError('set_pixels(color): Picture has not yet been initialized.')
+    def write_to(self,filename):
         if not os.path.isabs(filename):
             filename = media_folder + filename
         #pygame.image.save(self.surf, filename)
-        image = self.getImage()
+        image = self.get_image()
         image.save(filename, None)
 
     # TODO: add bounds checks for all the following functions to ensure that they are one based
     # draw stuff on pictures
-    def addRectFilled(self,acolor,x,y,w,h):
+    def add_rect_filled(self,acolor,x,y,w,h):
         pygame.draw.rect(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h))
         self.__update()
 
-    def addRect(self, acolor,x,y,w,h, width=1):
+    def add_rect(self, acolor,x,y,w,h, width=1):
         pygame.draw.rect(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h), width)
         self.__update()
 
     # Draws a polygon on the image.
-    def addPolygon(self,acolor,pointList):
-        pygame.draw.polygon(self.surf, acolor.get_rgb(), pointList, 1)
+    def add_polygon(self,acolor,point_list):
+        pygame.draw.polygon(self.surf, acolor.get_rgb(), point_list, 1)
         self.__update()
 
-    def addPolygonFilled(self, acolor,pointList):
-        pygame.draw.polygon(self.surf, acolor.get_rgb(), pointList, 0)
+    def add_polygon_filled(self, acolor,point_list):
+        pygame.draw.polygon(self.surf, acolor.get_rgb(), point_list, 0)
         self.__update()
 
-    def addOvalFilled(self, acolor,x,y,w,h):
+    def add_oval_filled(self, acolor,x,y,w,h):
         pygame.draw.ellipse(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h))
         self.__update()
 
-    def addOval(self, acolor,x,y,w,h):
+    def add_oval(self, acolor,x,y,w,h):
         pygame.draw.ellipse(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h), 1)
         self.__update()
 
-    def addArcFilled(self, acolor,x,y,w,h,start,angle):
+    def add_arc_filled(self, acolor,x,y,w,h,start,angle):
         #this is an estimation def needs to be done another way but I need to figure out how
         if w > h:
             pygame.draw.arc(self.surf, acolor.get_rgb(), Rect(x, y, w, h), start, angle, h/2)
@@ -596,45 +596,45 @@ class Picture:
         self.__update()
 
 
-    def addArc(self, acolor,x,y,w,h,start,angle):
+    def add_arc(self, acolor,x,y,w,h,start,angle):
         pygame.draw.arc(self.surf, acolor.get_rgb(), Rect(x, y, w, h), start, angle)
         self.__update()
 
-    def addLine(self, acolor, x1, y1, x2, y2, width=1):
+    def add_line(self, acolor, x1, y1, x2, y2, width=1):
         pygame.draw.line(self.surf, acolor.get_rgb(), [x1-1, y1-1], [x2-1, y2-1], width)
         self.__update()
 
-    def addText(self, acolor, x, y, string):
+    def add_text(self, acolor, x, y, string):
         global default_font
-        self.addTextWithStyle(acolor, x, y, string, default_font)
+        self.add_text_with_style(acolor, x, y, string, default_font)
         self.__update()
 
-    def addTextWithStyle(self, acolor, x, y, string, font):
+    def add_text_with_style(self, acolor, x, y, string, font):
         # add the text with the specified font
-        textSurf = font.render(string, True, acolor.get_rgb())
+        text_surf = font.render(string, True, acolor.get_rgb())
         self.surf.unlock()
-        self.surf.blit(textSurf, (x-1, y-1))
+        self.surf.blit(text_surf, (x-1, y-1))
         self.surf.lock()
         self.__update()
 
-    def addEventHandler(self, tkEventStr, callback):
+    def add_event_handler(self, tk_event_str, callback):
         # see: http://effbot.org/tkinterbook/tkinter-events-and-bindings.htm
         # for more information
-        self.__eventBindings[tkEventStr] = callback
-        if self.winActive:
-            self.canvas.bind(tkEventStr, callback)
+        self.__event_bindings[tk_event_str] = callback
+        if self.win_active:
+            self.canvas.bind(tk_event_str, callback)
 
-    def removeEventHandler(self, tkEventStr):
-        if tkEventStr in self.__eventBindings:
-            del self.__eventBindings[tkEventStr]
-            if self.winActive:
-                self.canvas.unbind(tkEventStr)
+    def remove_event_handler(self, tk_event_str):
+        if tk_event_str in self.__event_bindings:
+            del self.__event_bindings[tk_event_str]
+            if self.win_active:
+                self.canvas.unbind(tk_event_str)
 
-    def removeAllEventHandlers(self):
-        if self.winActive:
-            for eventStr, callback in self.__eventBindings.items():
-                    self.canvas.unbind(eventStr)
-        self.__eventBindings.clear()
+    def remove_all_event_handlers(self):
+        if self.win_active:
+            for event_str, callback in self.__event_bindings.items():
+                    self.canvas.unbind(event_str)
+        self.__event_bindings.clear()
 
 #
 # PIXEL ------------------------------------------------------------------------
@@ -642,18 +642,18 @@ class Picture:
 class Pixel:
 
     def __init__(self,picture,x,y):
-        lenX = len(picture)
-        lenY = len(picture[0])
-        if lenX > 0 and lenY > 0:
-            self.x = (x - 1) % lenX
-            self.y = (y - 1) % lenY
+        len_x = len(picture)
+        len_y = len(picture[0])
+        if len_x > 0 and len_y > 0:
+            self.x = (x - 1) % len_x
+            self.y = (y - 1) % len_y
             # we still want to fail if the accessible indices are out of wrap-around bounds so we
             # can not use self.x, and self.y below
             self.pix = picture[x-1][y-1]
         else:
-            raise ValueError(('Invalid image dimensions (' + str(lenX) + ', ' + str(lenY) + ')'))
+            raise ValueError(('Invalid image dimensions (' + str(len_x) + ', ' + str(len_y) + ')'))
     def __str__(self):
-        return "Pixel, color="+str(self.getColor())
+        return "Pixel, color="+str(self.get_color())
 
     def set_red(self,r):
         if 0 <= r and r <= 255:
@@ -670,7 +670,7 @@ class Pixel:
             self.pix[2] = b
         else:
             raise ValueError(('Invalid blue component value (' + str(b) + '), expected value within [0, 255]'))
-    def getRed(self):
+    def get_red(self):
         return int(self.pix[0])
 
     def get_green(self):
@@ -679,79 +679,79 @@ class Pixel:
     def get_blue(self):
         return int(self.pix[2])
 
-    def getColor(self):
-        return Color(self.getRed(),self.get_green(), self.get_blue())
+    def get_color(self):
+        return Color(self.get_red(),self.get_green(), self.get_blue())
 
-    def setColor(self,color):
-        self.set_red(color.getRed())
+    def set_color(self,color):
+        self.set_red(color.get_red())
         self.set_green(color.get_green())
         self.set_blue(color.get_blue())
 
-    def getX(self):
+    def get_x(self):
         return self.x + 1
 
-    def getY(self):
+    def get_y(self):
         return self.y + 1
     
 
 ##
 ## Global picture functions ----------------------------------------------------
 ##
-def makePicture(filename):
+def make_picture(filename):
     picture = Picture()
-    picture.loadImage(filename)
+    picture.load_image(filename)
     try:
-        w = picture.getWidth()
+        w = picture.get_width()
         return picture
     except:
         print "Was unable to load the image in " + filename +"\nMake sure it's a valid image file."
 
-def makeEmptyPicture(width, height):
+def make_empty_picture(width, height):
     picture = Picture()
-    picture.createImage(width, height)
+    picture.create_image(width, height)
     return picture
 
-def duplicatePicture(picture):
+def duplicate_picture(picture):
     if not picture.__class__ == Picture:
-        raise ValueError("duplicatePicture(picture): First input is not a picture")
-    newPicture = Picture()
-    newPicture.copyFromImage(picture)
-    return newPicture
+        raise ValueError("duplicate_picture(picture): First input is not a picture")
+    new_picture = Picture()
+    new_picture.copy_from_image(picture)
+    return new_picture
 
-def makeStyle(fontname, fontsize=10, bold=False, italic=False):
+def make_style(fontname, fontsize=10, bold=False, italic=False):
     # try to make a font style with the given parameters
     global default_font
     try:
         return pygame.font.SysFont(fontname, fontsize, bold, italic)
     except:
-        print "makeStyle(fontname,fontsize,bold,italic): No such font found"
+        print "make_style(fontname,fontsize,bold,italic): No such font found"
         return default_font
-def setPixels(picture,color):
+def set_pixels(picture,color):
     if not picture.__class__ == Picture:
-        raise ValueError("setPixels(picture,color): First input is not a picture")
+        raise ValueError("set_pixels(picture,color): First input is not a picture")
     if not color.__class__ == Color:
-        raise ValueError("setPixels(picture,color): Second input is not a color.")
-    return picture.setPixels(color)
+        raise ValueError("set_pixels(picture,color): Second input is not a color.")
+    return picture.set_pixels(color)
 
-def getPixel(picture,x,y):
+def get_pixel(picture,x,y):
     if not picture.__class__ == Picture:
-        raise ValueError("getPixel(picture,x,y): Input is not a picture")
-    return picture.getPixel(x,y)
+        raise ValueError("get_pixel(picture,x,y): Input is not a picture")
+    return picture.get_pixel(x,y)
 
-def getPixels(picture):
+def get_pixels(picture):
     if not picture.__class__ == Picture:
-        raise ValueError("getPixels(picture): Input is not a picture")
-    return picture.getPixels()
+        raise ValueError("get_pixels(picture): Input is not a picture")
+    return picture.get_pixels()
 
-def getWidth(picture):
+def get_width(picture):
     if not picture.__class__ == Picture:
-        raise ValueError("getWidth(picture): Input is not a picture")
-    return picture.getWidth()
+        raise ValueError("get_width(picture): Input is not a picture")
+    return picture.get_width()
 
-def getHeight(picture):
+def get_height(picture):
     if not picture.__class__ == Picture:
-        raise ValueError("getHeight(picture): Input is not a picture")
-    return picture.getHeight()
+        raise ValueError("get_height(picture): Input is not a picture")
+    return picture.get_height()
 
 def show(picture, title=None):
     if not picture.__class__ == Picture:
@@ -763,42 +763,42 @@ def repaint(picture):
         raise ValueError("repaint(picture): Input is not a picture")
     picture.repaint()
 
-def addLine(picture,x1,y1,x2,y2):
+def add_line(picture,x1,y1,x2,y2):
     if not picture.__class__ == Picture:
-        raise ValueError("addLine(picture,x1,y1,x2,y2): Input is not a picture")
-    picture.addLine(black,x1,y1,x2,y2)
+        raise ValueError("add_line(picture,x1,y1,x2,y2): Input is not a picture")
+    picture.add_line(black,x1,y1,x2,y2)
 
-def addText(picture,x1,y1,string):
+def add_text(picture,x1,y1,string):
     if not picture.__class__ == Picture:
-        raise ValueError("addText(picture,x1,y1,string): Input is not a picture")
-    picture.addText(black,x1,y1,string)
+        raise ValueError("add_text(picture,x1,y1,string): Input is not a picture")
+    picture.add_text(black,x1,y1,string)
 
-def addRect(picture,x,y,w,h):
+def add_rect(picture,x,y,w,h):
     if not picture.__class__ == Picture:
-        raise ValueError("addRect(picture,x,y,w,h): Input is not a picture")
-    picture.addRect(black,x,y,w,h)
+        raise ValueError("add_rect(picture,x,y,w,h): Input is not a picture")
+    picture.add_rect(black,x,y,w,h)
 
-def addRectFilled(picture,x,y,w,h,acolor):
+def add_rect_filled(picture,x,y,w,h,acolor):
     if not picture.__class__ == Picture:
-        raise ValueError("addRectFilled(picture,x,y,w,h,acolor): Input is not a picture")
-    picture.addRectFilled(acolor,x,y,w,h)
+        raise ValueError("add_rect_filled(picture,x,y,w,h,acolor): Input is not a picture")
+    picture.add_rect_filled(acolor,x,y,w,h)
 
-def addPolygon(picture,pointList,acolor):
+def add_polygon(picture,point_list,acolor):
     if not picture.__class__ == Picture:
-        raise ValueError("addPolygon(picture,pointList,acolor): Input is not a picture")
-    picture.addPolygon(acolor, pointList)
+        raise ValueError("add_polygon(picture,point_list,acolor): Input is not a picture")
+    picture.add_polygon(acolor, point_list)
 
-def addPolygonFilled(picture,pointlist,acolor):
+def add_polygon_filled(picture,pointlist,acolor):
     if not picture.__class__ == Picture:
-        raise ValueError("addPolygonFilled(picture,pointlist,acolor): Input is not a picture")
-    picture.addPolygonFilled(acolor, pointlist)
+        raise ValueError("add_polygon_filled(picture,pointlist,acolor): Input is not a picture")
+    picture.add_polygon_filled(acolor, pointlist)
 
-def writePictureTo(pict,filename):
+def write_picture_to(pict,filename):
     if not pict.__class__ == Picture:
-        raise ValueError("writePictureTo(pict,filename): Input is not a picture")
-    pict.writeTo(filename)
+        raise ValueError("write_picture_to(pict,filename): Input is not a picture")
+    pict.write_to(filename)
     #if not os.path.exists(filename):
-    #       print "writePictureTo(pict,filename): Path is not valid"
+    #       print "write_picture_to(pict,filename): Path is not valid"
     #       raise ValueError
 
 ##
@@ -809,10 +809,10 @@ def set_red(pixel,value):
         raise ValueError("set_red(pixel,value): Input is not a pixel")
     pixel.set_red(value)
 
-def getRed(pixel):
+def get_red(pixel):
     if not pixel.__class__ == Pixel:
-        raise ValueError("getRed(pixel): Input is not a pixel")
-    return pixel.getRed()
+        raise ValueError("get_red(pixel): Input is not a pixel")
+    return pixel.get_red()
 
 def set_blue(pixel,value):
     if not pixel.__class__ == Pixel:
@@ -834,27 +834,27 @@ def get_green(pixel):
         raise ValueError("get_green(pixel): Input is not a pixel")
     return pixel.get_green()
 
-def getColor(pixel):
+def get_color(pixel):
     if not pixel.__class__ == Pixel:
-        raise ValueError("getColor(pixel): Inputis not a pixel")
-    return pixel.getColor()
+        raise ValueError("get_color(pixel): Inputis not a pixel")
+    return pixel.get_color()
 
-def setColor(pixel,color):
+def set_color(pixel,color):
     if not pixel.__class__ == Pixel:
-        raise ValueError("setColor(pixel,color): Input is not a pixel.")
+        raise ValueError("set_color(pixel,color): Input is not a pixel.")
     if not color.__class__ == Color:
-        raise ValueError("setColor(pixel,color): Input is not a color.")
-    pixel.setColor(color)
+        raise ValueError("set_color(pixel,color): Input is not a color.")
+    pixel.set_color(color)
 
-def getX(pixel):
+def get_x(pixel):
     if not pixel.__class__ == Pixel:
-        raise ValueError("getX(pixel): Input is not a pixel")
-    return pixel.getX()
+        raise ValueError("get_x(pixel): Input is not a pixel")
+    return pixel.get_x()
 
-def getY(pixel):
+def get_y(pixel):
     if not pixel.__class__ == Pixel:
-        raise ValueError("getY(pixel): Input is not a pixel")
-    return pixel.getY()
+        raise ValueError("get_y(pixel): Input is not a pixel")
+    return pixel.get_y()
 
 ##
 ## Global color functions ------------------------------------------------------
@@ -878,10 +878,10 @@ def make_lighter(color):
     color.make_lighter()
     return color
 
-def makeColor(red,green,blue):
-    return newColor(red,green,blue)
+def make_color(red,green,blue):
+    return new_color(red,green,blue)
 
-def newColor(red,green,blue):
+def new_color(red,green,blue):
     return Color(red,green,blue)
 
 ##
@@ -891,19 +891,19 @@ def newColor(red,green,blue):
 # the following allows us to wrap an error message and display specific
 # information depending on the context
 
-def exceptionHook(type, value, traceback):
+def exception_hook(type, value, traceback):
     try:
-        global debugLevel
-        curLevel = debugLevel
+        global debug_level
+        cur_level = debug_level
     except:
-        curLevel = 0
+        cur_level = 0
 
     # handle each level
-    if (curLevel == 0):
+    if (cur_level == 0):
         # user mode
         print str(value)
         sys.exc_clear()
-    elif (curLevel == 1):
+    elif (cur_level == 1):
         raise value
     else:
         # normal error mode
@@ -919,20 +919,20 @@ def exceptionHook(type, value, traceback):
         # print the message and each calling method
         print "Message: (%s)\n    %s" % (str(type), value)
         print "Stack Trace:"
-        for tempFrame in framestack:
-            print "    [%s:(%d)] - %s()"    %       (tempFrame.f_code.co_filename,
-                                                tempFrame.f_lineno,
-                                                tempFrame.f_code.co_name)
+        for temp_frame in framestack:
+            print "    [%s:(%d)] - %s()"    %       (temp_frame.f_code.co_filename,
+                                                temp_frame.f_lineno,
+                                                temp_frame.f_code.co_name)
         sys.exc_clear()
 # set the hook
-sys.excepthook = exceptionHook
+sys.excepthook = exception_hook
 
 
 # graphical warnings and prompts
-def showWarning(msg, title="Warning"):
+def show_warning(msg, title="Warning"):
     tkMessageBox.showwarning(title, msg)
 
-def showError(msg, title="Error"):
+def show_error(msg, title="Error"):
     tkMessageBox.showerror(title, msg)
 
 #
@@ -941,15 +941,15 @@ def showError(msg, title="Error"):
 #       0 for no/cancel (only if there are 2 choices)
 #       1 for yes/ok
 #
-def promptYesNo(promptMsg, title):
-    result = tkMessageBox.askquestion(title, promptMsg, default=tkMessageBox.NO)
+def prompt_yes_no(prompt_msg, title):
+    result = tkMessageBox.askquestion(title, prompt_msg, default=tkMessageBox.NO)
     if result == 'yes':
         return 1
     else:
         return 0
 
-def promptOkCancel(promptMsg, title):
-    return int(tkMessageBox.askokcancel(title, promptMsg, default=tkMessageBox.CANCEL))
+def prompt_ok_cancel(prompt_msg, title):
+    return int(tkMessageBox.askokcancel(title, prompt_msg, default=tkMessageBox.CANCEL))
 
 #
 # set the default debug level
@@ -957,4 +957,4 @@ def promptOkCancel(promptMsg, title):
 # 1 - throw normal errors
 # 2 - show simple errors & stack trace
 #
-debugLevel = 0
+debug_level = 0
