@@ -22,9 +22,9 @@ def ensurePicturesEqual(p1, p2):
 	for idx in range(len(pixels1)):
 		px1 = pixels1[idx]
 		px2 = pixels2[idx]
-		if not (px1.getRed() == px2.getRed() and
-			px1.getGreen() == px2.getGreen() and
-			px1.getBlue() == px2.getBlue()):
+		if not (px1.get_red() == px2.get_red() and
+			px1.get_green() == px2.get_green() and
+			px1.get_blue() == px2.get_blue()):
 			raise ValueError('Pictures not equal')
 		
 def ensurePicturesNotEqual(p1, p2):
@@ -36,18 +36,18 @@ def ensurePicturesNotEqual(p1, p2):
 	for idx in range(len(pixels1)):
 		px1 = pixels1[idx]
 		px2 = pixels2[idx]
-		if not (px1.getRed() == px2.getRed() and
-			px1.getGreen() == px2.getGreen() and
-			px1.getBlue() == px2.getBlue()):
+		if not (px1.get_red() == px2.get_red() and
+			px1.get_green() == px2.get_green() and
+			px1.get_blue() == px2.get_blue()):
 			return
 	raise ValueError('Pictures equal for')	
 	
 def ensurePictureHasColor(picture, color):
 	pixels = picture.get_pixels()
 	for pixel in pixels:
-		if not ((pixel.getRed() == color.getRed())
-			and (pixel.getGreen() == color.getGreen())
-			and (pixel.getBlue() == color.getBlue())):
+		if not ((pixel.get_red() == color.get_red())
+			and (pixel.get_green() == color.get_green())
+			and (pixel.get_blue() == color.get_blue())):
 			raise ValueError('Picture does not have solid color')
 
 class Test_Picture(unittest.TestCase):
@@ -66,13 +66,13 @@ class Test_Picture(unittest.TestCase):
 	def testEmptyConstructor(self):
 		# empty constructor builds new picture
 		self.pict = Picture()
-		self.assertEqual(self.pict.dispImage, None, 'New Picture contains display image')
-		self.assertEqual(self.pict.winActive, 0, 'New Picture is active')
+		self.assertEqual(self.pict.disp_image, None, 'New Picture contains display image')
+		self.assertEqual(self.pict.win_active, 0, 'New Picture is active')
 		
 	def testCreateImageZeroDimensions(self):
 		# create empty image with zero dimensions
 		self.pict = Picture()
-		self.pict.createImage(0, 0)
+		self.pict.create_image(0, 0)
 		self.assertEqual(self.pict.surf.get_size(), (0, 0), "Wrong Picture dimensions")
 		self.assertEqual(len(self.pict.pixels), 0, "Wrong number of Picture pixels")
 		self.assertEqual(self.pict.filename, '', "Non-empty filename for empty image")
@@ -82,7 +82,7 @@ class Test_Picture(unittest.TestCase):
 		# create empty image with questionable dimensions
 		# TODO: should we even be creating the surface if one of the sides <= 0?
 		self.pict = Picture()
-		self.pict.createImage(0, 1) # what is a zero by 1 image?
+		self.pict.create_image(0, 1) # what is a zero by 1 image?
 		self.assertEqual(self.pict.surf.get_size(), (0, 1), "Wrong Picture dimensions")
 		self.assertEqual(len(self.pict.pixels), 0, "Wrong number of Picture pixels")
 		self.assertEqual(self.pict.filename, '', "Non-empty filename for empty image")
@@ -91,9 +91,9 @@ class Test_Picture(unittest.TestCase):
 	def testCreateImageInvalidDimensions(self):
 		# create empty image with invalid dimensions
 		self.pict = Picture()
-		self.assertRaises(ValueError, self.pict.createImage, -1, -1)
-		self.assertRaises(ValueError, self.pict.createImage, -1, 0)
-		self.assertRaises(ValueError, self.pict.createImage, 0, -1)
+		self.assertRaises(ValueError, self.pict.create_image, -1, -1)
+		self.assertRaises(ValueError, self.pict.create_image, -1, 0)
+		self.assertRaises(ValueError, self.pict.create_image, 0, -1)
 		
 	def testLoadImageNonExistantFile(self):
 		# load a non-existant file
@@ -132,13 +132,13 @@ class Test_Picture(unittest.TestCase):
 		# empty picture
 		self.assertRaises(AttributeError, str, self.pict)
 		# invalid attempt at loading picture
-		self.assertRaises(ValueError, self.pict.createImage, -1, -1)
+		self.assertRaises(ValueError, self.pict.create_image, -1, -1)
 		self.assertRaises(AttributeError, str, self.pict)
 		
 	def testToStringDimensionlessImage(self):	
 		# test toString
 		self.pict = Picture()
-		self.pict.createImage(0, 0)
+		self.pict.create_image(0, 0)
 		self.assertEqual(str(self.pict), 'Picture, filename  height 0 width 0', "Invalid toString for dimensionless image")
 		
 	def testToString(self):
@@ -165,32 +165,32 @@ class Test_Picture(unittest.TestCase):
 		# test title setters/getters
 		self.pict = Picture()
 		# setting after initial load
-		self.assertEqual(self.pict.getTitle(), 'Unnamed', "Improper initial title")
-		self.pict.setTitle('')
-		self.assertEqual(self.pict.getTitle(), '', "Improper title")
-		self.pict.setTitle('asdf')
-		self.assertEqual(self.pict.getTitle(), 'asdf', "Improper title")
+		self.assertEqual(self.pict.get_title(), 'Unnamed', "Improper initial title")
+		self.pict.set_title('')
+		self.assertEqual(self.pict.get_title(), '', "Improper title")
+		self.pict.set_title('asdf')
+		self.assertEqual(self.pict.get_title(), 'asdf', "Improper title")
 		# setting after creating a new image
-		self.pict.createImage(0, 0)
-		self.assertEqual(self.pict.getTitle(), 'None', "Improper title")
-		self.pict.setTitle('asdf')
-		self.assertEqual(self.pict.getTitle(), 'asdf', "Improper title")
+		self.pict.create_image(0, 0)
+		self.assertEqual(self.pict.get_title(), 'None', "Improper title")
+		self.pict.set_title('asdf')
+		self.assertEqual(self.pict.get_title(), 'asdf', "Improper title")
 		# setting after loading an image
 		self.pict.load_image(resi('white.bmp'))
-		self.assertEqual(self.pict.getTitle(), os.path.join('images', 'white.bmp'), "Improper title")
-		self.pict.setTitle('asdf')
-		self.assertEqual(self.pict.getTitle(), 'asdf', "Improper title")
+		self.assertEqual(self.pict.get_title(), os.path.join('images', 'white.bmp'), "Improper title")
+		self.pict.set_title('asdf')
+		self.assertEqual(self.pict.get_title(), 'asdf', "Improper title")
 		
 	def testGetImageInvalidImage(self):
-		# test getImage on an invalid image
+		# test get_image on an invalid image
 		self.pict = Picture()
 		# fails when no/invalid image created
-		self.assertRaises(AttributeError, self.pict.getImage)
-		self.assertRaises(ValueError, self.pict.createImage, -1, -1)	# try creating invalid
-		self.assertRaises(AttributeError, self.pict.getImage)
+		self.assertRaises(AttributeError, self.pict.get_image)
+		self.assertRaises(ValueError, self.pict.create_image, -1, -1)	# try creating invalid
+		self.assertRaises(AttributeError, self.pict.get_image)
 		# also seems to fail with empty image when passed into PIL
-		self.pict.createImage(0, 0)
-		self.assertRaises(ValueError, self.pict.getImage)
+		self.pict.create_image(0, 0)
+		self.assertRaises(ValueError, self.pict.get_image)
 		
 	def testGetImage(self):
 		# ensure that the Image has the same properties as the Picture		
@@ -200,11 +200,11 @@ class Test_Picture(unittest.TestCase):
 			# create/load picture
 			self.pict = Picture()
 			if idx == 0:
-				self.pict.createImage(50, 50)
+				self.pict.create_image(50, 50)
 			elif idx == 1:
 				self.pict.load_image(resi('white.bmp'))
 			# convert to PIL image and ensure properties are the same
-			image = self.pict.getImage()
+			image = self.pict.get_image()
     		self.assertEqual(image.mode, 'RGB', "Improper image color bands")
     		self.assertEqual(image.size, (50, 50), "Improper image size")
     		# ensure all the pixels are of the correct color
@@ -223,7 +223,7 @@ class Test_Picture(unittest.TestCase):
 		self.assertRaises(AttributeError, self.pict.get_width)
 		self.assertRaises(AttributeError, self.pict.get_height)
 		# after invalid image creation attempt
-		self.assertRaises(ValueError, self.pict.createImage, -1, -1)	# try creating invalid
+		self.assertRaises(ValueError, self.pict.create_image, -1, -1)	# try creating invalid
 		self.assertRaises(AttributeError, self.pict.get_width)
 		self.assertRaises(AttributeError, self.pict.get_height)
 	
@@ -235,7 +235,7 @@ class Test_Picture(unittest.TestCase):
 			self.pict = Picture()
 			w = dimension[idx][0]
 			h = dimension[idx][1]
-			self.pict.createImage(w, h)
+			self.pict.create_image(w, h)
 			self.assertEqual(self.pict.get_width(), w, 'Invalid image width')
 			self.assertEqual(self.pict.get_height(), h, 'Invalid image height')
     		del self.pict
@@ -252,7 +252,7 @@ class Test_Picture(unittest.TestCase):
 		self.assertRaises(AttributeError, self.pict.get_pixel, -1, -1)
 		self.assertRaises(AttributeError, self.pict.get_pixel, 50, 50)
 		# after invalid image creation attempt
-		self.assertRaises(ValueError, self.pict.createImage, -1, -1)	# try creating invalid
+		self.assertRaises(ValueError, self.pict.create_image, -1, -1)	# try creating invalid
 		self.assertRaises(AttributeError, self.pict.get_pixel, 0, 0)
 		self.assertRaises(AttributeError, self.pict.get_pixel, -1, -1)
 		self.assertRaises(AttributeError, self.pict.get_pixel, 50, 50)
@@ -262,7 +262,7 @@ class Test_Picture(unittest.TestCase):
 		# NOTE: indices are ONE based
 		# out of bounds indices
 		self.pict = Picture()
-		self.pict.createImage(0, 0)		
+		self.pict.create_image(0, 0)		
 		self.assertRaises(IndexError, self.pict.get_pixel, 0, 0)
 		self.assertRaises(IndexError, self.pict.get_pixel, -1, 0)
 		self.assertRaises(IndexError, self.pict.get_pixel, -1, -1)
@@ -270,7 +270,7 @@ class Test_Picture(unittest.TestCase):
 		del self.pict
 		# single pixel image
 		self.pict = Picture()
-		self.pict.createImage(1, 1)		
+		self.pict.create_image(1, 1)		
 		try:
 			# should not fail
 			self.pict.get_pixel(0, 0) # in python, this wraps to -1 from the left/right
@@ -281,7 +281,7 @@ class Test_Picture(unittest.TestCase):
 		del self.pict
 		# multi pixel image
 		self.pict = Picture()
-		self.pict.createImage(10, 10)
+		self.pict.create_image(10, 10)
 		try:
 			# should not fail
 			self.pict.get_pixel(-9, -9) # last wrap around value
@@ -299,7 +299,7 @@ class Test_Picture(unittest.TestCase):
 		self.pict = Picture()
 		self.assertRaises(AttributeError, self.pict.get_pixels)
 		# after invalid image creation attempt
-		self.assertRaises(ValueError, self.pict.createImage, -1, -1)	# try creating invalid
+		self.assertRaises(ValueError, self.pict.create_image, -1, -1)	# try creating invalid
 		self.assertRaises(AttributeError, self.pict.get_pixels)
 	
 	def testGetPixels(self):
@@ -310,7 +310,7 @@ class Test_Picture(unittest.TestCase):
 		
 		for idx in range(len(dimensions)):
 			self.pict = Picture()		
-    		self.pict.createImage(dimensions[idx][0], dimensions[idx][1])
+    		self.pict.create_image(dimensions[idx][0], dimensions[idx][1])
     		self.assertEqual(len(self.pict.get_pixels()), expectedLen[idx], 
 				'Invalid number of pixels returned (' + str(idx) + ')')    	
     		del self.pict
@@ -322,7 +322,7 @@ class Test_Picture(unittest.TestCase):
 	def testSetPixels(self):
 		# test set_pixels on an image
 		self.pict = Picture()
-		self.pict.createImage(44,44)
+		self.pict.create_image(44,44)
 		colors = (Color(0,0,0), Color(255,0,0), Color(255,255,255))
 		try:
 			for color in colors:
@@ -334,7 +334,7 @@ class Test_Picture(unittest.TestCase):
 	def testClear(self):
 		# test clear
 		self.pict = Picture()
-		self.pict.createImage(44,44)
+		self.pict.create_image(44,44)
 		black = Color(0,0,0)
 		colors = (Color(0,0,0), Color(255,0,0), Color(255,255,255))
 		try:
@@ -353,18 +353,18 @@ class Test_Picture(unittest.TestCase):
 		blessedSaveLocPrefix = resi('saved.')
 		saveLocPrefix = resi('saved.tmp.')
 		# fails on invalid/empty/blank image
-		self.assertRaises(AttributeError, self.pict.writeTo, saveLocPrefix + 'tmp')
-		self.assertRaises(ValueError, self.pict.createImage, -1, -1)	# try creating invalid
-		self.assertRaises(AttributeError, self.pict.writeTo, saveLocPrefix + 'tmp')
-		self.pict.createImage(0, 0)
-		self.assertRaises(ValueError, self.pict.writeTo, saveLocPrefix + 'tmp')
+		self.assertRaises(AttributeError, self.pict.write_to, saveLocPrefix + 'tmp')
+		self.assertRaises(ValueError, self.pict.create_image, -1, -1)	# try creating invalid
+		self.assertRaises(AttributeError, self.pict.write_to, saveLocPrefix + 'tmp')
+		self.pict.create_image(0, 0)
+		self.assertRaises(ValueError, self.pict.write_to, saveLocPrefix + 'tmp')
 		# invalid file types
-		self.pict.createImage(10, 10)
-		self.assertRaises(KeyError, self.pict.writeTo, saveLocPrefix + 'tmp')
+		self.pict.create_image(10, 10)
+		self.assertRaises(KeyError, self.pict.write_to, saveLocPrefix + 'tmp')
 		# ensure all of our types hold
 		for suffix in self.imageTypes:
 			try:
-				self.pict.writeTo(saveLocPrefix + suffix)
+				self.pict.write_to(saveLocPrefix + suffix)
 				# compare with saved copies
 				ensureImagesEqual(blessedSaveLocPrefix + suffix, saveLocPrefix + suffix)
 			except KeyError:
@@ -377,7 +377,7 @@ class Test_Picture(unittest.TestCase):
 			self.pict = Picture()
 			self.pict.load_image(blessedSaveLocPrefix + suffix)
 			try:
-				self.pict.writeTo(saveLocPrefix + suffix)
+				self.pict.write_to(saveLocPrefix + suffix)
 				# compare with saved copies
 				ensureImagesEqual(blessedSaveLocPrefix + suffix, saveLocPrefix + suffix)
 			except KeyError:
@@ -388,14 +388,14 @@ class Test_Picture(unittest.TestCase):
 		# test that copy from image fails when given bad input
 		self.pict = Picture()
 		p = Picture()
-		p.createImage(10,10)				
+		p.create_image(10,10)				
 		# negative coordinates
-		self.assertRaises(ValueError, self.pict.copyFromImage, p, -1)
-		self.assertRaises(ValueError, self.pict.copyFromImage, p, 100, -11)
+		self.assertRaises(ValueError, self.pict.copy_from_image, p, -1)
+		self.assertRaises(ValueError, self.pict.copy_from_image, p, 100, -11)
 		# out of bound coordinates
-		self.assertRaises(ValueError, self.pict.copyFromImage, p, p.get_width()+1)
-		self.assertRaises(ValueError, self.pict.copyFromImage, p, 100000000,1)
-		self.assertRaises(ValueError, self.pict.copyFromImage, p, 1, 1000000)
+		self.assertRaises(ValueError, self.pict.copy_from_image, p, p.get_width()+1)
+		self.assertRaises(ValueError, self.pict.copy_from_image, p, 100000000,1)
+		self.assertRaises(ValueError, self.pict.copy_from_image, p, 1, 1000000)
 							
 	def testCopyFromImage(self):
 		# test that copy from image works
@@ -407,7 +407,7 @@ class Test_Picture(unittest.TestCase):
 		# copy to self.pict whole
 		dimensions = ( (None,None), (50,50), (100,100) )
 		for dimen in dimensions:
-			self.pict.copyFromImage(p, 1,1, dimen[0], dimen[1])
+			self.pict.copy_from_image(p, 1,1, dimen[0], dimen[1])
 			ensurePictureHasColor(self.pict, white)
 			self.assertEqual(self.pict.get_width(), 50, 'New image width not equal')			
 			self.assertEqual(self.pict.get_height(), 50, 'New image height not equal')
@@ -417,7 +417,7 @@ class Test_Picture(unittest.TestCase):
 		dimensions = ( (2,2), (2,2), (2,2), (1,4), (6,2) )
 		self.failUnless(len(coordinates) == len(dimensions), 'Test arrays are mapped 1:1')
 		for idx in range(len(coordinates)):
-			self.pict.copyFromImage(p, coordinates[idx][0],coordinates[idx][1], dimensions[idx][0], dimensions[idx][1])
+			self.pict.copy_from_image(p, coordinates[idx][0],coordinates[idx][1], dimensions[idx][0], dimensions[idx][1])
 			ensurePictureHasColor(self.pict, white)
 			self.assertEqual(self.pict.get_width(), dimensions[idx][0], 'New image width not equal')			
 			self.assertEqual(self.pict.get_height(), dimensions[idx][1], 'New image height not equal')
@@ -442,12 +442,12 @@ class Test_Picture_Helpers(unittest.TestCase):
 	def testMakePictureInvalidFile(self):
 		# test invalid case
 		imageLoc = resi('doesNotExist.img')
-		self.assertRaises(ValueError, makePicture, imageLoc)
+		self.assertRaises(ValueError, make_picture, imageLoc)
 		
 	def testMakePicture(self):
 		# ensure that this returns an identical picture from one created manually
 		imageLoc = resi('white.bmp')
-		pMP = makePicture(imageLoc)
+		pMP = make_picture(imageLoc)
 		pManual = Picture(); pManual.load_image(imageLoc)
 		ensurePicturesEqual(pMP, pManual)
 				
@@ -482,9 +482,9 @@ class Test_Picture_Helpers(unittest.TestCase):
 				
 	def testGetShortPath(self):
 		# ensure that the short path is returned correctly
-		self.assertEqual(getShortPath(''), '', 'Invalid short path')
-		self.assertEqual(getShortPath('a.img'), 'a.img', 'Invalid short path')
-		self.assertEqual(getShortPath(os.path.join('b', 'a.img')), os.path.join('b', 'a.img'), 'Invalid short path')
-		self.assertEqual(getShortPath(os.path.join('c', os.path.join('b', 'a.img'))), os.path.join('b', 'a.img'), 'Invalid short path')
+		self.assertEqual(get_short_path(''), '', 'Invalid short path')
+		self.assertEqual(get_short_path('a.img'), 'a.img', 'Invalid short path')
+		self.assertEqual(get_short_path(os.path.join('b', 'a.img')), os.path.join('b', 'a.img'), 'Invalid short path')
+		self.assertEqual(get_short_path(os.path.join('c', os.path.join('b', 'a.img'))), os.path.join('b', 'a.img'), 'Invalid short path')
 
 
