@@ -967,4 +967,3 @@ def prompt_ok_cancel(prompt_msg, title):
 # 2 - show simple errors & stack trace
 #
 debug_level = 0
->>>>>>> .r58
