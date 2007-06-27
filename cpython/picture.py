@@ -706,26 +706,29 @@ def make_picture(filename):
     except:
         print "Was unable to load the image in " + filename +"\nMake sure it's a valid image file."
 
+# Maybe
 def make_empty_picture(width, height):
     picture = Picture()
     picture.create_image(width, height)
     return picture
 
-def duplicate_picture(picture):
-    if not picture.__class__ == Picture:
-        raise ValueError("duplicate_picture(picture): First input is not a picture")
-    new_picture = Picture()
-    new_picture.copy_from_image(picture)
-    return new_picture
+#def duplicate_picture(picture):
+#    if not picture.__class__ == Picture:
+#        raise ValueError("duplicate_picture(picture): First input is not a picture")
+#    new_picture = Picture()
+#    new_picture.copy_from_image(picture)
+#    return new_picture
 
-def make_style(fontname, fontsize=10, bold=False, italic=False):
-    # try to make a font style with the given parameters
-    global default_font
-    try:
-        return pygame.font.SysFont(fontname, fontsize, bold, italic)
-    except:
-        print "make_style(fontname,fontsize,bold,italic): No such font found"
-        return default_font
+#def make_style(fontname, fontsize=10, bold=False, italic=False):
+#    # try to make a font style with the given parameters
+#    global default_font
+#    try:
+#        return pygame.font.SysFont(fontname, fontsize, bold, italic)
+#    except:
+#        print "make_style(fontname,fontsize,bold,italic): No such font found"
+#        return default_font
+
+# Maybe
 def set_pixels(picture,color):
     if not picture.__class__ == Picture:
         raise ValueError("set_pixels(picture,color): First input is not a picture")
@@ -758,36 +761,42 @@ def show(picture, title=None):
         raise ValueError("show(picture): Input is not a picture")
     picture.show()
 
-def repaint(picture):
-    if not picture.__class__ == Picture:
-        raise ValueError("repaint(picture): Input is not a picture")
-    picture.repaint()
+#def repaint(picture):
+#    if not picture.__class__ == Picture:
+#        raise ValueError("repaint(picture): Input is not a picture")
+#    picture.repaint()
 
+# Maybe
 def add_line(picture,x1,y1,x2,y2):
     if not picture.__class__ == Picture:
         raise ValueError("add_line(picture,x1,y1,x2,y2): Input is not a picture")
     picture.add_line(black,x1,y1,x2,y2)
 
+# Maybe
 def add_text(picture,x1,y1,string):
     if not picture.__class__ == Picture:
         raise ValueError("add_text(picture,x1,y1,string): Input is not a picture")
     picture.add_text(black,x1,y1,string)
 
+# Maybe
 def add_rect(picture,x,y,w,h):
     if not picture.__class__ == Picture:
         raise ValueError("add_rect(picture,x,y,w,h): Input is not a picture")
     picture.add_rect(black,x,y,w,h)
 
+# Maybe
 def add_rect_filled(picture,x,y,w,h,acolor):
     if not picture.__class__ == Picture:
         raise ValueError("add_rect_filled(picture,x,y,w,h,acolor): Input is not a picture")
     picture.add_rect_filled(acolor,x,y,w,h)
 
+# Maybe
 def add_polygon(picture,point_list,acolor):
     if not picture.__class__ == Picture:
         raise ValueError("add_polygon(picture,point_list,acolor): Input is not a picture")
     picture.add_polygon(acolor, point_list)
 
+# Maybe
 def add_polygon_filled(picture,pointlist,acolor):
     if not picture.__class__ == Picture:
         raise ValueError("add_polygon_filled(picture,pointlist,acolor): Input is not a picture")
