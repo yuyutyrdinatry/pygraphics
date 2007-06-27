@@ -9,9 +9,9 @@ debugLevel = 1
 
 def colorEqualsColor(color, coloro):
 	# helper function to compare two colors
-	return (color.getRed() == coloro.getRed() and
-				color.getGreen() == coloro.getGreen() and
-				color.getBlue() == coloro.getBlue())
+	return (color.get_red() == coloro.get_red() and
+				color.get_green() == coloro.get_green() and
+				color.get_blue() == coloro.get_blue())
 	
 def normalizeColor(color):
 	# helper function to bound colors within [0,255]
@@ -105,17 +105,17 @@ class Test_Color(unittest.TestCase):
 			# normalize color components
 			normalizeColor(color)
 			# set tuple
-			self.color.setRGB(color)
-			self.assertEqual(self.color.getRGB(), color, 'Different colors encountered after setting/getting')
-			self.color.setRGB(defaultColor)
+			self.color.set_rgb(color)
+			self.assertEqual(self.color.get_rgb(), color, 'Different colors encountered after setting/getting')
+			self.color.set_rgb(defaultColor)
 			# set individually
-			self.color.setRed(color[0])
-			self.color.setGreen(color[1])
-			self.color.setBlue(color[2])
-			self.assertEqual(self.color.getRed(), color[0], 'Different red component returned')
-			self.assertEqual(self.color.getGreen(), color[1], 'Different green component returned')
-			self.assertEqual(self.color.getBlue(), color[2], 'Different blue component returned')
-			self.color.setRGB(defaultColor)
+			self.color.set_red(color[0])
+			self.color.set_green(color[1])
+			self.color.set_blue(color[2])
+			self.assertEqual(self.color.get_red(), color[0], 'Different red component returned')
+			self.assertEqual(self.color.get_green(), color[1], 'Different green component returned')
+			self.assertEqual(self.color.get_blue(), color[2], 'Different blue component returned')
+			self.color.set_rgb(defaultColor)
 			
 	def testMakeLighterDarker(self):
 		# not quite sure how to test this other than compring the resulting color's values 
@@ -127,16 +127,16 @@ class Test_Color(unittest.TestCase):
 				
 			cL = Color(color[0], color[1], color[2])
 			cD = Color(color[0], color[1], color[2])
-			cL.makeLighter()
-			cD.makeDarker()
+			cL.make_lighter()
+			cD.make_darker()
 			# we expect the lighter color to have values closer to white
-			self.failUnless(cL.getRed() >= color[0], 'Red component is not lighter')
-			self.failUnless(cL.getGreen() >= color[1], 'Green component is not lighter')
-			self.failUnless(cL.getBlue() >= color[2], 'Blue component is not lighter')
+			self.failUnless(cL.get_red() >= color[0], 'Red component is not lighter')
+			self.failUnless(cL.get_green() >= color[1], 'Green component is not lighter')
+			self.failUnless(cL.get_blue() >= color[2], 'Blue component is not lighter')
 			# we expect the darker color to have values closer to black			
-			self.failUnless(cD.getRed() <=color[0], 'Red component is not darker')
-			self.failUnless(cD.getGreen() <= color[1], 'Green component is not darker')
-			self.failUnless(cD.getBlue() <= color[2], 'Blue component is not darker')
+			self.failUnless(cD.get_red() <=color[0], 'Red component is not darker')
+			self.failUnless(cD.get_green() <= color[1], 'Green component is not darker')
+			self.failUnless(cD.get_blue() <= color[2], 'Blue component is not darker')
 					
 	def testToString(self):
 		# ensure that tostring is returning the correct representation
@@ -157,8 +157,8 @@ class Test_Color_Helpers(unittest.TestCase):
 		self.assertRaises(ValueError, distance, DummyClass(), DummyClass())
 		self.assertRaises(ValueError, distance, Color(0,0,0), DummyClass())
 		self.assertRaises(ValueError, distance, DummyClass(), Color(0,0,0))
-		self.assertRaises(ValueError, makeDarker, DummyClass())
-		self.assertRaises(ValueError, makeLighter, DummyClass())
+		self.assertRaises(ValueError, make_darker, DummyClass())
+		self.assertRaises(ValueError, make_lighter, DummyClass())
 		
 	def testMakeNewColor(self):
 		# ensure that the colors created through these are identical to those created manually
