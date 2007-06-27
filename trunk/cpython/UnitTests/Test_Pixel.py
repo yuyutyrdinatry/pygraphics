@@ -1,7 +1,8 @@
 import unittest
 import os.path
 from TestExecute import *
-from media import *
+from picture import *
+#from media import *
 
 # we MUST set the debug level to 1 to force errors to return
 debugLevel = 1
