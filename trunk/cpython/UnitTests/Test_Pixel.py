@@ -9,25 +9,25 @@ debugLevel = 1
 
 def pixelEqualsColor(pixel, color):
 	# helper function to compare pixel and color values
-	return (pixel.getRed() == color.getRed() and
-				pixel.getGreen() == color.getGreen() and
-				pixel.getBlue() == color.getBlue())
+	return (pixel.get_red() == color.get_red() and
+				pixel.get_green() == color.get_green() and
+				pixel.get_blue() == color.get_blue())
 
 def pixelEqualsColorArray(pixel, array3d):
 	# helper function to compare pixel color values
-	return (pixel.getRed() == array3d[0] and
-		pixel.getGreen() == array3d[1] and
-		pixel.getBlue() == array3d[2])
+	return (pixel.get_red() == array3d[0] and
+		pixel.get_green() == array3d[1] and
+		pixel.get_blue() == array3d[2])
 	
 def pixelXYEqualsArray(pixel, array2d):
 	# helper function to compare pixel coordinates
-	return (pixel.getX() == array2d[0] and pixel.getY() == array2d[1])
+	return (pixel.get_x() == array2d[0] and pixel.get_y() == array2d[1])
 	
 def colorEqualsColor(color, coloro):
 	# helper function to compare two colors
-	return (color.getRed() == coloro.getRed() and
-				color.getGreen() == coloro.getGreen() and
-				color.getBlue() == coloro.getBlue())
+	return (color.get_red() == coloro.get_red() and
+				color.get_green() == coloro.get_green() and
+				color.get_blue() == coloro.get_blue())
 
 class Test_Pixel(unittest.TestCase):
 	''' Tests the media.py Pixel class members '''
@@ -111,23 +111,23 @@ class Test_Pixel(unittest.TestCase):
 		
 		self.failUnless(pixelEqualsColorArray(self.pixel, self.B), 'Improper color component')
 		self.pixel.setRed(0) # empty set
-		self.pixel.setGreen(0)
-		self.pixel.setBlue(0)
+		self.pixel.set_green(0)
+		self.pixel.set_blue(0)
 		self.failUnless(pixelEqualsColorArray(self.pixel, self.B), 'Improper color component')
 		self.pixel.setRed(255) # set new red
 		self.failUnless(pixelEqualsColorArray(self.pixel, [255, 0, 0]), 'Improper color component')
-		self.pixel.setBlue(128) # set new blue
+		self.pixel.set_blue(128) # set new blue
 		self.failUnless(pixelEqualsColorArray(self.pixel, [255, 0, 128]), 'Improper color component')
-		self.pixel.setGreen(64) # set green
+		self.pixel.set_green(64) # set green
 		self.failUnless(pixelEqualsColorArray(self.pixel, [255, 64, 128]), 'Improper color component')
-		self.pixel.setBlue(255); self.pixel.setGreen(255)
+		self.pixel.set_blue(255); self.pixel.set_green(255)
 		self.failUnless(pixelEqualsColorArray(self.pixel, self.W), 'Improper color component')
 		# test out of bounds color values
 		outOfBounds = [-1, -10, 256, 300]
 		for value in outOfBounds:
 			self.assertRaises(ValueError, self.pixel.setRed, value)
-			self.assertRaises(ValueError, self.pixel.setGreen, value)
-			self.assertRaises(ValueError, self.pixel.setBlue, value)
+			self.assertRaises(ValueError, self.pixel.set_green, value)
+			self.assertRaises(ValueError, self.pixel.set_blue, value)
 		
 	def testSetGetColor(self):
 		# test that setters and getters for pixel color is correct
@@ -135,12 +135,12 @@ class Test_Pixel(unittest.TestCase):
 		self.pixel = Pixel(self.img, 1, 1)
 		for color in colors:
 			# ensure that the colors are the same after setting and getting
-			self.pixel.setColor(color)
+			self.pixel.set_color(color)
 			self.failUnless(pixelEqualsColor(self.pixel, color), 'Colors do not match (' + str(self.pixel) + ', ' + str(color) + ')')
-			self.failUnless(colorEqualsColor(self.pixel.getColor(), color), 'Colors do not match (' + str(self.pixel.getColor()) + ', ' + str(color) + ')')
+			self.failUnless(colorEqualsColor(self.pixel.get_color(), color), 'Colors do not match (' + str(self.pixel.get_color()) + ', ' + str(color) + ')')
 
 	def testGetXY(self):
-		# test that getX and getY return valid indices within ranges x=[0, width], y=[0, height]
+		# test that get_x and get_y return valid indices within ranges x=[0, width], y=[0, height]
 		width = len(self.largeImg)
 		height = len(self.largeImg[0])
 		
@@ -150,7 +150,7 @@ class Test_Pixel(unittest.TestCase):
 		# test each of the input coordinates, making sure they map to the correct expected coords
 		for idx in range(len(inputCoordinates)):
 			self.pixel = Pixel(self.largeImg, inputCoordinates[idx][0], inputCoordinates[idx][1])
-			self.failUnless(pixelXYEqualsArray(self.pixel, expectedCoordinates[idx]), 'Improper XY coordinates (' + str(self.pixel.getX()) + ', ' + str(self.pixel.getY()) + ')')			
+			self.failUnless(pixelXYEqualsArray(self.pixel, expectedCoordinates[idx]), 'Improper XY coordinates (' + str(self.pixel.get_x()) + ', ' + str(self.pixel.get_y()) + ')')			
 			del self.pixel
 		
 class Test_Pixel_Helpers(unittest.TestCase):
@@ -158,16 +158,16 @@ class Test_Pixel_Helpers(unittest.TestCase):
 						
 	def testNonPixelObjectCall(self):
 		# ensuring that all the picture global convenience functions fail on non-Picture objects
-		self.assertRaises(ValueError, setRed, DummyClass(), 0)
-		self.assertRaises(ValueError, setGreen, DummyClass(), 0)
-		self.assertRaises(ValueError, setBlue, DummyClass(), 0)
-		self.assertRaises(ValueError, getRed, DummyClass())
-		self.assertRaises(ValueError, getGreen, DummyClass())
-		self.assertRaises(ValueError, getBlue, DummyClass())
-		self.assertRaises(ValueError, getColor, DummyClass())
-		self.assertRaises(ValueError, setColor, DummyClass(), None)
-		self.assertRaises(ValueError, setColor, Pixel([[0,0,0]], 1, 1), None)
-		self.assertRaises(ValueError, getX, DummyClass())
-		self.assertRaises(ValueError, getY, DummyClass())
+		self.assertRaises(ValueError, set_red, DummyClass(), 0)
+		self.assertRaises(ValueError, set_green, DummyClass(), 0)
+		self.assertRaises(ValueError, set_blue, DummyClass(), 0)
+		self.assertRaises(ValueError, get_red, DummyClass())
+		self.assertRaises(ValueError, get_green, DummyClass())
+		self.assertRaises(ValueError, get_blue, DummyClass())
+		self.assertRaises(ValueError, get_color, DummyClass())
+		self.assertRaises(ValueError, set_color, DummyClass(), None)
+		self.assertRaises(ValueError, set_color, Pixel([[0,0,0]], 1, 1), None)
+		self.assertRaises(ValueError, get_x, DummyClass())
+		self.assertRaises(ValueError, get_y, DummyClass())
 		
 		
