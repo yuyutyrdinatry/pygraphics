@@ -146,8 +146,8 @@ class Test_Color(unittest.TestCase):
 			normalizeColor(color)
 			# compare strings
 			expectedStr = 'color r=' + str(color[0]) + ' g=' + str(color[1]) + ' b=' + str(color[2])
-			newColor = Color(color[0], color[1], color[2])
-			self.assertEqual(str(newColor), expectedStr, 'Color strings do not match:\n' + str(newColor) + '\n' + expectedStr )
+			new_color = Color(color[0], color[1], color[2])
+			self.assertEqual(str(new_color), expectedStr, 'Color strings do not match:\n' + str(new_color) + '\n' + expectedStr )
 		
 class Test_Color_Helpers(unittest.TestCase):
 	''' Tests global functions related to the Color class '''
@@ -167,8 +167,8 @@ class Test_Color_Helpers(unittest.TestCase):
 			# normalize color components
 			normalizeColor(color)
 			# create using all three ways
-			colorMake = makeColor(color[0], color[1], color[2])
-			colorNew = newColor(color[0], color[1], color[2])
+			colorMake = make_color(color[0], color[1], color[2])
+			colorNew = new_color(color[0], color[1], color[2])
 			colorManual = Color(color[0], color[1], color[2])
 			self.failUnless(colorEqualsColor(colorMake, colorNew) and colorEqualsColor(colorMake, colorManual), 'Colors not the same (' + str(colorManual) + ')')			
 		

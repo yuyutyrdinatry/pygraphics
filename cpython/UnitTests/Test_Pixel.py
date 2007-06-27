@@ -110,11 +110,11 @@ class Test_Pixel(unittest.TestCase):
 		self.pixel = Pixel(self.img, 1, 1)
 		
 		self.failUnless(pixelEqualsColorArray(self.pixel, self.B), 'Improper color component')
-		self.pixel.setRed(0) # empty set
+		self.pixel.set_red(0) # empty set
 		self.pixel.set_green(0)
 		self.pixel.set_blue(0)
 		self.failUnless(pixelEqualsColorArray(self.pixel, self.B), 'Improper color component')
-		self.pixel.setRed(255) # set new red
+		self.pixel.set_red(255) # set new red
 		self.failUnless(pixelEqualsColorArray(self.pixel, [255, 0, 0]), 'Improper color component')
 		self.pixel.set_blue(128) # set new blue
 		self.failUnless(pixelEqualsColorArray(self.pixel, [255, 0, 128]), 'Improper color component')
@@ -125,7 +125,7 @@ class Test_Pixel(unittest.TestCase):
 		# test out of bounds color values
 		outOfBounds = [-1, -10, 256, 300]
 		for value in outOfBounds:
-			self.assertRaises(ValueError, self.pixel.setRed, value)
+			self.assertRaises(ValueError, self.pixel.set_red, value)
 			self.assertRaises(ValueError, self.pixel.set_green, value)
 			self.assertRaises(ValueError, self.pixel.set_blue, value)
 		
