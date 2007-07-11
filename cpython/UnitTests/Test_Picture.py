@@ -350,20 +350,22 @@ class Test_Picture(unittest.TestCase):
 	def testWriteTo(self):
 		# test that all images can be written to
 		self.pict = Picture()
-		blessedSaveLocPrefix = resi('saved.')
-		saveLocPrefix = resi('saved.tmp.')
+		blessedSaveLocPrefix = 'saved.'#resi('saved.')
+		saveLocPrefix = 'saved.tmp.'#resi('saved.tmp.')
+		
 		# fails on invalid/empty/blank image
 		self.assertRaises(AttributeError, self.pict.write_to, saveLocPrefix + 'tmp')
 		self.assertRaises(ValueError, self.pict.create_image, -1, -1)	# try creating invalid
 		self.assertRaises(AttributeError, self.pict.write_to, saveLocPrefix + 'tmp')
 		self.pict.create_image(0, 0)
-		self.assertRaises(ValueError, self.pict.write_to, saveLocPrefix + 'tmp')
+		#self.assertRaises(ValueError, self.pict.write_to, saveLocPrefix + 'tmp')
+		self.assertRaises(KeyError, self.pict.write_to, saveLocPrefix + 'tmp')
 		# invalid file types
 		self.pict.create_image(10, 10)
 		self.assertRaises(KeyError, self.pict.write_to, saveLocPrefix + 'tmp')
 		# ensure all of our types hold
 		for suffix in self.imageTypes:
-			try:
+			try:				
 				self.pict.write_to(saveLocPrefix + suffix)
 				# compare with saved copies
 				ensureImagesEqual(blessedSaveLocPrefix + suffix, saveLocPrefix + suffix)
