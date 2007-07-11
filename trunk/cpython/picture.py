@@ -55,10 +55,10 @@ ver = "1.1"
 default_frequency = 22050
 default_sample_size = -16                 # negative denotes signed number of bits
 default_num_channels = 1          # stereo or mono
-pygame.mixer.pre_init(default_frequency, default_sample_size, (default_num_channels > 1))
-pygame.font.init()
-pygame.mixer.init()
-default_font = pygame.font.SysFont("times", 24)
+#pygame.mixer.pre_init(default_frequency, default_sample_size, (default_num_channels > 1))
+#pygame.font.init()
+#pygame.mixer.init()
+#default_font = pygame.font.SysFont("times", 24)
 
 top = Tk()
 top.withdraw()
