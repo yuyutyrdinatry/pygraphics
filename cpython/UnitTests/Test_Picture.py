@@ -73,7 +73,7 @@ class Test_Picture(unittest.TestCase):
 		# create empty image with zero dimensions
 		self.pict = Picture()
 		self.pict.create_image(0, 0)
-		self.assertEqual(self.pict.surf.get_size(), (0, 0), "Wrong Picture dimensions")
+		self.assertEqual(self.pict.surf.size, (0, 0), "Wrong Picture dimensions")
 		self.assertEqual(len(self.pict.pixels), 0, "Wrong number of Picture pixels")
 		self.assertEqual(self.pict.filename, '', "Non-empty filename for empty image")
 		self.assertEqual(self.pict.title, 'None', "")
@@ -83,7 +83,7 @@ class Test_Picture(unittest.TestCase):
 		# TODO: should we even be creating the surface if one of the sides <= 0?
 		self.pict = Picture()
 		self.pict.create_image(0, 1) # what is a zero by 1 image?
-		self.assertEqual(self.pict.surf.get_size(), (0, 1), "Wrong Picture dimensions")
+		self.assertEqual(self.pict.surf.size, (0, 1), "Wrong Picture dimensions")
 		self.assertEqual(len(self.pict.pixels), 0, "Wrong number of Picture pixels")
 		self.assertEqual(self.pict.filename, '', "Non-empty filename for empty image")
 		self.assertEqual(self.pict.title, 'None', "")
@@ -116,7 +116,7 @@ class Test_Picture(unittest.TestCase):
 				self.assertEqual(self.pict.filename, file, "Improper filename for loaded image")
 				self.assertEqual(self.pict.title, os.path.join('images', filename), "Improper title for loaded image")
 				# ensure correct dimensions and depth
-				self.assertEqual(self.pict.surf.get_size(), (50, 50), "Invalid Picture dimensions")
+				self.assertEqual(self.pict.surf.size, (50, 50), "Invalid Picture dimensions")
 				self.assertEqual(len(self.pict.pixels)*len(self.pict.pixels[0])*len(self.pict.pixels[0][0]), (50*50*3))
 			except ValueError, e:
 				print 'Error loading images of type: ' + suffix + " (" + str(e) + ")"
@@ -350,8 +350,8 @@ class Test_Picture(unittest.TestCase):
 	def testWriteTo(self):
 		# test that all images can be written to
 		self.pict = Picture()
-		blessedSaveLocPrefix = 'saved.'#resi('saved.')
-		saveLocPrefix = 'saved.tmp.'#resi('saved.tmp.')
+		blessedSaveLocPrefix = resi('saved.')
+		saveLocPrefix = resi('saved.tmp.')
 		
 		# fails on invalid/empty/blank image
 		self.assertRaises(AttributeError, self.pict.write_to, saveLocPrefix + 'tmp')
@@ -366,9 +366,10 @@ class Test_Picture(unittest.TestCase):
 		# ensure all of our types hold
 		for suffix in self.imageTypes:
 			try:				
-				self.pict.write_to(saveLocPrefix + suffix)
+				self.pict.write_to(saveLocPrefix +"."+ suffix)
 				# compare with saved copies
-				ensureImagesEqual(blessedSaveLocPrefix + suffix, saveLocPrefix + suffix)
+#				print "\n"+blessedSaveLocPrefix +'.'+ suffix, saveLocPrefix +'.'+ suffix+"\n"
+				ensureImagesEqual(blessedSaveLocPrefix +'.'+ suffix, saveLocPrefix +'.'+ suffix)
 			except KeyError:
 				self.fail('Failed saving created image to (' + suffix + ') files')
 		del self.pict
@@ -377,11 +378,11 @@ class Test_Picture(unittest.TestCase):
 		blessedSaveLocPrefix = resi('white.')
 		for suffix in self.imageTypes:
 			self.pict = Picture()
-			self.pict.load_image(blessedSaveLocPrefix + suffix)
+			self.pict.load_image(blessedSaveLocPrefix +'.'+ suffix)
 			try:
-				self.pict.write_to(saveLocPrefix + suffix)
+				self.pict.write_to(saveLocPrefix +'.'+ suffix)
 				# compare with saved copies
-				ensureImagesEqual(blessedSaveLocPrefix + suffix, saveLocPrefix + suffix)
+				ensureImagesEqual(blessedSaveLocPrefix +'.'+ suffix, saveLocPrefix +'.'+ suffix)
 			except KeyError:
 				self.fail('Failed saving loaded image to (' + suffix + ') files')
 			del self.pict
@@ -466,21 +467,22 @@ class Test_Picture_Helpers(unittest.TestCase):
 		self.assertRaises(ValueError, add_rect, DummyClass(), 0, 0, 0, 0)
 		self.assertRaises(ValueError, add_rect_filled, DummyClass(), 0, 0, 0, 0, None)
 		self.assertRaises(ValueError, write_picture_to, DummyClass(), '')
-		self.assertRaises(ValueError, duplicate_picture, DummyClass())
+		#self.assertRaises(ValueError, duplicate_picture, DummyClass())
 		self.assertRaises(ValueError, set_pixels, DummyClass(), None)
 		self.assertRaises(ValueError, set_pixels, Picture(), DummyClass())
-		
-	def testDuplicatePicture(self):
-		# ensure that the new picture is equal to the old picture
-		imageLoc = resi('white.bmp')
-		self.pict = Picture()
-		self.pict.load_image(imageLoc)
-		# copy full image
-		p = duplicate_picture(self.pict)
-		ensurePicturesEqual(self.pict, p)
-		# ensure that changing one does not affect the other
-		self.pict.clear();
-		ensurePicturesNotEqual(self.pict, p)
+
+#Not supported anymore		
+#	def testDuplicatePicture(self):
+#		# ensure that the new picture is equal to the old picture
+#		imageLoc = resi('white.bmp')
+#		self.pict = Picture()
+#		self.pict.load_image(imageLoc)
+#		# copy full image
+#		p = duplicate_picture(self.pict)
+#		ensurePicturesEqual(self.pict, p)
+#		# ensure that changing one does not affect the other
+#		self.pict.clear();
+#		ensurePicturesNotEqual(self.pict, p)
 				
 	def testGetShortPath(self):
 		# ensure that the short path is returned correctly
