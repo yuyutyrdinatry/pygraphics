@@ -348,7 +348,7 @@ yellowgreen = Color(154,205,50)
 
 ##
 ## PICTURE FRAME ---------------------------------------------------------------
-##
+
 class PictureFrame(Toplevel):
 
     def __init__(self, picture):
@@ -376,10 +376,19 @@ class Picture:
         #       self.add_event_handler("<Button-1>", self.do_pick_color)
         #       self.add_event_handler("<B1-Motion>", self.do_pick_color)
 
-    def __initialize_picture(self, surface, filename, title):
-        self.surf = surface
+    def __initialize_picture(self, surf, filename, title):
+        self.surf = surf
         # we get the pixels array from the surface
-        self.pixels = pygame.surfarray.pixels3d(self.surf)
+        self.pixels = surf.load()#pygame.surfarray.pixels3d(self.surf)
+        self.p = []
+        
+        for i in range(surf.size[0]):
+            self.p.append([])
+            for j in range(surf.size[1]):
+                self.p[i].append(self.pixels[i,j])
+        
+        self.pixels = self.p
+        
         self.filename = filename
         self.title = title
         self.__update()
@@ -398,7 +407,8 @@ class Picture:
         if (width < 0 or height < 0):
             raise ValueError("create_image(" + str(width) + ", " + str(height) + "): Invalid image dimensions")
         else:
-            self.__initialize_picture(pygame.Surface((width, height)), '', 'None')
+            self.__initialize_picture(Image.new('RGB', (width, height), None), '', 'None')
+            #self.__initialize_picture(pygame.Surface((width, height)), '', 'None')
 
     def load_image(self,filename):
         global media_folder
@@ -414,7 +424,7 @@ class Picture:
             size = image.size
             data = image.tostring()
             # initialize this picture with new properties
-            self.__initialize_picture(pygame.image.fromstring(data, size, mode), filename, get_short_path(filename))
+            self.__initialize_picture(image, filename, get_short_path(filename))
 
     def copy_from_image(self, picture, x=1, y=1, width=None, height=None):
     # copies and image from another picture, replacing this one
@@ -447,7 +457,7 @@ class Picture:
         size = image.size
         data = image.tostring()
         # initialize this picture with new properties
-        self.__initialize_picture(pygame.image.fromstring(data, size, mode), picture.filename, picture.title)
+        self.__initialize_picture(image, picture.filename, picture.title)
 
     def overlay_image(self, picture, x=0, y=0):
         if x == 0:
@@ -488,21 +498,22 @@ class Picture:
             self.show()
 
     def show(self):
-        if not self.win_active:
-            self.frame = PictureFrame(self)
-            self.canvas = Canvas(self.frame, width=self.get_width(),
-                height=self.get_height(), highlightthickness=0)
-
-            self.disp_image = ImageTk.PhotoImage(self.get_image())
-            self.item = self.canvas.create_image(0, 0, image=self.disp_image, anchor='nw')
-            self.canvas.pack()
-            self.win_active = 1
-            self.visible_frame = True
-            # bind all events
-            for event_str, callback in self.__event_bindings.items():
-                self.canvas.bind(event_str, callback)
-        else:
-            self.repaint()
+        self.surf.show()
+#        if not self.win_active:
+#            self.frame = PictureFrame(self)
+#            self.canvas = Canvas(self.frame, width=self.get_width(),
+#                height=self.get_height(), highlightthickness=0)
+#
+#            self.disp_image = ImageTk.PhotoImage(self.get_image())
+#            self.item = self.canvas.create_image(0, 0, image=self.disp_image, anchor='nw')
+#            self.canvas.pack()
+#            self.win_active = 1
+#            self.visible_frame = True
+#            # bind all events
+#            for event_str, callback in self.__event_bindings.items():
+#                self.canvas.bind(event_str, callback)
+#        else:
+#            self.repaint()
 
     def do_pick_color(self, event):
         x = event.x+1
@@ -524,15 +535,17 @@ class Picture:
 
     def get_image(self):
         # seems to return a PIL image of the same dimensions
-        data = pygame.image.tostring(self.surf, "RGB", 0)
-        image = fromstring("RGB", (self.get_width(), self.get_height()), data)
-        return image
+        #data = pygame.image.tostring(self.surf, "RGB", 0)
+        #image = fromstring("RGB", (self.get_width(), self.get_height()), data)
+        data = self.surf.tostring()
+        image = Image.fromstring("RGB", (self.get_width(), self.get_height()), data)
+        return image#self.surf
 
     def get_width(self):
-        return self.surf.get_width()
+        return self.surf.size[0]
 
     def get_height(self):
-        return self.surf.get_height()
+        return self.surf.size[1]
 
     def get_pixel(self,x,y):
         return Pixel(self.pixels,x,y)
@@ -557,8 +570,9 @@ class Picture:
         if not os.path.isabs(filename):
             filename = media_folder + filename
         #pygame.image.save(self.surf, filename)
-        image = self.get_image()
-        image.save(filename, None)
+        #image = self.get_image()
+        #image.save(filename, None)
+        self.surf.save(filename)
 
     # TODO: add bounds checks for all the following functions to ensure that they are one based
     # draw stuff on pictures
