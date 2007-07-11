@@ -60,10 +60,10 @@ default_num_channels = 1          # stereo or mono
 #pygame.mixer.init()
 #default_font = pygame.font.SysFont("times", 24)
 
-top = Tk()
-top.withdraw()
+#top = Tk()
+#top.withdraw()
 # set up the tkSnack sound library
-tkSnack.initializeSnack(top)
+#tkSnack.initializeSnack(top)
 
 media_folder = user.home + os.sep
 
@@ -88,8 +88,10 @@ def get_media_path(filename):
     return file
 
 def pick_a_file(**options):
-    global top
-    path = tkFileDialog.askopenfilename(parent=top)
+#    global top
+    root = Tk()
+    root.withdraw()
+    path = tkFileDialog.askopenfilename()#parent=top)
     return path
 
 def pick_a_folder(**options):
@@ -350,16 +352,16 @@ yellowgreen = Color(154,205,50)
 ##
 ## PICTURE FRAME ---------------------------------------------------------------
 
-class PictureFrame(Toplevel):
+#class PictureFrame(Toplevel):
+#
+#    def __init__(self, picture):
+#        Toplevel.__init__(self)
+#        self.title(picture.title)
+#        self.pic = picture
 
-    def __init__(self, picture):
-        Toplevel.__init__(self)
-        self.title(picture.title)
-        self.pic = picture
-
-    def destroy(self):
-        self.pic.window_inactive()
-        Toplevel.destroy(self)
+#    def destroy(self):
+#        self.pic.window_inactive()
+#        Toplevel.destroy(self)
 
 ##
 ## PICTURE ---------------------------------------------------------------------
@@ -370,9 +372,9 @@ class Picture:
         self.title = "Unnamed"
         self.disp_image = None
         self.win_active = 0
-        self.__auto_repaint = auto_repaint
-        self.visible_frame = False
-        self.__event_bindings = {}
+#        self.__auto_repaint = auto_repaint
+#        self.visible_frame = False
+#        self.__event_bindings = {}
         # bind the mouse event to show the pixel information
         #       self.add_event_handler("<Button-1>", self.do_pick_color)
         #       self.add_event_handler("<B1-Motion>", self.do_pick_color)
@@ -392,16 +394,16 @@ class Picture:
         
         self.filename = filename
         self.title = title
-        self.__update()
+#        self.__update()
 
-    def set_auto_repaint(self, boolean):
-        self.__auto_repaint = boolean
-        self.__update()
+#    def set_auto_repaint(self, boolean):
+#        self.__auto_repaint = boolean
+#        self.__update()
 
-    def window_inactive(self):
-        del self.disp_image, self.item, self.canvas
-        self.win_active = 0
-        self.visible_frame = False
+#    def window_inactive(self):
+#        del self.disp_image, self.item, self.canvas
+#        self.win_active = 0
+#        self.visible_frame = False
 
     def create_image(self, width, height):
         # fail if dimensions are invalid
@@ -475,7 +477,7 @@ class Picture:
         self.surf.blit(picture.surf, (x-1, y-1))
         picture.surf.lock()
         self.surf.lock()
-        self.__update()
+#        self.__update()
 
     def clear(self, color=black):
         # clears the picture pixels to black
@@ -484,23 +486,33 @@ class Picture:
     def __str__(self):
         return "Picture, filename "+self.filename+" height "+str(self.get_height())+" width "+str(self.get_width())
 
-    def __update(self):
-        if self.visible_frame and self.__auto_repaint:
-            self.repaint()
+#    def __update(self):
+#        if self.visible_frame and self.__auto_repaint:
+#            self.repaint()
 
-    def repaint(self):
-        if self.win_active:
-            self.canvas.delete(self.item)
-            self.disp_image = ImageTk.PhotoImage(self.get_image())
-            self.item = self.canvas.create_image(0, 0, image=self.disp_image, anchor='nw')
-            self.canvas.pack()
-            self.canvas.update()
-            self.frame.title(self.title)
-        else:
-            self.show()
+#    def repaint(self):
+#        if self.win_active:
+#            self.canvas.delete(self.item)
+#            self.disp_image = ImageTk.PhotoImage(self.get_image())
+#            self.item = self.canvas.create_image(0, 0, image=self.disp_image, anchor='nw')
+#            self.canvas.pack()
+#            self.canvas.update()
+#            self.frame.title(self.title)
+#        else:
+#            self.show()
 
     def show(self):
+        import thread
+        i=1
+        p = thread.start_new(self.showchild, (i,))
+        import time
+        time.sleep(0.1)
+        #if raw_input() == 'c': pass
+        
+    def showchild(self, tid):
+        #os.execlp('python', 'python', 'test.py') # overlay program
         self.surf.show()
+        #assert False, 'error starting program'               # shouldn't return
 #        if not self.win_active:
 #            self.frame = PictureFrame(self)
 #            self.canvas = Canvas(self.frame, width=self.get_width(),
@@ -524,13 +536,13 @@ class Picture:
             pixel = self.get_pixel(x, y)
             print pixel;
 
-    def hide(self):
-        if self.win_active:
-            self.frame.destroy()
+#    def hide(self):
+#        if self.win_active:
+#            self.frame.destroy()
 
     def set_title(self, title):
         self.title = title
-        self.__update()
+#        self.__update()
 
     def get_title(self):
         return self.title
@@ -569,7 +581,7 @@ class Picture:
             image = Image.new(self.surf.mode, self.surf.size, tuple(color.get_rgb()))
             self.__initialize_picture(image, self.filename, self.title)           
             #self.surf.fill(color.get_rgb())
-            self.__update()
+#            self.__update()
         except:
             raise AttributeError('set_pixels(color): Picture has not yet been initialized.')
     def write_to(self,filename):
@@ -584,28 +596,28 @@ class Picture:
     # draw stuff on pictures
     def add_rect_filled(self,acolor,x,y,w,h):
         pygame.draw.rect(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h))
-        self.__update()
+#        self.__update()
 
     def add_rect(self, acolor,x,y,w,h, width=1):
         pygame.draw.rect(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h), width)
-        self.__update()
+#        self.__update()
 
     # Draws a polygon on the image.
     def add_polygon(self,acolor,point_list):
         pygame.draw.polygon(self.surf, acolor.get_rgb(), point_list, 1)
-        self.__update()
+#        self.__update()
 
     def add_polygon_filled(self, acolor,point_list):
         pygame.draw.polygon(self.surf, acolor.get_rgb(), point_list, 0)
-        self.__update()
+#        self.__update()
 
     def add_oval_filled(self, acolor,x,y,w,h):
         pygame.draw.ellipse(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h))
-        self.__update()
+#        self.__update()
 
     def add_oval(self, acolor,x,y,w,h):
         pygame.draw.ellipse(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h), 1)
-        self.__update()
+#        self.__update()
 
     def add_arc_filled(self, acolor,x,y,w,h,start,angle):
         #this is an estimation def needs to be done another way but I need to figure out how
@@ -613,21 +625,21 @@ class Picture:
             pygame.draw.arc(self.surf, acolor.get_rgb(), Rect(x, y, w, h), start, angle, h/2)
         else:
             pygame.draw.arc(self.surf, acolor.get_rgb(), Rect(x, y, w, h), start, angle, w/2)
-        self.__update()
+#        self.__update()
 
 
     def add_arc(self, acolor,x,y,w,h,start,angle):
         pygame.draw.arc(self.surf, acolor.get_rgb(), Rect(x, y, w, h), start, angle)
-        self.__update()
+#        self.__update()
 
     def add_line(self, acolor, x1, y1, x2, y2, width=1):
         pygame.draw.line(self.surf, acolor.get_rgb(), [x1-1, y1-1], [x2-1, y2-1], width)
-        self.__update()
+#        self.__update()
 
     def add_text(self, acolor, x, y, string):
         global default_font
         self.add_text_with_style(acolor, x, y, string, default_font)
-        self.__update()
+#        self.__update()
 
     def add_text_with_style(self, acolor, x, y, string, font):
         # add the text with the specified font
@@ -635,26 +647,26 @@ class Picture:
         self.surf.unlock()
         self.surf.blit(text_surf, (x-1, y-1))
         self.surf.lock()
-        self.__update()
+ #       self.__update()
 
-    def add_event_handler(self, tk_event_str, callback):
-        # see: http://effbot.org/tkinterbook/tkinter-events-and-bindings.htm
-        # for more information
-        self.__event_bindings[tk_event_str] = callback
-        if self.win_active:
-            self.canvas.bind(tk_event_str, callback)
+#    def add_event_handler(self, tk_event_str, callback):
+#        # see: http://effbot.org/tkinterbook/tkinter-events-and-bindings.htm
+#        # for more information
+#        self.__event_bindings[tk_event_str] = callback
+#        if self.win_active:
+#            self.canvas.bind(tk_event_str, callback)
 
-    def remove_event_handler(self, tk_event_str):
-        if tk_event_str in self.__event_bindings:
-            del self.__event_bindings[tk_event_str]
-            if self.win_active:
-                self.canvas.unbind(tk_event_str)
+#    def remove_event_handler(self, tk_event_str):
+#        if tk_event_str in self.__event_bindings:
+#            del self.__event_bindings[tk_event_str]
+#            if self.win_active:
+#                self.canvas.unbind(tk_event_str)
 
-    def remove_all_event_handlers(self):
-        if self.win_active:
-            for event_str, callback in self.__event_bindings.items():
-                    self.canvas.unbind(event_str)
-        self.__event_bindings.clear()
+#    def remove_all_event_handlers(self):
+#        if self.win_active:
+#            for event_str, callback in self.__event_bindings.items():
+#                    self.canvas.unbind(event_str)
+#        self.__event_bindings.clear()
 
 #
 # PIXEL ------------------------------------------------------------------------
