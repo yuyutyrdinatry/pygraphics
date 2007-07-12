@@ -383,14 +383,14 @@ class Picture:
         self.surf = surf
         # we get the pixels array from the surface
         self.pixels = surf.load()#pygame.surfarray.pixels3d(self.surf)
-        self.p = []
+        #self.p = []
         
-        for i in range(surf.size[0]):
-            self.p.append([])
-            for j in range(surf.size[1]):
-                self.p[i].append(self.pixels[i,j])
+        #for i in range(surf.size[0]):
+        #    self.p.append([])
+        #    for j in range(surf.size[1]):
+        #        self.p[i].append(list(self.pixels[i,j]))
         
-        self.pixels = self.p
+        #self.pixels = self.p
         
         self.filename = filename
         self.title = title
@@ -429,16 +429,18 @@ class Picture:
             # initialize this picture with new properties
             self.__initialize_picture(image, filename, get_short_path(filename))
 
-    def copy_from_image(self, picture, x=1, y=1, width=None, height=None):
+    def copy_from_image(self, picture, x=0, y=0, width=None, height=None):
+        print x, y, width, height
     # copies and image from another picture, replacing this one
         # note that the coordinates are one based
+        # chnaged coordinates to zero based
         # copy the other picture's image
         image = picture.get_image().copy()
     # crop to the dimensions specified
         image_width = picture.get_width()
         image_height = picture.get_height()
         # throw exceptions if the values are invalid
-        if (x < 1 or y < 1 or x >= image_width or y >= image_height):
+        if (x < 0 or y < 0 or x >= image_width or y >= image_height):
             raise ValueError(('Invalid x/y coordinates specified'))
         # width || height < 1 implies a full image copied (maybe with warning)
         if (width == None and height == None):
@@ -448,8 +450,8 @@ class Picture:
         elif (width == None or height == None or width < 1 or height < 1):
             raise ValueError(('Invalid width/height specified'))
         # get/bound the actual image coordinates
-        x1 = x-1
-        y1 = y-1
+        x1 = x
+        y1 = y
         x2 = x1+min(width, image_width-x1)
         y2 = y1 + min(height, image_height-y1)
         # get the sub image with the dimensions specified [x1,y1,x2,y1)
@@ -564,15 +566,18 @@ class Picture:
         return self.surf.size[1]
 
     def get_pixel(self,x,y):
-        return Pixel(self.pixels,x,y)
+        return Pixel(self,x,y)
+        #return Pixel(self.pixels,x,y)
 
     def get_pixels(self):
-        collect = []#TODO: change to 0-based?
+        collect = []
         # we want the width and the height inclusive since Pixel() is one based
         # we increase the ranges so that we don't have to add in each iteration
-        for x in range(1,self.get_width()+1):
-            for y in range(1,self.get_height()+1):
-                collect.append(Pixel(self.pixels,x,y))
+        #Changed to 0-based!
+        for x in range(0,self.get_width()):
+            for y in range(0,self.get_height()):
+                collect.append(Pixel(self,x,y))
+                #collect.append(Pixel(self.pixels,x,y))
         return collect
 
     def set_pixels(self, color):
@@ -674,14 +679,16 @@ class Picture:
 class Pixel:
 
     def __init__(self,picture,x,y):
-        len_x = len(picture)
-        len_y = len(picture[0])
+        len_x = picture.get_width()#len(picture)
+        len_y = picture.get_height()#len(picture[0])
         if len_x > 0 and len_y > 0:
-            self.x = (x - 1) % len_x
-            self.y = (y - 1) % len_y
+            self.x = x % len_x #self.x = (x - 1) % len_x
+            self.y = y % len_y #self.y = (y - 1) % len_y
             # we still want to fail if the accessible indices are out of wrap-around bounds so we
             # can not use self.x, and self.y below
-            self.pix = picture[x-1][y-1]
+            #self.pix = [picture.pixels[x-1,y-1]]#picture[x-1][y-1]
+            self.pix = picture
+            #self.pix.pixels[x-1,y-1]=(255,255,255)
         else:
             raise ValueError(('Invalid image dimensions (' + str(len_x) + ', ' + str(len_y) + ')'))
     def __str__(self):
@@ -689,27 +696,30 @@ class Pixel:
 
     def set_red(self,r):
         if 0 <= r and r <= 255:
-            self.pix[0] = r
+            self.pix.pixels[self.x,self.y] = (r,self.pix.pixels[self.x,self.y][1],self.pix.pixels[self.x,self.y][2])
+            #self.pix[0] = r
         else:
             raise ValueError(('Invalid red component value (' + str(r) + '), expected value within [0, 255]'))
     def set_green(self,g):
         if 0 <= g and g <= 255:
-            self.pix[1] = g
+            self.pix.pixels[self.x,self.y] = (self.pix.pixels[self.x,self.y][0],g,self.pix.pixels[self.x,self.y][2])
+            #self.pix[1] = g
         else:
             raise ValueError(('Invalid green component value (' + str(g) + '), expected value within [0, 255]'))
     def set_blue(self,b):
         if 0 <= b and b <= 255:
-            self.pix[2] = b
+            self.pix.pixels[self.x,self.y] = (self.pix.pixels[self.x,self.y][0],self.pix.pixels[self.x,self.y][1],b)
+            #self.pix[2] = b
         else:
             raise ValueError(('Invalid blue component value (' + str(b) + '), expected value within [0, 255]'))
     def get_red(self):
-        return int(self.pix[0])
+        return int(self.pix.pixels[self.x,self.y][0])
 
     def get_green(self):
-        return int(self.pix[1])
+        return int(self.pix.pixels[self.x,self.y][1])
 
     def get_blue(self):
-        return int(self.pix[2])
+        return int(self.pix.pixels[self.x,self.y][2])
 
     def get_color(self):
         return Color(self.get_red(),self.get_green(), self.get_blue())
@@ -720,10 +730,10 @@ class Pixel:
         self.set_blue(color.get_blue())
 
     def get_x(self):
-        return self.x + 1
+        return self.x# + 1
 
     def get_y(self):
-        return self.y + 1
+        return self.y# + 1
     
 
 ##
