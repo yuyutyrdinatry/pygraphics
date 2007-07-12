@@ -410,10 +410,10 @@ class Test_Picture(unittest.TestCase):
 		# copy to self.pict whole
 		dimensions = ( (None,None), (50,50), (100,100) )
 		for dimen in dimensions:
-			self.pict.copy_from_image(p, 1,1, dimen[0], dimen[1])
+			self.pict.copy_from_image(p, 0,0, dimen[0], dimen[1])
 			ensurePictureHasColor(self.pict, white)
-			self.assertEqual(self.pict.get_width(), 50, 'New image width not equal')			
-			self.assertEqual(self.pict.get_height(), 50, 'New image height not equal')
+			self.assertEqual(self.pict.get_width(), 50, 'New image width not equal '+str(self.pict.get_width())+str(dimen))
+			self.assertEqual(self.pict.get_height(), 50, 'New image height not equal '+str(self.pict.get_height())+str(dimen))
 			self.pict.clear()
 		# copy sub image
 		coordinates = ( (1,1), (4,4), (6,6), (1,2), (3,4) )
