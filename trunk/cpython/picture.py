@@ -24,27 +24,27 @@
 #
 #
 
-from Image import fromstring
+#from Image import fromstring
 from math import sqrt
-from Queue import *
+#from Queue import *
 #from threading import *
 from Tkinter import *
-from tkCommonDialog import Dialog
-import cStringIO
+#from tkCommonDialog import Dialog
+#import cStringIO
 import Image
-import ImageTk
-import inspect
-import Numeric
+#import ImageTk
+#import inspect
+#import Numeric
 import os
 #import pygame
-import re
-import struct
+#import re
+#import struct
 import sys
 import time
 import tkColorChooser
 import tkFileDialog
 import tkMessageBox
-import tkSnack
+#import tkSnack
 import user
 import thread
 
@@ -429,61 +429,71 @@ class Picture:
             # initialize this picture with new properties
             self.__initialize_picture(image, filename, get_short_path(filename))
 
-    def copy_from_image(self, picture, x=0, y=0, width=None, height=None):
-        print x, y, width, height
-    # copies and image from another picture, replacing this one
-        # note that the coordinates are one based
-        # chnaged coordinates to zero based
-        # copy the other picture's image
-        image = picture.get_image().copy()
-    # crop to the dimensions specified
-        image_width = picture.get_width()
-        image_height = picture.get_height()
-        # throw exceptions if the values are invalid
-        if (x < 0 or y < 0 or x >= image_width or y >= image_height):
-            raise ValueError(('Invalid x/y coordinates specified'))
-        # width || height < 1 implies a full image copied (maybe with warning)
-        if (width == None and height == None):
-            width = image_width
-            height = image_height
-        # fail if either is None, or they are < 1
-        elif (width == None or height == None or width < 1 or height < 1):
+#    def copy_from_image(self, picture, x=0, y=0, width=None, height=None):
+#        print x, y, width, height
+#    # copies and image from another picture, replacing this one
+#        # note that the coordinates are one based
+#        # chnaged coordinates to zero based
+#        # copy the other picture's image
+#        image = picture.get_image().copy()
+#    # crop to the dimensions specified
+#        image_width = picture.get_width()
+#        image_height = picture.get_height()
+#        # throw exceptions if the values are invalid
+#        if (x < 0 or y < 0 or x >= image_width or y >= image_height):
+#            raise ValueError(('Invalid x/y coordinates specified'))
+#        # width || height < 1 implies a full image copied (maybe with warning)
+#        if (width == None and height == None):
+#            width = image_width
+#            height = image_height
+#        # fail if either is None, or they are < 1
+#        elif (width == None or height == None or width < 1 or height < 1):
+#            raise ValueError(('Invalid width/height specified'))
+#        # get/bound the actual image coordinates
+#        x1 = x
+#        y1 = y
+#        x2 = x1+min(width, image_width-x1)
+#        y2 = y1 + min(height, image_height-y1)
+#        # get the sub image with the dimensions specified [x1,y1,x2,y1)
+#        box = (x1, y1, x2, y2)
+#        image = image.crop(box)
+#        # get the image properties
+#        mode = image.mode
+#        size = image.size
+#        data = image.tostring()
+#        image = Image.fromstring(mode, size, data)
+#        # initialize this picture with new properties        
+#        self.__initialize_picture(image, picture.filename, picture.title)
+    
+    def crop(self,x1,y1,x2,y2):
+        maxX=self.get_width();
+        maxY=self.get_height();
+        if (not(0<=x1<=maxX)  or not(0<=y1<=maxY) or
+            not(x1<x2<=maxX) or not(y1<y2<=maxY)):
             raise ValueError(('Invalid width/height specified'))
-        # get/bound the actual image coordinates
-        x1 = x
-        y1 = y
-        x2 = x1+min(width, image_width-x1)
-        y2 = y1 + min(height, image_height-y1)
-        # get the sub image with the dimensions specified [x1,y1,x2,y1)
-        box = (x1, y1, x2, y2)
-        image = image.crop(box)
-        # get the image properties
-        mode = image.mode
-        size = image.size
-        data = image.tostring()
-        image = Image.fromstring(mode, size, data)
-        # initialize this picture with new properties        
+        
+        image = self.surf.crop((x1,y1,x2,y2))
         self.__initialize_picture(image, picture.filename, picture.title)
 
-    def overlay_image(self, picture, x=0, y=0):
-        if x == 0:
-            # center x
-            x = (self.get_width()/2)-(picture.get_width()/2)+1
-        if y == 0:
-            # center y
-            y = (self.get_height()/2)-(picture.get_height()/2)+1
-        # blit the other image
-        # note that we must unlock both image surfaces
-        self.surf.unlock()
-        picture.surf.unlock()
-        self.surf.blit(picture.surf, (x-1, y-1))
-        picture.surf.lock()
-        self.surf.lock()
-#        self.__update()
+#    def overlay_image(self, picture, x=0, y=0):
+#        if x == 0:
+#            # center x
+#            x = (self.get_width()/2)-(picture.get_width()/2)+1
+#        if y == 0:
+#            # center y
+#            y = (self.get_height()/2)-(picture.get_height()/2)+1
+#        # blit the other image
+#        # note that we must unlock both image surfaces
+#        self.surf.unlock()
+#        picture.surf.unlock()
+#        self.surf.blit(picture.surf, (x-1, y-1))
+#        picture.surf.lock()
+#        self.surf.lock()
+##        self.__update()
 
-    def clear(self, color=black):
-        # clears the picture pixels to black
-        self.set_pixels(color)
+#    def clear(self, color=black):
+#        # clears the picture pixels to black
+#        self.set_pixels(color)
 
     def __str__(self):
         return "Picture, filename "+self.filename+" height "+str(self.get_height())+" width "+str(self.get_width())
@@ -756,6 +766,19 @@ def make_empty_picture(width, height):
     picture = Picture()
     picture.create_image(width, height)
     return picture
+
+def crop_picture(picture,x1,y1,x2,y2):
+    '''picture: the picture to be cropped
+       x1: defines left pixel coordinate
+       y1: defines upper pixel coordinate
+       x2: defines right pixel coordinate
+       y2: defines lower pixel coordinate.
+       Replaces picture with a rectangular region from the current picture.
+       Note coordinates are zero-based so to get a 50x50 image starting from
+       top left corner the coordinates would be: 0,0,49,49'''
+    if not picture.__class__ == Picture:
+        raise ValueError("crop_picture(picture,x1,y1,x2,y2): First input is not a picture")
+    picture.crop(x1,y1,x2+1,y2+1)
 
 #def duplicate_picture(picture):
 #    if not picture.__class__ == Picture:
