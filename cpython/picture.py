@@ -36,17 +36,17 @@ import ImageTk
 import inspect
 import Numeric
 import os
-import pygame
+#import pygame
 import re
 import struct
 import sys
-#import thread
 import time
 import tkColorChooser
 import tkFileDialog
 import tkMessageBox
 import tkSnack
 import user
+import thread
 
 ##
 ## Global vars -------------------------------------------------------
@@ -504,10 +504,8 @@ class Picture:
 #            self.show()
 
     def show(self):
-        import thread
         i=1
         p = thread.start_new(self.showchild, (i,))
-        import time
         time.sleep(0.1)
         #if raw_input() == 'c': pass
         
@@ -740,6 +738,8 @@ class Pixel:
 ## Global picture functions ----------------------------------------------------
 ##
 def make_picture(filename):
+    '''filename: a string represeting the location and name of picture
+       Creates a picture.'''
     picture = Picture()
     picture.load_image(filename)
     try:
@@ -750,6 +750,9 @@ def make_picture(filename):
 
 # Maybe
 def make_empty_picture(width, height):
+    '''width: the width of the picture
+       height:  the height of the picture
+       Generates a blank picture'''
     picture = Picture()
     picture.create_image(width, height)
     return picture
@@ -772,6 +775,10 @@ def make_empty_picture(width, height):
 
 # Maybe
 def set_pixels(picture,color):
+    '''picture: the picture to be modified
+       color: the color to which all the pixels will be set
+       Sets all the pixels of the picture given as first argument
+       to the color given as second argument'''
     if not picture.__class__ == Picture:
         raise ValueError("set_pixels(picture,color): First input is not a picture")
     if not color.__class__ == Color:
@@ -779,26 +786,49 @@ def set_pixels(picture,color):
     return picture.set_pixels(color)
 
 def get_pixel(picture,x,y):
+    '''picture: the picture you want to get the pixel from
+       x: the x-coordinate of the pixel you want
+       y: the y-coordinate of the pixel you want
+       Takes a picture, an x position and a y position (two numbers),
+       and returns the Pixel object at that point in the picture.'''
     if not picture.__class__ == Picture:
         raise ValueError("get_pixel(picture,x,y): Input is not a picture")
     return picture.get_pixel(x,y)
 
 def get_pixels(picture):
+    '''picture: the picture you want to get the pixels from
+       returns: a list of all the pixels in the picture
+       Takes a picture as input and returns the sequence of
+       Pixel objects in the picture. This is another name for "getPixels".'''
     if not picture.__class__ == Picture:
         raise ValueError("get_pixels(picture): Input is not a picture")
     return picture.get_pixels()
 
 def get_width(picture):
+    '''picture: the picture you want to get the width of
+       returns: the width of the picture
+       Takes a picture as input and returns its length in
+       the number of pixels left-to-right in the picture.'''
     if not picture.__class__ == Picture:
         raise ValueError("get_width(picture): Input is not a picture")
     return picture.get_width()
 
 def get_height(picture):
+    '''picture: the picture you want to get the height of
+       returns: the height of the picture
+       Takes a picture as input and returns its length in the
+       number of pixels top-to-bottom in the picture.'''
     if not picture.__class__ == Picture:
         raise ValueError("get_height(picture): Input is not a picture")
     return picture.get_height()
 
 def show(picture, title=None):
+    '''picture: Picture to be displayed
+       title(optional): Title of the image to be displayed
+       Displays the picture. On Unix platforms, this method saves the
+       image to a temporary PPM file, and calls the xv utility.
+       On Windows, it saves the image to a temporary BMP file,
+       and uses the standard BMP display utility to show it.'''
     if not picture.__class__ == Picture:
         raise ValueError("show(picture): Input is not a picture")
     picture.show()
@@ -845,6 +875,11 @@ def add_polygon_filled(picture,pointlist,acolor):
     picture.add_polygon_filled(acolor, pointlist)
 
 def write_picture_to(pict,filename):
+    '''pict: the picture you want to be written out to a file
+       path: the path to the file you want the picture written to
+       Takes a picture and a file name (string) as input, then writes
+       the picture to the file as a JPEG. (Be sure to end the filename
+       in ".jpg" for the operating system to understand it well.)'''
     if not pict.__class__ == Picture:
         raise ValueError("write_picture_to(pict,filename): Input is not a picture")
     pict.write_to(filename)
@@ -856,41 +891,71 @@ def write_picture_to(pict,filename):
 ## Global pixel functions ------------------------------------------------------
 ##
 def set_red(pixel,value):
+    '''pixel: the pixel you want to set the red value in.
+       value: a number (0 - 255) for the new red value of the pixel
+       Takes in a Pixel object and a value (between 0 and 255) and sets
+       the redness of that pixel to the given value.'''
     if not pixel.__class__ == Pixel:
         raise ValueError("set_red(pixel,value): Input is not a pixel")
     pixel.set_red(value)
 
 def get_red(pixel):
+    '''pixel: the pixel you want to get the amount of red from
+       returns: the red value of the pixel
+       Takes a Pixel object and returns the value (between 0 and 255)
+       of the amount of redness in that pixel.'''
     if not pixel.__class__ == Pixel:
         raise ValueError("get_red(pixel): Input is not a pixel")
     return pixel.get_red()
 
 def set_blue(pixel,value):
+    '''pixel: the pixel you want to set the blue value in.
+       value: a number (0 - 255) for the new blue value of the pixel
+       Takes in a Pixel object and a value (between 0 and 255) and sets
+       the blueness of that pixel to the given value.'''
     if not pixel.__class__ == Pixel:
         raise ValueError("set_blue(pixel,value): Input is not a pixel")
     pixel.set_blue(value)
 
 def get_blue(pixel):
+    '''pixel: the pixel you want to get the amount of blue from
+       returns: the blue value of the pixel
+       Takes a Pixel object and returns the value (between 0 and 255)
+       of the amount of blueness in that pixel.'''
     if not pixel.__class__ == Pixel:
         raise ValueError("get_blue(pixel): Input is not a pixel")
     return pixel.get_blue()
 
 def set_green(pixel,value):
+    '''pixel: the pixel you want to set the green value in.
+       value: a number (0 - 255) for the new green value of the pixel
+       Takes in a Pixel object and a value (between 0 and 255) and sets
+       the greeness of that pixel to the given value.'''
     if not pixel.__class__ == Pixel:
         raise ValueError("set_green(pixel,value): Input is not a pixel")
     pixel.set_green(value)
 
 def get_green(pixel):
+    '''pixel: the pixel you want to get the amount of green from
+       returns: the green value of the pixel
+       Takes a Pixel object and returns the value (between 0 and 255)
+       of the amount of greenness in that pixel.'''
     if not pixel.__class__ == Pixel:
         raise ValueError("get_green(pixel): Input is not a pixel")
     return pixel.get_green()
 
 def get_color(pixel):
+    '''pixel: the pixel you want to extract the color from
+       returns: a color, the color from the pixel
+       Takes a Pixel and returns the Color object at that pixel.'''
     if not pixel.__class__ == Pixel:
         raise ValueError("get_color(pixel): Inputis not a pixel")
     return pixel.get_color()
 
 def set_color(pixel,color):
+    '''pixel: the pixel you want to set the color of
+       color: the color you want to set the pixel to
+       Takes in a pixel and a color, and sets the pixel to the provided color.'''
     if not pixel.__class__ == Pixel:
         raise ValueError("set_color(pixel,color): Input is not a pixel.")
     if not color.__class__ == Color:
@@ -898,11 +963,19 @@ def set_color(pixel,color):
     pixel.set_color(color)
 
 def get_x(pixel):
+    '''pixel: the pixel you want to find the x-coordinate of
+       returns: the x-coordinate of the pixel
+       Takes in a pixel object and returns the x position of
+       where that pixel is in the picture.'''
     if not pixel.__class__ == Pixel:
         raise ValueError("get_x(pixel): Input is not a pixel")
     return pixel.get_x()
 
 def get_y(pixel):
+    '''pixel: the pixel you want to find the y-coordinate of
+       returns: the y-coordinate of the pixel
+       Takes in a pixel object and returns the y position of
+       where that pixel is in the picture.'''
     if not pixel.__class__ == Pixel:
         raise ValueError("get_y(pixel): Input is not a pixel")
     return pixel.get_y()
@@ -911,6 +984,13 @@ def get_y(pixel):
 ## Global color functions ------------------------------------------------------
 ##
 def distance(c1,c2):
+    '''c1: the first color you want compared
+       c2: the second color you want compared
+       Takes two Color objects and returns a single
+       number representing the distance between the colors.
+       The red, green, and blue values of the colors are
+       takenas a point in (x, y, z) space, and the cartesian
+       distance is computed.'''
     if not c1.__class__ == Color:
         raise ValueError("distance(c1,c2): First input is not a color.")
     if not c2.__class__ == Color:
@@ -918,21 +998,41 @@ def distance(c1,c2):
     return c1.distance(c2)
 
 def make_darker(color):
+    '''color: the color you want to darken
+       returns: the new, darker color
+       Takes a color and returns a slightly darker
+       version of the original color.'''
     if not color.__class__ == Color:
         raise ValueError("make_darker(color): Input is not a color.")
     color.make_darker()
     return color
 
 def make_lighter(color):
+    '''color: the color you want to lighten
+       returns: the new, lighter color
+       Takes a color and returns a slightly lighter
+       version of the original color.'''
     if not color.__class__ == Color:
         raise ValueError("make_lighter(color): Input is not a color.")
     color.make_lighter()
     return color
 
 def make_color(red,green,blue):
+    '''red: the amount of red you want in the color
+       green: the amount of green you want in the color
+       blue: the amount of blue you want in the picture
+       returns: the color made from the inputs
+       Takes three inputs: For the red, green, and blue
+       components (in order), then returns a color object.'''
     return new_color(red,green,blue)
 
 def new_color(red,green,blue):
+    '''red: the amount of red you want in the color
+       green: the amount of green you want in the color
+       blue: the amount of blue you want in the picture
+       returns: the color made from the inputs
+       Takes three inputs: For the red, green, and blue
+       components (in order), then returns a color object.'''
     return Color(red,green,blue)
 
 ##
