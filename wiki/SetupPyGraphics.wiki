@@ -27,7 +27,10 @@ For any platform:
 
 
 
-= Old Instructions (no longer apply)=
+
+
+
+== Old Instructions (no longer apply)==
 
 NOTE: these instructions are specific to the Windows OS
 
@@ -68,6 +71,7 @@ NOTE: these instructions are specific to the Windows OS
     Start python and type: {{{from media import *}}}
 
 Congradulations! You can now use the PyGraphics library and tools.
+
 
 
 
