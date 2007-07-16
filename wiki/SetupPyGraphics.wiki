@@ -1,9 +1,9 @@
-#summary Instructions on how to install the pygraphics libraries and dependecies
+#summary Instructions on how to install the pygraphics libraries and dependencies
 #labels Featured
 
 = Introduction =
 
-An all platform DistUtils installer as well as a Windows installer is now available
+An all platform DistUtils installer as well as a Windows installer are now available
 from the Downloads menu.
 PyGraphics depends on the PIL library. It also requires the Tk library which is included with the [http://www.python.org/download/ Python installer].
 
@@ -62,7 +62,6 @@ NOTE: these instructions are specific to the Windows OS
     Start python and type: {{{from media import *}}}
 
 Congradulations! You can now use the PyGraphics library and tools.
-
 
 
 
