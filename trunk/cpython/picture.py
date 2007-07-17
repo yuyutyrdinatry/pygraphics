@@ -31,7 +31,7 @@ from math import sqrt
 from Tkinter import *
 #from tkCommonDialog import Dialog
 #import cStringIO
-import Image
+import Image, ImageDraw, ImageFont
 #import ImageTk
 #import inspect
 #import Numeric
@@ -59,7 +59,7 @@ default_num_channels = 1          # stereo or mono
 #pygame.font.init()
 #pygame.mixer.init()
 #default_font = pygame.font.SysFont("times", 24)
-
+default_font = ImageFont.load_default()
 #top = Tk()
 #top.withdraw()
 # set up the tkSnack sound library
@@ -608,59 +608,89 @@ class Picture:
     # TODO: add bounds checks for all the following functions to ensure that they are one based
     # draw stuff on pictures
     def add_rect_filled(self,acolor,x,y,w,h):
-        pygame.draw.rect(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h))
+        #pygame.draw.rect(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h))
+        draw = ImageDraw.Draw(self.surf)
+        draw.rectangle([x,y,x+w,y+h], outline=tuple(acolor.get_rgb()), fill=tuple(acolor.get_rgb()))
+        del draw 
 #        self.__update()
 
-    def add_rect(self, acolor,x,y,w,h, width=1):
-        pygame.draw.rect(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h), width)
+    def add_rect(self, acolor,x,y,w,h, width1=1):
+        #pygame.draw.rect(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h), width)
+        draw = ImageDraw.Draw(self.surf)
+        draw.rectangle([x,y,x+w,y+h], outline=tuple(acolor.get_rgb()))
+        del draw 
 #        self.__update()
 
     # Draws a polygon on the image.
     def add_polygon(self,acolor,point_list):
-        pygame.draw.polygon(self.surf, acolor.get_rgb(), point_list, 1)
+        #pygame.draw.polygon(self.surf, acolor.get_rgb(), point_list, 1)
+        draw = ImageDraw.Draw(self.surf)
+        draw.polygon(point_list, outline=tuple(acolor.get_rgb()))
+        del draw 
 #        self.__update()
 
     def add_polygon_filled(self, acolor,point_list):
-        pygame.draw.polygon(self.surf, acolor.get_rgb(), point_list, 0)
+        #pygame.draw.polygon(self.surf, acolor.get_rgb(), point_list, 0)
+        draw = ImageDraw.Draw(self.surf)
+        draw.polygon(point_list, outline=tuple(acolor.get_rgb()), fill=tuple(acolor.get_rgb()))
+        del draw 
 #        self.__update()
 
     def add_oval_filled(self, acolor,x,y,w,h):
-        pygame.draw.ellipse(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h))
+        #pygame.draw.ellipse(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h))
+        draw = ImageDraw.Draw(self.surf)
+        draw.ellipse([x,y,x+w,y+h], outline=tuple(acolor.get_rgb()), fill=tuple(acolor.get_rgb()))
+        del draw 
 #        self.__update()
 
     def add_oval(self, acolor,x,y,w,h):
-        pygame.draw.ellipse(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h), 1)
+        #pygame.draw.ellipse(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h), 1)
+        draw = ImageDraw.Draw(self.surf)
+        draw.ellipse([x,y,x+w,y+h], outline=tuple(acolor.get_rgb()))
+        del draw 
 #        self.__update()
 
-    def add_arc_filled(self, acolor,x,y,w,h,start,angle):
+    def add_arc_filled(self, acolor,x,y,w,h,start,end):
         #this is an estimation def needs to be done another way but I need to figure out how
-        if w > h:
-            pygame.draw.arc(self.surf, acolor.get_rgb(), Rect(x, y, w, h), start, angle, h/2)
-        else:
-            pygame.draw.arc(self.surf, acolor.get_rgb(), Rect(x, y, w, h), start, angle, w/2)
+        #if w > h:
+        #    pygame.draw.arc(self.surf, acolor.get_rgb(), Rect(x, y, w, h), start, angle, h/2)
+        #else:
+        #    pygame.draw.arc(self.surf, acolor.get_rgb(), Rect(x, y, w, h), start, angle, w/2)
 #        self.__update()
+        draw = ImageDraw.Draw(self.surf)
+        draw.arc([x,y,x+w,y+h],start,end, outline=tuple(acolor.get_rgb()), fill=tuple(acolor.get_rgb()))
+        del draw
 
 
-    def add_arc(self, acolor,x,y,w,h,start,angle):
-        pygame.draw.arc(self.surf, acolor.get_rgb(), Rect(x, y, w, h), start, angle)
+    def add_arc(self, acolor,x,y,w,h,start,end):
+        #pygame.draw.arc(self.surf, acolor.get_rgb(), Rect(x, y, w, h), start, angle)
 #        self.__update()
+        draw = ImageDraw.Draw(self.surf)
+        draw.arc([x,y,x+w,y+h],start,end, outline=tuple(acolor.get_rgb()))
+        del draw
 
-    def add_line(self, acolor, x1, y1, x2, y2, width=1):
-        pygame.draw.line(self.surf, acolor.get_rgb(), [x1-1, y1-1], [x2-1, y2-1], width)
+    def add_line(self, acolor, x1, y1, x2, y2, width1=1):
+        #pygame.draw.line(self.surf, acolor.get_rgb(), [x1-1, y1-1], [x2-1, y2-1], width)
 #        self.__update()
+        draw = ImageDraw.Draw(self.surf)
+        draw.line([x1,y1,x2,y2], fill=tuple(acolor.get_rgb()), width=width1)
+        del draw
 
     def add_text(self, acolor, x, y, string):
         global default_font
         self.add_text_with_style(acolor, x, y, string, default_font)
 #        self.__update()
 
-    def add_text_with_style(self, acolor, x, y, string, font):
+    def add_text_with_style(self, acolor, x, y, string, font1):
         # add the text with the specified font
-        text_surf = font.render(string, True, acolor.get_rgb())
-        self.surf.unlock()
-        self.surf.blit(text_surf, (x-1, y-1))
-        self.surf.lock()
- #       self.__update()
+        #text_surf = font.render(string, True, acolor.get_rgb())
+        #self.surf.unlock()
+        #self.surf.blit(text_surf, (x-1, y-1))
+        #self.surf.lock()
+#       self.__update()
+        draw = ImageDraw.Draw(self.surf)
+        draw.text((x,y), text=string,  fill=tuple(acolor.get_rgb()), font=font1)
+        del draw
 
 #    def add_event_handler(self, tk_event_str, callback):
 #        # see: http://effbot.org/tkinterbook/tkinter-events-and-bindings.htm
@@ -862,37 +892,88 @@ def show(picture, title=None):
 #    picture.repaint()
 
 # Maybe
-def add_line(picture,x1,y1,x2,y2):
+def add_line(picture,x1,y1,x2,y2,acolor):
+    '''picture: the picture you want to draw the line on 
+       x1: the x position you want the line to start 
+       y1: the y position you want the line to start
+       x2: the x position you want the line to end 
+       y2: the y position you want the line to end
+       acolor: the color you want to draw in 
+       Takes a picture, a starting (x, y) position (two numbers), and an
+       ending (x, y) position (two more numbers, four total) and draws a
+       line from the starting point to the ending point in the picture.'''
     if not picture.__class__ == Picture:
         raise ValueError("add_line(picture,x1,y1,x2,y2): Input is not a picture")
-    picture.add_line(black,x1,y1,x2,y2)
+    picture.add_line(acolor,x1,y1,x2,y2)
 
 # Maybe
-def add_text(picture,x1,y1,string):
+def add_text(picture,x1,y1,string,acolor):
+    '''picture: the picture you want to add the text to
+       x1: the x-coordinate where you want to start writing the text
+       y1: the y-coordinate where you want to start writing the text
+       string: s string containing the text you want written
+       acolor: the color you want to draw in
+       Takes a picture, an x position and a y position (two numbers),
+       and some text as a string, which will get drawn into the picture,
+       in the specified color.'''
     if not picture.__class__ == Picture:
         raise ValueError("add_text(picture,x1,y1,string): Input is not a picture")
-    picture.add_text(black,x1,y1,string)
+    picture.add_text(acolor,x1,y1,string)
 
 # Maybe
-def add_rect(picture,x,y,w,h):
+def add_rect(picture,x,y,w,h,acolor):
+    '''picture: the picture you want to draw the rectangle on
+       x: the x-coordinate of the upper left-hand corner of the rectangle
+       y: the y-coordinate of the upper left-hand corner of the rectangle
+       w: the width of the rectangle
+       h: the height of the rectangle
+       acolor: the color you want to draw in
+       Takes a picture, a starting (x, y) position (two numbers), and a width
+       and height (two more numbers, four total) then draws a rectangle in
+       outline of the given width and height with the position (x, y) as the
+       upper left corner.'''
     if not picture.__class__ == Picture:
         raise ValueError("add_rect(picture,x,y,w,h): Input is not a picture")
-    picture.add_rect(black,x,y,w,h)
+    picture.add_rect(acolor,x,y,w,h)
 
 # Maybe
 def add_rect_filled(picture,x,y,w,h,acolor):
+    '''picture: the picture you want to draw the rectangle on
+       x: the x-coordinate of the upper left-hand corner of the rectangle
+       y: the y-coordinate of the upper left-hand corner of the rectangle
+       w: the width of the rectangle
+       h: the height of the rectangle
+       acolor: the color you want to draw in 
+       Takes a picture, a starting (x, y) position (two numbers), and a width
+       and height (two more numbers, four total) then draws a filled rectangle
+       of the given width, height and color with the position (x, y) as the
+       upper left corner.'''
     if not picture.__class__ == Picture:
         raise ValueError("add_rect_filled(picture,x,y,w,h,acolor): Input is not a picture")
     picture.add_rect_filled(acolor,x,y,w,h)
 
 # Maybe
 def add_polygon(picture,point_list,acolor):
+    '''picture: the picture you want to draw the polygon on
+       pointlist: a list containing vertices xy coordinates
+                  (ex. [x1,y1,x2,y2,x3,y3])
+                  It should contain at least three coordinate pairs.
+       acolor: the color you want to draw in 
+       Takes a picture, draws an outline (not filled) of a polygon in the
+       given color with the sides being lines connecting the given vertices'''
     if not picture.__class__ == Picture:
         raise ValueError("add_polygon(picture,point_list,acolor): Input is not a picture")
     picture.add_polygon(acolor, point_list)
 
 # Maybe
 def add_polygon_filled(picture,pointlist,acolor):
+    '''picture: the picture you want to draw the polygon on
+       pointlist: a list containing vertices xy coordinates
+                  (ex. [x1,y1,x2,y2,x3,y3])
+                  It should contain at least three coordinate pairs.
+       acolor: the color you want to draw in 
+       Takes a picture, draws a filled polygon in the given color with
+       the sides being lines connecting the given vertices'''
     if not picture.__class__ == Picture:
         raise ValueError("add_polygon_filled(picture,pointlist,acolor): Input is not a picture")
     picture.add_polygon_filled(acolor, pointlist)
