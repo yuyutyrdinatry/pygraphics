@@ -491,9 +491,9 @@ class Picture:
 #        self.surf.lock()
 ##        self.__update()
 
-#    def clear(self, color=black):
-#        # clears the picture pixels to black
-#        self.set_pixels(color)
+    def clear(self, color=black):
+        # clears the picture pixels to black
+        self.set_pixels(color)
 
     def __str__(self):
         return "Picture, filename "+self.filename+" height "+str(self.get_height())+" width "+str(self.get_width())
@@ -717,8 +717,14 @@ class Picture:
 class Pixel:
 
     def __init__(self,picture,x,y):
+        
+        if not picture.__class__ == Picture:
+            raise ValueError("Pixel(picture, x, y): picture input is not a Picture")
+        
         len_x = picture.get_width()#len(picture)
         len_y = picture.get_height()#len(picture[0])
+        if x<=(-1*len_x) or x>=len_x or y<=(-1*len_y) or y>=len_y:
+            raise IndexError
         if len_x > 0 and len_y > 0:
             self.x = x % len_x #self.x = (x - 1) % len_x
             self.y = y % len_y #self.y = (y - 1) % len_y
@@ -1053,7 +1059,7 @@ def get_color(pixel):
        returns: a color, the color from the pixel
        Takes a Pixel and returns the Color object at that pixel.'''
     if not pixel.__class__ == Pixel:
-        raise ValueError("get_color(pixel): Inputis not a pixel")
+        raise ValueError("get_color(pixel): Input is not a pixel")
     return pixel.get_color()
 
 def set_color(pixel,color):
