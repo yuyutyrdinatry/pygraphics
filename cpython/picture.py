@@ -95,6 +95,7 @@ def get_media_path(filename):
 def pick_a_file(**options):
 #    global top
     root = Tk()
+    #root.focus_force()
     root.withdraw()
     path = tkFileDialog.askopenfilename()#parent=top)
     root.destroy()
