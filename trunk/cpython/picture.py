@@ -32,6 +32,7 @@ from Tkinter import *
 #from tkCommonDialog import Dialog
 #import cStringIO
 import Image, ImageDraw, ImageFont
+import ImageTk as imtk
 #import ImageTk
 #import inspect
 #import Numeric
@@ -44,6 +45,7 @@ import time
 import tkColorChooser
 import tkFileDialog
 import tkMessageBox
+import tkFont
 #import tkSnack
 import user
 import thread
@@ -70,6 +72,9 @@ media_folder = user.home + os.sep
 ##
 ## Global misc functions -------------------------------------------------------
 ##
+def open_picture_tool():
+    OpenPictureTool()
+
 def version():
     global ver
     return ver
@@ -92,6 +97,7 @@ def pick_a_file(**options):
     root = Tk()
     root.withdraw()
     path = tkFileDialog.askopenfilename()#parent=top)
+    root.destroy()
     return path
 
 def pick_a_folder(**options):
@@ -781,8 +787,231 @@ class Pixel:
     
 
 ##
+## Picture Tool ----------------------------------------------------------------
+##
+class OpenPictureTool():
+
+    def __init__(self, file_name):
+        self.file_name = file_name#'C:/img_1037.jpg'
+        self.picture = make_picture(self.file_name)
+    
+#p = pickAFile()
+#p = makePicture(p)
+#openPictureTool(p)
+#fileName = 'C:\img_1037.jpg'
+#fileName = 'C:\image.gif'
+
+#
+#import sys
+#import Tkinter as tk
+#from PIL import Image
+#
+    def run_tool(self):
+        self.root = Tk()
+
+        self.top = Menu(self.root,bd=2)
+        self.root.config(menu=self.top)
+        
+        self.zoom = Menu(self.top, tearoff=0)
+        self.zoom.add_command(label='25%',  command=(lambda: self.zoomf(0.25)),  underline=0)
+        self.zoom.add_command(label='50%',  command=(lambda: self.zoomf(0.5)),  underline=0)
+        self.zoom.add_command(label='75%',  command=(lambda: self.zoomf(0.75)),  underline=0)
+        self.zoom.add_command(label='100%', command=(lambda: self.zoomf(1.0)), underline=0)
+        self.zoom.add_command(label='150%', command=(lambda: self.zoomf(1.5)),  underline=0)
+        self.zoom.add_command(label='200%', command=(lambda: self.zoomf(2.0)),  underline=0)
+        self.zoom.add_command(label='500%', command=(lambda: self.zoomf(5.0)),  underline=0)
+        #zoom.add_separator()
+        #zoom.add_command(label='Restore',    command=restore, underline=0)
+        self.top.add_cascade(label='Zoom',     menu=self.zoom,        underline=0)
+ 
+        #
+        # create a frame and pack it
+        #
+        self.frame1 = Frame(self.root)
+        #
+        self.frame1.pack(side=BOTTOM, fill=X)
+        #
+
+        #
+        # pick a (small) image file you have in the working directory ...
+        #
+        #root.photo1 = tk.PhotoImage(file="C:\Image.gif")
+
+        self.root.im = Image.open(self.file_name).convert("RGB")
+        self.root.original = self.root.im
+        self.root.zoomMult = 1.0
+        #saveimage = im
+
+        self.root.photo1 = imtk.PhotoImage(image=self.root.im)#file="C:\img_1037.jpg")
+        #savephoto = root.photo1
+        self.root.title(self.file_name)
+        
+        #Canvas for the Image, with scroll bars
+        self.canvas1 = Canvas(self.frame1,width=self.root.photo1.width()-1,
+                    height=self.root.photo1.height()-1,cursor="crosshair",borderwidth=0)
+        self.root.vbar = Scrollbar(self.frame1)
+        self.root.hbar = Scrollbar(self.frame1, orient='horizontal')
+        self.root.vbar.pack(side=RIGHT,  fill=Y)
+        self.root.hbar.pack(side=BOTTOM, fill=X)
+
+        self.canvas1.pack(side="bottom", padx=0, pady=0,anchor=NW,fill=BOTH, expand=YES)
+        self.root.vbar.config(command=self.canvas1.yview)                # call on scroll move
+        self.root.hbar.config(command=self.canvas1.xview)
+        self.canvas1.config(yscrollcommand=self.root.vbar.set)           # call on canvas move
+        self.canvas1.config(xscrollcommand=self.root.hbar.set)
+        self.drawImage(self.root.im)
+        #img = canvas1.create_image(0,0,image=root.photo1,anchor=tk.NW)
+        self.canvas1.bind('<Button-1>', self.canvClick)
+
+        #Entry fields and Enter button
+        fields = 'X:', 'Y:'
+        
+        self.root.bind('<Return>', (lambda event: self.fetch(self.ents))) #enter key available
+
+        flag = 1
+        self.ents = []
+        self.v = StringVar()
+        self.v.set("R:      G:      B:     ")
+        for field in fields:
+            row = Frame(self.root)                           # make a new row
+            lab = Label(row, width=5, text=field)       # add label, entry
+            ent = Entry(row)
+            if(flag==1):
+                font = tkFont.Font (size=10)
+                colorLabel = Label(row, textvariable=self.v, font=font)
+                self.canvas2 = Canvas(row,width=35,bd=2,relief=RIDGE,height=20)
+            row.pack(side=TOP, fill=X)                  # pack row on top
+            lab.pack(side=LEFT)
+            ent.pack(side=LEFT, expand=NO, fill=X)    # grow horizontal
+            if(flag==1):
+                colorLabel.pack(side=LEFT, padx=100, pady=1)
+                self.canvas2.pack(side=LEFT, padx=2, pady=1)
+                flag-=1
+            self.ents.append(ent)
+
+        button1 = Button(row,width=25,overrelief=GROOVE, bg="lightGrey",
+                            text="Enter", command= (lambda: self.fetch(self.ents))).pack(
+                     side=TOP, padx=6, pady=1, anchor=CENTER,fill=BOTH)
+
+        #
+        # start the event loop
+        #
+        self.root.mainloop()
+        sys.exit(0)
+
+
+
+
+    def zoomf(self, factor):
+        # zoom in or out in increments
+        imgpil = self.root.original
+        wide, high = imgpil.size
+        #root.zoomMult *= factor
+        #if factor < 1.0:                     # antialias best if shrink
+        #    filter = Image.ANTIALIAS         # also nearest, bilinear
+        #else:
+        #    filter = Image.BICUBIC
+        new = imgpil.resize((int(wide * factor), int(high * factor)))#, filter)
+        self.drawImage(new)
+
+    def restore(self):
+        self.drawImage(self.root.original)
+
+
+    def drawImage(self, imgpil, forcesize=( )):
+        self.root.im = imgpil
+        self.root.photo1 = imtk.PhotoImage(image=imgpil)                  # not file=imgpath
+        scrwide, scrhigh = forcesize or self.root.maxsize()   # wm screen size x,y
+        scrhigh-=115             # leave room for top display/button at max photo size
+        imgwide  = self.root.photo1.width( )                         # size in pixels
+        imghigh  = self.root.photo1.height( )                        # same as imgpil.size
+
+        fullsize = (0, 0, imgwide, imghigh)              # scrollable
+        viewwide = min(imgwide, scrwide)                 # viewable
+        viewhigh = min(imghigh, scrhigh)
+
+        #canvas = canvas1
+        self.canvas1.delete('all')                             # clear prior photo
+        self.canvas1.config(height=viewhigh, width=viewwide)   # viewable window size
+        self.canvas1.config(scrollregion=fullsize)          # scrollable area size
+    
+        self.root.img = self.canvas1.create_image(0, 0, image=self.root.photo1, anchor=NW)
+
+        if imgwide <= scrwide and imghigh <= scrhigh:    # too big for display?
+            self.root.state('normal')                         # no: win size per img
+        elif sys.platform[:3] == 'win':                  # do windows fullscreen
+            self.root.state('zoomed')                         # others use geometry( )
+        #print (scrwide, scrhigh), imgpil.size
+
+
+    def canvClick(self, event):
+        try:
+            x = self.canvas1.canvasx(event.x)
+            y = self.canvas1.canvasy(event.y)
+            if(x >= 0 and x<self.root.photo1.width() and y >= 0 
+               and y<self.root.photo1.height()):
+                tk_rgb = "#%02x%02x%02x" % self.root.im.getpixel((x,y))
+                self.canvas2.config(bg=tk_rgb)           
+                rgb = "R: %d; G: %d; B: %d;" % self.root.im.getpixel((x,y))
+                self.v.set(rgb)
+                evX,evY = self.ents
+                evX.delete(0,END)
+                evX.insert(0,str(x))
+                evY.delete(0,END)
+                evY.insert(0,str(y))
+            else:
+                rgb = "X,Y Out of Range"
+                self.v.set(rgb)
+        except ValueError:
+            pass
+
+    #do at Button press or Enter key press
+    def fetch(self, entries):
+        strX,strY = entries
+        try:
+            x = int(strX.get())
+            y = int(strY.get())
+            if(x >= 0 and x<self.root.photo1.width() and y >= 0 and y<self.root.photo1.height()):
+                tk_rgb = "#%02x%02x%02x" % self.root.im.getpixel((x,y))
+                self.canvas2.config(bg=tk_rgb)           
+                rgb = "R: %d; G: %d; B: %d;" % self.root.im.getpixel((x,y))
+                self.v.set(rgb)
+                #row.update_idletasks()
+            else:
+                rgb = "X,Y Out of Range"
+                self.v.set(rgb)
+        except ValueError:
+            pass    
+
+
+
+##
 ## Global picture functions ----------------------------------------------------
 ##
+def open_picture_tool(filename):
+    '''filename: a string represeting the location and name of picture
+       Allows you to find information about digital images.
+       
+       The PictureTool's Toolbar:
+        Once you have opened an image, you can view information about its individual
+        pixels by looking at the toolbar. To select a pixel drag (click and hold down)
+        the mouse to the position you want and then release it to hold that position's
+        information in the toolbar.
+        The following information in the toolbar changes to reflect the properties of
+        the pixel you selected:
+        X = the x coordinate of the pixel (its horizontal position, counting from the left)
+        Y = the y coordinate of the pixel (its vertical position, counting from the top)
+        R = the Red value of the pixel (0 to 255)
+        G = the Green value of the pixel (0 to 255)
+        B = the Blue value of the pixel (0 to 255)
+        In addition, the box at the far right displays the color of the pixel.
+       Zooming in/out:
+        To Zoom, select the amount of zoom you want from the zoom menu.
+        Less than 100% zooms out and more than 100% zooms in. The 100% zoom level will
+        always return you to your orginal picture. '''
+    tool = OpenPictureTool(filename)
+    p = thread.start_new_thread(tool.run_tool, ())
+
 def make_picture(filename):
     '''filename: a string represeting the location and name of picture
        Creates a picture.'''
