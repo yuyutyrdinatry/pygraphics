@@ -962,7 +962,7 @@ class OpenPictureTool:
 #from PIL import Image
 #
 
-    def run_tool(self):
+    def run_tool(self, safe):
         self.root = Tk()
 
         self.top = Menu(self.root, bd=2)
@@ -1078,7 +1078,8 @@ class OpenPictureTool:
         #
 
         self.root.mainloop()
-        sys.exit(0)
+        if(not safe):
+            sys.exit(0)
 
     def zoomf(self, factor):
 
@@ -1143,9 +1144,9 @@ class OpenPictureTool:
                 self.v.set(rgb)
                 (evX, evY) = self.ents
                 evX.delete(0, END)
-                evX.insert(0, str(x))
+                evX.insert(0, str(int(x)))
                 evY.delete(0, END)
-                evY.insert(0, str(y))
+                evY.insert(0, str(int(y)))
             else:
                 rgb = "X,Y Out of Range"
                 self.v.set(rgb)
@@ -1173,6 +1174,8 @@ class OpenPictureTool:
                 rgb = "X,Y Out of Range"
                 self.v.set(rgb)
         except ValueError:
+            rgb = "X,Y Coordinates must be integers!"
+            self.v.set(rgb)
             pass
 
 
@@ -1205,9 +1208,9 @@ def open_picture_tool(filename):
 
     tool = OpenPictureTool(filename)
     if sys.platform == 'mac':
-        tool.run_tool()
+        tool.run_tool(True)
     else:
-        p = thread.start_new_thread(tool.run_tool, ())
+        p = thread.start_new_thread(tool.run_tool, (False,))
 
 def open_picture_tool_safe(filename):
     """filename: a string represeting the location and name of picture
@@ -1232,7 +1235,7 @@ def open_picture_tool_safe(filename):
         always return you to your orginal picture. """
 
     tool = OpenPictureTool(filename)
-    tool.run_tool()
+    tool.run_tool(True)
     
 
 
