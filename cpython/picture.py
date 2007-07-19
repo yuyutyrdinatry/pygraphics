@@ -121,16 +121,19 @@ def pick_a_file(**options):
     root = Tk()
     root.title("Choose File")
     root.focus_force()
+    root.geometry("0x0")
+#   root.geometry("+100+200")
+    root.attributes("-alpha",0.0)
+    #root.withdraw()
+    path = tkFileDialog.askopenfilename()
+    #root.mainloop()
+    root.destroy()
+    return path
 
-    button = Button(text='Open File...', command=lambda:askopen(root)).pack(fill=X)
-    #path = tkFileDialog.askopenfilename()
-    root.mainloop()
-    return root.path
-
-def askopen(root):
-     root.path = tkFileDialog.askopenfilename()
-     root.destroy()
-     #return path
+#def askopen(root):
+#     root.path = tkFileDialog.askopenfilename()
+#     root.destroy()
+#     #return path
 
 def pick_a_folder(**options):
     global media_folder
