@@ -1204,7 +1204,36 @@ def open_picture_tool(filename):
         always return you to your orginal picture. """
 
     tool = OpenPictureTool(filename)
-    p = thread.start_new_thread(tool.run_tool, ())
+    if sys.platform == 'mac':
+        tool.run_tool()
+    else:
+        p = thread.start_new_thread(tool.run_tool, ())
+
+def open_picture_tool_safe(filename):
+    """filename: a string represeting the location and name of picture
+       Allows you to find information about digital images.
+       
+       The PictureTool's Toolbar:
+        Once you have opened an image, you can view information about its individual
+        pixels by looking at the toolbar. To select a pixel drag (click and hold down)
+        the mouse to the position you want and then release it to hold that position's
+        information in the toolbar.
+        The following information in the toolbar changes to reflect the properties of
+        the pixel you selected:
+        X = the x coordinate of the pixel (its horizontal position, counting from the left)
+        Y = the y coordinate of the pixel (its vertical position, counting from the top)
+        R = the Red value of the pixel (0 to 255)
+        G = the Green value of the pixel (0 to 255)
+        B = the Blue value of the pixel (0 to 255)
+        In addition, the box at the far right displays the color of the pixel.
+       Zooming in/out:
+        To Zoom, select the amount of zoom you want from the zoom menu.
+        Less than 100% zooms out and more than 100% zooms in. The 100% zoom level will
+        always return you to your orginal picture. """
+
+    tool = OpenPictureTool(filename)
+    tool.run_tool()
+    
 
 
 def make_picture(filename):
