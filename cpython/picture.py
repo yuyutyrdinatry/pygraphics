@@ -118,18 +118,19 @@ def get_media_path(filename):
 
 
 def pick_a_file(**options):
-
-#    global top
-
     root = Tk()
+    root.title("Choose File")
+    root.focus_force()
 
-    #root.focus_force()
+    button = Button(text='Open File...', command=lambda:askopen(root)).pack(fill=X)
+    #path = tkFileDialog.askopenfilename()
+    root.mainloop()
+    return root.path
 
-    root.withdraw()
-    path = tkFileDialog.askopenfilename()  #parent=top)
-    root.destroy()
-    return path
-
+def askopen(root):
+     root.path = tkFileDialog.askopenfilename()
+     root.destroy()
+     #return path
 
 def pick_a_folder(**options):
     global media_folder
