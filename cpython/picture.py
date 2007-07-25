@@ -123,7 +123,7 @@ def pick_a_file(**options):
     root.focus_force()
     root.geometry("0x0")
 #   root.geometry("+100+200")
-    if not ((sys.platform)[:3] == 'mac'):
+    if not ((sys.platform)[:3] == 'dar'):
         root.attributes("-alpha",0.0)
     #root.withdraw()
     path = tkFileDialog.askopenfilename()
@@ -1208,7 +1208,7 @@ def open_picture_tool(filename):
        filename: a string represeting the location and name of picture"""
 
     tool = OpenPictureTool(filename)
-    if (sys.platform)[:3] == 'mac':
+    if (sys.platform)[:3] == 'dar':
         tool.run_tool(True)
     else:
         p = thread.start_new_thread(tool.run_tool, (False,))
