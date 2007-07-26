@@ -24,7 +24,7 @@ Install the python PIL library and PyGraphics:
 
   * OR Use the All Platforms distutils from, [http://pygraphics.googlecode.com/files/Imaging-1.1.6-PyGraphics-1.0.tar.gz here], this is a "from source" kit (not binaries)
 
-
+Note: For Linux users, as you probably know Python and its PIL library can be installed using a Package Manager (ie. Synaptic Package Manager)
 
 
 
@@ -71,7 +71,6 @@ NOTE: these instructions are specific to the Windows OS
     Start python and type: {{{from media import *}}}
 
 Congradulations! You can now use the PyGraphics library and tools.
-
 
 
 
