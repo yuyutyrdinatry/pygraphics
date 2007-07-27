@@ -552,7 +552,7 @@ class Picture:
             raise ValueError('Invalid width/height specified')
 
         image = self.surf.crop((x1, y1, x2, y2))
-        self.__initialize_picture(image, picture.filename, picture.title)
+        self.__initialize_picture(image, self.filename, self.title)
 
 #    def overlay_image(self, picture, x=0, y=0):
 #        if x == 0:
