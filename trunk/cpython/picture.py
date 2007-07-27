@@ -24,44 +24,23 @@
 # June 14, 2007 modified file, commented out Movie, Sound, Turtle
 # Signed: Leo Kaliazine
 #
-#
+# July 27, 2007 Finished modifying the new picture.py library
+#               no longer dependent on Numerical and Pygame
 
-#from Image import fromstring
 
 from math import sqrt
-
-#from Queue import *
-#from threading import *
-
 from Tkinter import *
-
-#from tkCommonDialog import Dialog
-#import cStringIO
-
 import Image
 import ImageDraw
 import ImageFont
 import ImageTk as imtk
-
-#import ImageTk
-#import inspect
-#import Numeric
-
 import os
-
-#import pygame
-#import re
-#import struct
-
 import sys
 import time
 import tkColorChooser
 import tkFileDialog
 import tkMessageBox
 import tkFont
-
-#import tkSnack
-
 import user
 import thread
 
@@ -69,22 +48,12 @@ import thread
 ## Global vars -------------------------------------------------------
 ##
 
-ver = "1.1"
+ver = "1.3"
 default_frequency = 22050
 default_sample_size = -16  # negative denotes signed number of bits
 default_num_channels = 1  # stereo or mono
 
-#pygame.mixer.pre_init(default_frequency, default_sample_size, (default_num_channels > 1))
-#pygame.font.init()
-#pygame.mixer.init()
-#default_font = pygame.font.SysFont("times", 24)
-
 default_font = ImageFont.load_default()
-
-#top = Tk()
-#top.withdraw()
-# set up the tkSnack sound library
-#tkSnack.initializeSnack(top)
 
 media_folder = user.home + os.sep
 
@@ -127,14 +96,9 @@ def pick_a_file(**options):
         root.attributes("-alpha",0.0)
     #root.withdraw()
     path = tkFileDialog.askopenfilename()
-    #root.mainloop()
+
     root.destroy()
     return path
-
-#def askopen(root):
-#     root.path = tkFileDialog.askopenfilename()
-#     root.destroy()
-#     #return path
 
 def pick_a_folder(**options):
     global media_folder
@@ -225,9 +189,6 @@ class Color:
         return self - color
 
     def get_rgb(self):
-
-        #changed wat's returned from an [] to a tuple
-
         return [self.r, self.g, self.b]
 
     def set_rgb(self, atuple):
@@ -409,19 +370,6 @@ whitesmoke = Color(245, 245, 245)
 yellow = Color(255, 255, 0)
 yellowgreen = Color(154, 205, 50)
 
-##
-## PICTURE FRAME ---------------------------------------------------------------
-
-#class PictureFrame(Toplevel):
-#
-#    def __init__(self, picture):
-#        Toplevel.__init__(self)
-#        self.title(picture.title)
-#        self.pic = picture
-
-#    def destroy(self):
-#        self.pic.window_inactive()
-#        Toplevel.destroy(self)
 
 ##
 ## PICTURE ---------------------------------------------------------------------
@@ -435,42 +383,15 @@ class Picture:
         self.disp_image = None
         self.win_active = 0
 
-#        self.__auto_repaint = auto_repaint
-#        self.visible_frame = False
-#        self.__event_bindings = {}
-        # bind the mouse event to show the pixel information
-        #       self.add_event_handler("<Button-1>", self.do_pick_color)
-        #       self.add_event_handler("<B1-Motion>", self.do_pick_color)
-
     def __initialize_picture(self, surf, filename, title):
         self.surf = surf
 
         # we get the pixels array from the surface
 
-        self.pixels = surf.load()  #pygame.surfarray.pixels3d(self.surf)
-
-        #self.p = []
-
-        #for i in range(surf.size[0]):
-        #    self.p.append([])
-        #    for j in range(surf.size[1]):
-        #        self.p[i].append(list(self.pixels[i,j]))
-
-        #self.pixels = self.p
+        self.pixels = surf.load()
 
         self.filename = filename
         self.title = title
-
-#        self.__update()
-
-#    def set_auto_repaint(self, boolean):
-#        self.__auto_repaint = boolean
-#        self.__update()
-
-#    def window_inactive(self):
-#        del self.disp_image, self.item, self.canvas
-#        self.win_active = 0
-#        self.visible_frame = False
 
     def create_image(self, width, height):
 
@@ -482,8 +403,6 @@ class Picture:
         else:
             self.__initialize_picture(Image.new("RGB", (width, height)),
                     '', 'None')
-
-            #self.__initialize_picture(pygame.Surface((width, height)), '', 'None')
 
     def load_image(self, filename):
         global media_folder
@@ -506,42 +425,6 @@ class Picture:
 
             self.__initialize_picture(image, filename, get_short_path(filename))
 
-#    def copy_from_image(self, picture, x=0, y=0, width=None, height=None):
-#        print x, y, width, height
-#    # copies and image from another picture, replacing this one
-#        # note that the coordinates are one based
-#        # chnaged coordinates to zero based
-#        # copy the other picture's image
-#        image = picture.get_image().copy()
-#    # crop to the dimensions specified
-#        image_width = picture.get_width()
-#        image_height = picture.get_height()
-#        # throw exceptions if the values are invalid
-#        if (x < 0 or y < 0 or x >= image_width or y >= image_height):
-#            raise ValueError(('Invalid x/y coordinates specified'))
-#        # width || height < 1 implies a full image copied (maybe with warning)
-#        if (width == None and height == None):
-#            width = image_width
-#            height = image_height
-#        # fail if either is None, or they are < 1
-#        elif (width == None or height == None or width < 1 or height < 1):
-#            raise ValueError(('Invalid width/height specified'))
-#        # get/bound the actual image coordinates
-#        x1 = x
-#        y1 = y
-#        x2 = x1+min(width, image_width-x1)
-#        y2 = y1 + min(height, image_height-y1)
-#        # get the sub image with the dimensions specified [x1,y1,x2,y1)
-#        box = (x1, y1, x2, y2)
-#        image = image.crop(box)
-#        # get the image properties
-#        mode = image.mode
-#        size = image.size
-#        data = image.tostring()
-#        image = Image.fromstring(mode, size, data)
-#        # initialize this picture with new properties
-#        self.__initialize_picture(image, picture.filename, picture.title)
-
     def crop(self, x1, y1, x2, y2):
         maxX = self.get_width()
         None
@@ -554,22 +437,6 @@ class Picture:
         image = self.surf.crop((x1, y1, x2, y2))
         self.__initialize_picture(image, self.filename, self.title)
 
-#    def overlay_image(self, picture, x=0, y=0):
-#        if x == 0:
-#            # center x
-#            x = (self.get_width()/2)-(picture.get_width()/2)+1
-#        if y == 0:
-#            # center y
-#            y = (self.get_height()/2)-(picture.get_height()/2)+1
-#        # blit the other image
-#        # note that we must unlock both image surfaces
-#        self.surf.unlock()
-#        picture.surf.unlock()
-#        self.surf.blit(picture.surf, (x-1, y-1))
-#        picture.surf.lock()
-#        self.surf.lock()
-##        self.__update()
-
     def clear(self, color=black):
 
         # clears the picture pixels to black
@@ -580,21 +447,6 @@ class Picture:
         return "Picture, filename " + self.filename + " height " + str(self.get_height()) + \
             " width " + str(self.get_width())
 
-#    def __update(self):
-#        if self.visible_frame and self.__auto_repaint:
-#            self.repaint()
-
-#    def repaint(self):
-#        if self.win_active:
-#            self.canvas.delete(self.item)
-#            self.disp_image = ImageTk.PhotoImage(self.get_image())
-#            self.item = self.canvas.create_image(0, 0, image=self.disp_image, anchor='nw')
-#            self.canvas.pack()
-#            self.canvas.update()
-#            self.frame.title(self.title)
-#        else:
-#            self.show()
-
     def show(self):
         i = 1
         p = thread.start_new(self.showchild, (i, ))
@@ -603,27 +455,7 @@ class Picture:
         #if raw_input() == 'c': pass
 
     def showchild(self, tid):
-
-        #os.execlp('python', 'python', 'test.py') # overlay program
-
         self.surf.show()
-
-        #assert False, 'error starting program'               # shouldn't return
-#        if not self.win_active:
-#            self.frame = PictureFrame(self)
-#            self.canvas = Canvas(self.frame, width=self.get_width(),
-#                height=self.get_height(), highlightthickness=0)
-#
-#            self.disp_image = ImageTk.PhotoImage(self.get_image())
-#            self.item = self.canvas.create_image(0, 0, image=self.disp_image, anchor='nw')
-#            self.canvas.pack()
-#            self.win_active = 1
-#            self.visible_frame = True
-#            # bind all events
-#            for event_str, callback in self.__event_bindings.items():
-#                self.canvas.bind(event_str, callback)
-#        else:
-#            self.repaint()
 
     def do_pick_color(self, event):
         x = event.x + 1
@@ -633,27 +465,14 @@ class Picture:
             print pixel
             None
 
-#    def hide(self):
-#        if self.win_active:
-#            self.frame.destroy()
-
     def set_title(self, title):
         self.title = title
-
-#        self.__update()
 
     def get_title(self):
         return self.title
 
     def get_image(self):
-
-        # seems to return a PIL image of the same dimensions
-        #data = pygame.image.tostring(self.surf, "RGB", 0)
-        #image = fromstring("RGB", (self.get_width(), self.get_height()), data)
-        #data = self.surf.tostring()
-        #image = Image.fromstring("RGB", (self.get_width(), self.get_height()), data)
-
-        if self.get_height() == 0 and self.get_width() == 0:  #TODO this is temp fix for UnitTest
+        if self.get_height() == 0 and self.get_width() == 0:
             raise ValueError
         return self.surf
 
@@ -666,8 +485,6 @@ class Picture:
     def get_pixel(self, x, y):
         return Pixel(self, x, y)
 
-        #return Pixel(self.pixels,x,y)
-
     def get_pixels(self):
         collect = []
 
@@ -679,8 +496,6 @@ class Picture:
             for y in range(0, self.get_height()):
                 collect.append(Pixel(self, x, y))
 
-                #collect.append(Pixel(self.pixels,x,y))
-
         return collect
 
     def set_pixels(self, color):
@@ -690,118 +505,60 @@ class Picture:
             image = Image.new(self.surf.mode, self.surf.size, tuple(color.get_rgb()))
             self.__initialize_picture(image, self.filename, self.title)
         except:
-
-            #self.surf.fill(color.get_rgb())
-#            self.__update()
-
             raise AttributeError('set_pixels(color): Picture has not yet been initialized.')
 
     def write_to(self, filename):
         if not os.path.isabs(filename):
             filename = media_folder + filename
 
-        #pygame.image.save(self.surf, filename)
-        #image = self.get_image()
-        #image.save(filename, None)
-
         self.surf.save(filename)
 
-    # TODO: add bounds checks for all the following functions to ensure that they are one based
-    # draw stuff on pictures
-
     def add_rect_filled(self, acolor, x, y, w, h):
-
-        #pygame.draw.rect(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h))
-
         draw = ImageDraw.Draw(self.surf)
         draw.rectangle([x, y, x + w, y + h], outline=tuple(acolor.get_rgb()),
                        fill=tuple(acolor.get_rgb()))
         del draw
 
-#        self.__update()
-
     def add_rect(self, acolor, x, y, w, h, width1=1):
-
-        #pygame.draw.rect(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h), width)
-
         draw = ImageDraw.Draw(self.surf)
         draw.rectangle([x, y, x + w, y + h], outline=tuple(acolor.get_rgb()))
         del draw
 
-#        self.__update()
-
     # Draws a polygon on the image.
-
     def add_polygon(self, acolor, point_list):
-
-        #pygame.draw.polygon(self.surf, acolor.get_rgb(), point_list, 1)
-
         draw = ImageDraw.Draw(self.surf)
         draw.polygon(point_list, outline=tuple(acolor.get_rgb()))
         del draw
 
-#        self.__update()
-
     def add_polygon_filled(self, acolor, point_list):
-
-        #pygame.draw.polygon(self.surf, acolor.get_rgb(), point_list, 0)
-
         draw = ImageDraw.Draw(self.surf)
         draw.polygon(point_list, outline=tuple(acolor.get_rgb()), fill=
                      tuple(acolor.get_rgb()))
         del draw
 
-#        self.__update()
-
     def add_oval_filled(self, acolor, x, y, w, h):
-
-        #pygame.draw.ellipse(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h))
-
         draw = ImageDraw.Draw(self.surf)
         draw.ellipse([x, y, x + w, y + h], outline=tuple(acolor.get_rgb()),
                      fill=tuple(acolor.get_rgb()))
         del draw
 
-#        self.__update()
-
     def add_oval(self, acolor, x, y, w, h):
-
-        #pygame.draw.ellipse(self.surf, acolor.get_rgb(), pygame.Rect(x-1, y-1, w, h), 1)
-
         draw = ImageDraw.Draw(self.surf)
         draw.ellipse([x, y, x + w, y + h], outline=tuple(acolor.get_rgb()))
         del draw
 
-#        self.__update()
-
     def add_arc_filled(self, acolor, x, y, w, h, start, end):
-
-        #this is an estimation def needs to be done another way but I need to figure out how
-        #if w > h:
-        #    pygame.draw.arc(self.surf, acolor.get_rgb(), Rect(x, y, w, h), start, angle, h/2)
-        #else:
-        #    pygame.draw.arc(self.surf, acolor.get_rgb(), Rect(x, y, w, h), start, angle, w/2)
-#        self.__update()
-
         draw = ImageDraw.Draw(self.surf)
         draw.arc([x, y, x + w, y + h], start, end, outline=tuple(acolor.get_rgb()),
                  fill=tuple(acolor.get_rgb()))
         del draw
 
     def add_arc(self, acolor, x, y, w, h, start, end):
-
-        #pygame.draw.arc(self.surf, acolor.get_rgb(), Rect(x, y, w, h), start, angle)
-#        self.__update()
-
         draw = ImageDraw.Draw(self.surf)
         draw.arc([x, y, x + w, y + h], start, end, outline=tuple(acolor.get_rgb()))
         del draw
 
     def add_line(self, acolor, x1, y1, x2, y2, width1=1):
-
-        #pygame.draw.line(self.surf, acolor.get_rgb(), [x1-1, y1-1], [x2-1, y2-1], width)
-#        self.__update()
-
         draw = ImageDraw.Draw(self.surf)
         draw.line([x1, y1, x2, y2], fill=tuple(acolor.get_rgb()), width=
                   width1)
@@ -811,41 +568,11 @@ class Picture:
         global default_font
         self.add_text_with_style(acolor, x, y, string, default_font)
 
-#        self.__update()
-
     def add_text_with_style(self, acolor, x, y, string, font1):
-
-        # add the text with the specified font
-        #text_surf = font.render(string, True, acolor.get_rgb())
-        #self.surf.unlock()
-        #self.surf.blit(text_surf, (x-1, y-1))
-        #self.surf.lock()
-#       self.__update()
-
         draw = ImageDraw.Draw(self.surf)
         draw.text((x, y), text=string, fill=tuple(acolor.get_rgb()),
                   font=font1)
         del draw
-
-
-#    def add_event_handler(self, tk_event_str, callback):
-#        # see: http://effbot.org/tkinterbook/tkinter-events-and-bindings.htm
-#        # for more information
-#        self.__event_bindings[tk_event_str] = callback
-#        if self.win_active:
-#            self.canvas.bind(tk_event_str, callback)
-
-#    def remove_event_handler(self, tk_event_str):
-#        if tk_event_str in self.__event_bindings:
-#            del self.__event_bindings[tk_event_str]
-#            if self.win_active:
-#                self.canvas.unbind(tk_event_str)
-
-#    def remove_all_event_handlers(self):
-#        if self.win_active:
-#            for event_str, callback in self.__event_bindings.items():
-#                    self.canvas.unbind(event_str)
-#        self.__event_bindings.clear()
 
 #
 # PIXEL ------------------------------------------------------------------------
@@ -859,24 +586,17 @@ class Pixel:
         if not picture.__class__ == Picture:
             raise ValueError("Pixel(picture, x, y): picture input is not a Picture")
 
-        len_x = picture.get_width()  #len(picture)
-        len_y = picture.get_height()  #len(picture[0])
+        len_x = picture.get_width()
+        len_y = picture.get_height()
         if x <= -1 * len_x or x >= len_x or y <= -1 * len_y or y >= \
             len_y:
             raise IndexError
         if len_x > 0 and len_y > 0:
-            self.x = x % len_x  #self.x = (x - 1) % len_x
-            self.y = y % len_y  #self.y = (y - 1) % len_y
-
-            # we still want to fail if the accessible indices are out of wrap-around bounds so we
-            # can not use self.x, and self.y below
-            #self.pix = [picture.pixels[x-1,y-1]]#picture[x-1][y-1]
+            self.x = x % len_x
+            self.y = y % len_y
 
             self.pix = picture
         else:
-
-            #self.pix.pixels[x-1,y-1]=(255,255,255)
-
             raise ValueError('Invalid image dimensions (' + str(len_x) +
                              ", " + str(len_y) + ")")
 
@@ -888,9 +608,6 @@ class Pixel:
             (self.pix.pixels)[self.x, self.y] = (r, (self.pix.pixels)[self.x,
                     self.y][1], (self.pix.pixels)[self.x, self.y][2])
         else:
-
-            #self.pix[0] = r
-
             raise ValueError('Invalid red component value (' + str(r) +
                              '), expected value within [0, 255]')
 
@@ -899,9 +616,6 @@ class Pixel:
             (self.pix.pixels)[self.x, self.y] = ((self.pix.pixels)[self.x,
                     self.y][0], g, (self.pix.pixels)[self.x, self.y][2])
         else:
-
-            #self.pix[1] = g
-
             raise ValueError('Invalid green component value (' + str(g) +
                              '), expected value within [0, 255]')
 
@@ -910,9 +624,6 @@ class Pixel:
             (self.pix.pixels)[self.x, self.y] = ((self.pix.pixels)[self.x,
                     self.y][0], (self.pix.pixels)[self.x, self.y][1], b)
         else:
-
-            #self.pix[2] = b
-
             raise ValueError('Invalid blue component value (' + str(b) +
                              '), expected value within [0, 255]')
 
@@ -934,10 +645,10 @@ class Pixel:
         self.set_blue(color.get_blue())
 
     def get_x(self):
-        return self.x  # + 1
+        return self.x
 
     def get_y(self):
-        return self.y  # + 1
+        return self.y
 
 
 ##
@@ -950,18 +661,6 @@ class OpenPictureTool:
     def __init__(self, file_name):
         self.file_name = file_name  #'C:/img_1037.jpg'
         self.picture = make_picture(self.file_name)
-
-#p = pickAFile()
-#p = makePicture(p)
-#openPictureTool(p)
-#fileName = 'C:\img_1037.jpg'
-#fileName = 'C:\image.gif'
-
-#
-#import sys
-#import Tkinter as tk
-#from PIL import Image
-#
 
     def run_tool(self, safe):
         self.root = Tk()
@@ -985,9 +684,6 @@ class OpenPictureTool:
         self.zoom.add_command(label='500%', command=lambda : self.zoomf(5.0),
                               underline=0)
 
-        #zoom.add_separator()
-        #zoom.add_command(label='Restore',    command=restore, underline=0)
-
         self.top.add_cascade(label='Zoom', menu=self.zoom, underline=0)
 
         #
@@ -996,26 +692,13 @@ class OpenPictureTool:
 
         self.frame1 = Frame(self.root)
 
-        #
-
         self.frame1.pack(side=BOTTOM, fill=X)
-
-        #
-
-        #
-        # pick a (small) image file you have in the working directory ...
-        #
-        #root.photo1 = tk.PhotoImage(file="C:\Image.gif")
 
         self.root.im = Image.open(self.file_name).convert("RGB")
         self.root.original = self.root.im
         self.root.zoomMult = 1.0
 
-        #saveimage = im
-
-        self.root.photo1 = imtk.PhotoImage(image=self.root.im)  #file="C:\img_1037.jpg")
-
-        #savephoto = root.photo1
+        self.root.photo1 = imtk.PhotoImage(image=self.root.im)
 
         self.root.title(self.file_name)
 
@@ -1036,8 +719,6 @@ class OpenPictureTool:
         self.canvas1.config(yscrollcommand=self.root.vbar.set)  # call on canvas move
         self.canvas1.config(xscrollcommand=self.root.hbar.set)
         self.drawImage(self.root.im)
-
-        #img = canvas1.create_image(0,0,image=root.photo1,anchor=tk.NW)
 
         self.canvas1.bind('<Button-1>', self.canvClick)
 
@@ -1079,7 +760,7 @@ class OpenPictureTool:
         #
 
         self.root.mainloop()
-        if(not safe):
+        if(not safe): #used when not running on darwin(Mac) OS
             sys.exit(0)
 
     def zoomf(self, factor):
@@ -1113,8 +794,6 @@ class OpenPictureTool:
         viewwide = min(imgwide, scrwide)  # viewable
         viewhigh = min(imghigh, scrhigh)
 
-        #canvas = canvas1
-
         self.canvas1.delete('all')  # clear prior photo
         self.canvas1.config(height=viewhigh, width=viewwide)  # viewable window size
         self.canvas1.config(scrollregion=fullsize)  # scrollable area size
@@ -1126,11 +805,9 @@ class OpenPictureTool:
             self.root.state('normal')  # no: win size per img
         elif (sys.platform)[:3] == 'win':
 
-                                                         # do windows fullscreen
+            # do windows fullscreen
 
             self.root.state('zoomed')  # others use geometry( )
-
-        #print (scrwide, scrhigh), imgpil.size
 
     def canvClick(self, event):
         try:
@@ -1169,9 +846,6 @@ class OpenPictureTool:
                         y))
                 self.v.set(rgb)
             else:
-
-                #row.update_idletasks()
-
                 rgb = "X,Y Out of Range"
                 self.v.set(rgb)
         except ValueError:
@@ -1256,10 +930,6 @@ def make_picture(filename):
         print "Was unable to load the image in " + filename + \
             "\nMake sure it's a valid image file."
 
-
-# Maybe
-
-
 def make_empty_picture(width, height):
     """Generates a blank picture.
     
@@ -1287,26 +957,6 @@ def crop_picture(picture, x1, y1, x2, y2):
     if not picture.__class__ == Picture:
         raise ValueError("crop_picture(picture,x1,y1,x2,y2): First input is not a picture")
     picture.crop(x1, y1, x2 + 1, y2 + 1)
-
-
-#def duplicate_picture(picture):
-#    if not picture.__class__ == Picture:
-#        raise ValueError("duplicate_picture(picture): First input is not a picture")
-#    new_picture = Picture()
-#    new_picture.copy_from_image(picture)
-#    return new_picture
-
-#def make_style(fontname, fontsize=10, bold=False, italic=False):
-#    # try to make a font style with the given parameters
-#    global default_font
-#    try:
-#        return pygame.font.SysFont(fontname, fontsize, bold, italic)
-#    except:
-#        print "make_style(fontname,fontsize,bold,italic): No such font found"
-#        return default_font
-
-# Maybe
-
 
 def set_pixels(picture, color):
     """Sets all the pixels of the picture given as first argument
@@ -1388,15 +1038,6 @@ def show(picture):
         raise ValueError("show(picture): Input is not a picture")
     picture.show()
 
-
-#def repaint(picture):
-#    if not picture.__class__ == Picture:
-#        raise ValueError("repaint(picture): Input is not a picture")
-#    picture.repaint()
-
-# Maybe
-
-
 def add_line(picture, x1, y1, x2, y2, acolor):
     """Takes a picture, a starting (x, y) position (two numbers), and an
        ending (x, y) position (two more numbers, four total) and draws a
@@ -1413,10 +1054,6 @@ def add_line(picture, x1, y1, x2, y2, acolor):
         raise ValueError("add_line(picture,x1,y1,x2,y2): Input is not a picture")
     picture.add_line(acolor, x1, y1, x2, y2)
 
-
-# Maybe
-
-
 def add_text(picture, x1, y1, string, acolor):
     """Takes a picture, an x position and a y position (two numbers),
        and some text as a string, which will get drawn into the picture,
@@ -1431,10 +1068,6 @@ def add_text(picture, x1, y1, string, acolor):
     if not picture.__class__ == Picture:
         raise ValueError("add_text(picture,x1,y1,string): Input is not a picture")
     picture.add_text(acolor, x1, y1, string)
-
-
-# Maybe
-
 
 def add_rect(picture, x, y, w, h, acolor):
     """Takes a picture, a starting (x, y) position (two numbers), and a width
@@ -1453,10 +1086,6 @@ def add_rect(picture, x, y, w, h, acolor):
         raise ValueError("add_rect(picture,x,y,w,h): Input is not a picture")
     picture.add_rect(acolor, x, y, w, h)
 
-
-# Maybe
-
-
 def add_rect_filled(picture, x, y, w, h, acolor):
     """Takes a picture, a starting (x, y) position (two numbers), and a width
        and height (two more numbers, four total) then draws a filled rectangle
@@ -1474,10 +1103,6 @@ def add_rect_filled(picture, x, y, w, h, acolor):
         raise ValueError("add_rect_filled(picture,x,y,w,h,acolor): Input is not a picture")
     picture.add_rect_filled(acolor, x, y, w, h)
 
-
-# Maybe
-
-
 def add_polygon(picture, point_list, acolor):
     """Takes a picture, draws an outline (not filled) of a polygon in the
        given color with the sides being lines connecting the given vertices
@@ -1491,10 +1116,6 @@ def add_polygon(picture, point_list, acolor):
     if not picture.__class__ == Picture:
         raise ValueError("add_polygon(picture,point_list,acolor): Input is not a picture")
     picture.add_polygon(acolor, point_list)
-
-
-# Maybe
-
 
 def add_polygon_filled(picture, pointlist, acolor):
     """Takes a picture, draws a filled polygon in the given color with
@@ -1522,7 +1143,6 @@ def write_picture_to(pict, filename):
     if not pict.__class__ == Picture:
         raise ValueError("write_picture_to(pict,filename): Input is not a picture")
     pict.write_to(filename)
-
 
     #if not os.path.exists(filename):
     #       print "write_picture_to(pict,filename): Path is not valid"
