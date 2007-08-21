@@ -1086,6 +1086,23 @@ def add_rect(picture, x, y, w, h, acolor):
         raise ValueError("add_rect(picture,x,y,w,h): Input is not a picture")
     picture.add_rect(acolor, x, y, w, h)
 
+def add_oval(picture, x, y, w, h, acolor):
+    """Takes a picture, a starting (x, y) position (two numbers), and a width
+       and height (two more numbers, four total) then draws an oval in
+       outline of the given width and height with the position (x, y) as the
+       upper left corner.
+       
+       picture: the picture you want to draw the oval on
+       x: the x-coordinate of the upper left-hand corner of the oval
+       y: the y-coordinate of the upper left-hand corner of the oval
+       w: the width of the oval
+       h: the height of the oval
+       acolor: the color you want to draw in"""
+
+    if not picture.__class__ == Picture:
+        raise ValueError("add_oval(picture,x,y,w,h): Input is not a picture")
+    picture.add_oval(acolor, x, y, w, h)
+
 def add_rect_filled(picture, x, y, w, h, acolor):
     """Takes a picture, a starting (x, y) position (two numbers), and a width
        and height (two more numbers, four total) then draws a filled rectangle
@@ -1102,6 +1119,23 @@ def add_rect_filled(picture, x, y, w, h, acolor):
     if not picture.__class__ == Picture:
         raise ValueError("add_rect_filled(picture,x,y,w,h,acolor): Input is not a picture")
     picture.add_rect_filled(acolor, x, y, w, h)
+
+def add_oval_filled(picture, x, y, w, h, acolor):
+    """Takes a picture, a starting (x, y) position (two numbers), and a width
+       and height (two more numbers, four total) then draws a filled oval
+       of the given width, height and color with the position (x, y) as the
+       upper left corner.
+    
+       picture: the picture you want to draw the oval on
+       x: the x-coordinate of the upper left-hand corner of the oval
+       y: the y-coordinate of the upper left-hand corner of the oval
+       w: the width of the oval
+       h: the height of the oval
+       acolor: the color you want to draw in"""
+
+    if not picture.__class__ == Picture:
+        raise ValueError("add_rect_filled(picture,x,y,w,h,acolor): Input is not a picture")
+    picture.add_oval_filled(acolor, x, y, w, h)
 
 def add_polygon(picture, point_list, acolor):
     """Takes a picture, draws an outline (not filled) of a polygon in the

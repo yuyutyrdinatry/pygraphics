@@ -371,7 +371,7 @@ class Test_Picture(unittest.TestCase):
 				self.pict.write_to(saveLocPrefix +"."+ suffix)
 				# compare with saved copies
 #				print "\n"+blessedSaveLocPrefix +'.'+ suffix, saveLocPrefix +'.'+ suffix+"\n"
-				ensureImagesEqual(blessedSaveLocPrefix +'.'+ suffix, saveLocPrefix +'.'+ suffix)
+				ensureImagesEqual(blessedSaveLocPrefix + suffix, saveLocPrefix + suffix)
 			except KeyError:
 				self.fail('Failed saving created image to (' + suffix + ') files')
 		del self.pict
@@ -380,11 +380,11 @@ class Test_Picture(unittest.TestCase):
 		blessedSaveLocPrefix = resi('white.')
 		for suffix in self.imageTypes:
 			self.pict = Picture()
-			self.pict.load_image(blessedSaveLocPrefix +'.'+ suffix)
+			self.pict.load_image(blessedSaveLocPrefix + suffix)
 			try:
-				self.pict.write_to(saveLocPrefix +'.'+ suffix)
+				self.pict.write_to(saveLocPrefix + suffix)
 				# compare with saved copies
-				ensureImagesEqual(blessedSaveLocPrefix +'.'+ suffix, saveLocPrefix +'.'+ suffix)
+				ensureImagesEqual(blessedSaveLocPrefix + suffix, saveLocPrefix + suffix)
 			except KeyError:
 				self.fail('Failed saving loaded image to (' + suffix + ') files')
 			del self.pict
