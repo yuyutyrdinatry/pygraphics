@@ -152,6 +152,7 @@ def quit():
 
 
 class Color:
+    '''An RGB color.'''
 
     def __init__(self, r, g, b):
         self.r = int(r) % 256
@@ -448,9 +449,10 @@ class Picture:
             " width " + str(self.get_width())
 
     def show(self):
-        i = 1
-        p = thread.start_new(self.showchild, (i, ))
-        time.sleep(0.1)
+        self.surf.show()
+#        i = 1
+#        p = thread.start_new(self.showchild, (i, ))
+#        time.sleep(0.1)
 
         #if raw_input() == 'c': pass
 
@@ -580,6 +582,7 @@ class Picture:
 
 
 class Pixel:
+    '''A pixel in an image with a color and an x and y location.'''
 
     def __init__(self, picture, x, y):
 
