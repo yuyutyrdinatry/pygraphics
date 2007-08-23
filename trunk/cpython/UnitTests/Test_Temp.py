@@ -1,6 +1,6 @@
 import unittest
 from TestExecute import *
-from media import *
+from picture import *
 
 # we MUST set the debug level to 1 to force errors to return
 debugLevel = 1
