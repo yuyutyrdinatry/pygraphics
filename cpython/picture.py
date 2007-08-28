@@ -92,7 +92,7 @@ def pick_a_file(**options):
     root.focus_force()
     root.geometry("0x0")
 #   root.geometry("+100+200")
-    if not ((sys.platform)[:3] == 'dar'):
+    if((sys.platform)[:3] == 'win'):
         root.attributes("-alpha",0.0)
     #root.withdraw()
     path = tkFileDialog.askopenfilename()
@@ -449,10 +449,12 @@ class Picture:
             " width " + str(self.get_width())
 
     def show(self):
-        self.surf.show()
-#        i = 1
-#        p = thread.start_new(self.showchild, (i, ))
-#        time.sleep(0.1)
+        if (sys.platform)[:3] == 'win':
+            i = 1
+            p = thread.start_new(self.showchild, (i, ))
+            time.sleep(0.1)
+        else:
+            self.surf.show()
 
         #if raw_input() == 'c': pass
 
