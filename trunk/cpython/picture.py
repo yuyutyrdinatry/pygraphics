@@ -406,9 +406,9 @@ class Picture:
                     '', 'None')
 
     def load_image(self, filename):
-        global media_folder
-        if not os.path.isabs(filename):
-            filename = media_folder + filename
+        # global media_folder
+        # if not os.path.isabs(filename):
+        #    filename = media_folder + filename
 
         # fail if file does not exist
 
@@ -512,8 +512,8 @@ class Picture:
             raise AttributeError('set_pixels(color): Picture has not yet been initialized.')
 
     def write_to(self, filename):
-        if not os.path.isabs(filename):
-            filename = media_folder + filename
+        # if not os.path.isabs(filename):
+        #    filename = media_folder + filename
 
         self.surf.save(filename)
 
