@@ -449,12 +449,12 @@ class Picture:
             " width " + str(self.get_width())
 
     def show(self):
-        if (sys.platform)[:3] == 'win':
-            i = 1
-            p = thread.start_new(self.showchild, (i, ))
-            time.sleep(0.1)
-        else:
-            self.surf.show()
+        #if (sys.platform)[:3] == 'win':
+        #    i = 1
+        #    p = thread.start_new(self.showchild, (i, ))
+        #    time.sleep(0.1)
+        #else:
+        self.surf.show()
 
         #if raw_input() == 'c': pass
 
