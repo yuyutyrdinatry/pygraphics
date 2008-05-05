@@ -19,15 +19,15 @@ def color_equals_color(color1, color2):
 				color1.get_blue() == color2.get_blue())
 
 # Perhaps reserve the variable name "color" for Color objects?
-    # Option: color_matrix for RGB lists, others?
+    # Option: color_array for RGB lists, others?
     
-def normalize_color_matrix(color_matrix):
-	'''Normalize list color_matrix to bound values within [0, 255].
+def normalize_color_array(color_array):
+	'''Normalize list color_array to bound values within [0, 255].
 	
-	Note: color_matrix is intended to be a list with int values R, G, B in the following format, [R, G, B]'''
+	Note: color_array is intended to be a list with int values R, G, B in the following format, [R, G, B]'''
 	
-	for idx in range(len(color_matrix)):
-				color_matrix[idx] = int(color_matrix[idx]) % 256
+	for idx in range(len(color_array)):
+				color_array[idx] = int(color_array[idx]) % 256
 
 class TestColor(unittest.TestCase):
 	''' Tests the media.py Color class members '''
@@ -117,55 +117,55 @@ class TestColor(unittest.TestCase):
 		'''Test setting and getting RGB values from Color object.'''
 		# test the setters/getters of RGB components
 		default_color = [0,0,0]
-		color_matrices = [ [1,1,1], [-1,-1,-1], [0,64,255], [255,255,255], [-10,-64,-255], [-1000,0,1000], ['10', 10, '10'] ]
+		color_arrays = [ [1,1,1], [-1,-1,-1], [0,64,255], [255,255,255], [-10,-64,-255], [-1000,0,1000], ['10', 10, '10'] ]
 		self.color = Color(default_color[0], default_color[1], default_color[2])
-		for color_matrix in color_matrices:
+		for color_array in color_arrays:
 			# normalize color components
-			normalize_color_matrix(color_matrix)
+			normalize_color_array(color_array)
 			# set tuple
-			self.color.set_rgb(color_matrix)
-			self.assertEqual(self.color.get_rgb(), color_matrix, 'Different colors encountered after setting/getting')
+			self.color.set_rgb(color_array)
+			self.assertEqual(self.color.get_rgb(), color_array, 'Different colors encountered after setting/getting')
 			self.color.set_rgb(default_color)
 			# set individually
-			self.color.set_red(color_matrix[0])
-			self.color.set_green(color_matrix[1])
-			self.color.set_blue(color_matrix[2])
-			self.assertEqual(self.color.get_red(), color_matrix[0], 'Different red component returned')
-			self.assertEqual(self.color.get_green(), color_matrix[1], 'Different green component returned')
-			self.assertEqual(self.color.get_blue(), color_matrix[2], 'Different blue component returned')
+			self.color.set_red(color_array[0])
+			self.color.set_green(color_array[1])
+			self.color.set_blue(color_array[2])
+			self.assertEqual(self.color.get_red(), color_array[0], 'Different red component returned')
+			self.assertEqual(self.color.get_green(), color_array[1], 'Different green component returned')
+			self.assertEqual(self.color.get_blue(), color_array[2], 'Different blue component returned')
 			self.color.set_rgb(default_color)
 			
 	def test_make_lighter_darker(self):
 		'''Test make_lighter and make_darker methods of Color object.'''
 		# not quite sure how to test this other than comparing the resulting color's values 
 		# TODO: revisit this when we allow arbitrary changes in intensity
-		color_matrices = [ [1,1,1], [-1,-1,-1], [0,64,255], [255,255,255], [-10,-64,-255], [-1000,0,1000], ['10', 10, '10'] ]
-		for color_matrix in color_matrices:
+		color_arrays = [ [1,1,1], [-1,-1,-1], [0,64,255], [255,255,255], [-10,-64,-255], [-1000,0,1000], ['10', 10, '10'] ]
+		for color_array in color_arrays:
 			# normalize color components
-			normalize_color_matrix(color_matrix)
+			normalize_color_array(color_array)
 				
-			cL = Color(color_matrix[0], color_matrix[1], color_matrix[2])
-			cD = Color(color_matrix[0], color_matrix[1], color_matrix[2])
+			cL = Color(color_array[0], color_array[1], color_array[2])
+			cD = Color(color_array[0], color_array[1], color_array[2])
 			cL.make_lighter()
 			cD.make_darker()
 			# we expect the lighter color to have values closer to white
-			self.failUnless(cL.get_red() >= color_matrix[0], 'Red component is not lighter')
-			self.failUnless(cL.get_green() >= color_matrix[1], 'Green component is not lighter')
-			self.failUnless(cL.get_blue() >= color_matrix[2], 'Blue component is not lighter')
+			self.failUnless(cL.get_red() >= color_array[0], 'Red component is not lighter')
+			self.failUnless(cL.get_green() >= color_array[1], 'Green component is not lighter')
+			self.failUnless(cL.get_blue() >= color_array[2], 'Blue component is not lighter')
 			# we expect the darker color to have values closer to black			
-			self.failUnless(cD.get_red() <= color_matrix[0], 'Red component is not darker')
-			self.failUnless(cD.get_green() <= color_matrix[1], 'Green component is not darker')
-			self.failUnless(cD.get_blue() <= color_matrix[2], 'Blue component is not darker')
+			self.failUnless(cD.get_red() <= color_array[0], 'Red component is not darker')
+			self.failUnless(cD.get_green() <= color_array[1], 'Green component is not darker')
+			self.failUnless(cD.get_blue() <= color_array[2], 'Blue component is not darker')
 					
 	def test_to_string(self):
 		'''Test __str__ method of Color object.'''
-		color_matrices = [ [1,1,1], [-1,-1,-1], [0,64,255], [255,255,255], [-10,-64,-255], [-1000,0,1000], ['10', 10, '10'] ]
-		for color_matrix in color_matrices:
+		color_arrays = [ [1,1,1], [-1,-1,-1], [0,64,255], [255,255,255], [-10,-64,-255], [-1000,0,1000], ['10', 10, '10'] ]
+		for color_array in color_arrays:
 			# normalize color components
-			normalize_color_matrix(color_matrix)
+			normalize_color_array(color_array)
 			# compare strings
-			expected_str = 'color r=' + str(color_matrix[0]) + ' g=' + str(color_matrix[1]) + ' b=' + str(color_matrix[2])
-			new_color = Color(color_matrix[0], color_matrix[1], color_matrix[2])
+			expected_str = 'color r=' + str(color_array[0]) + ' g=' + str(color_array[1]) + ' b=' + str(color_array[2])
+			new_color = Color(color_array[0], color_array[1], color_array[2])
 			self.assertEqual(str(new_color), expected_str, 'Color strings do not match:\n' + str(new_color) + '\n' + expected_str )
 		
 class TestColorHelpers(unittest.TestCase):
@@ -181,14 +181,14 @@ class TestColorHelpers(unittest.TestCase):
 		
 	def test_make_new_color(self):
 		'''Test picture module functions make_color and new_color to ensure they create Color objects identical to ones created manually.'''
-		color_matrices = [ [1,1,1], [-1,-1,-1], [0,64,255], [255,255,255], [-10,-64,-255], [-1000,0,1000], ['10', 10, '10'] ]
-		for color_matrix in color_matrices:
+		color_arrays = [ [1,1,1], [-1,-1,-1], [0,64,255], [255,255,255], [-10,-64,-255], [-1000,0,1000], ['10', 10, '10'] ]
+		for color_array in color_arrays:
 			# normalize color components
-			normalize_color_matrix(color_matrix)
+			normalize_color_array(color_array)
 			# create using all three ways
-			color_make = make_color(color_matrix[0], color_matrix[1], color_matrix[2])
-			color_new = new_color(color_matrix[0], color_matrix[1], color_matrix[2])
-			color_manual = Color(color_matrix[0], color_matrix[1], color_matrix[2])
+			color_make = make_color(color_array[0], color_array[1], color_array[2])
+			color_new = new_color(color_array[0], color_array[1], color_array[2])
+			color_manual = Color(color_array[0], color_array[1], color_array[2])
 			self.failUnless(color_equals_color(color_make, color_new) and color_equals_color(color_make, color_manual), 'Colors not the same (' + str(color_manual) + ')')			
 		
 		
