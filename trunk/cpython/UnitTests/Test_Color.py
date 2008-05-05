@@ -7,13 +7,13 @@ from picture import *
 # we MUST set the debug level to 1 to force errors to return
 debugLevel = 1
 
-def colorEqualsColor(color, coloro):
+def color_equals_color(color, coloro):
 	# helper function to compare two colors
 	return (color.get_red() == coloro.get_red() and
 				color.get_green() == coloro.get_green() and
 				color.get_blue() == coloro.get_blue())
 	
-def normalizeColor(color):
+def normalize_color(color):
 	# helper function to bound colors within [0,255]
 	for idx in range(len(color)):
 				color[idx] = int(color[idx]) % 256
@@ -91,10 +91,10 @@ class Test_Color(unittest.TestCase):
 			differenceOne = colorOne[idx].difference(colorTwo[idx])
 			subTwo = colorTwo[idx]-colorOne[idx]
 			differenceTwo = colorTwo[idx].difference(colorOne[idx])
-			self.failUnless(colorEqualsColor(subOne, differenceOne), 'Difference and subtraction differ (one-two)')
-			self.failUnless(colorEqualsColor(subTwo, differenceTwo), 'Difference and subtraction differ (two-one)')
-			self.failUnless(colorEqualsColor(subOne, expectedDifferenceOneMinusTwo[idx]), 'Unexpected difference returned (one-two)')
-			self.failUnless(colorEqualsColor(subTwo, expectedDifferenceTwoMinusOne[idx]), 'Unexpected difference returned (two-one)')
+			self.failUnless(color_equals_color(subOne, differenceOne), 'Difference and subtraction differ (one-two)')
+			self.failUnless(color_equals_color(subTwo, differenceTwo), 'Difference and subtraction differ (two-one)')
+			self.failUnless(color_equals_color(subOne, expectedDifferenceOneMinusTwo[idx]), 'Unexpected difference returned (one-two)')
+			self.failUnless(color_equals_color(subTwo, expectedDifferenceTwoMinusOne[idx]), 'Unexpected difference returned (two-one)')
 	
 	def testSetGetRGB(self):
 		# test the setters/getters of RGB components
@@ -103,7 +103,7 @@ class Test_Color(unittest.TestCase):
 		self.color = Color(defaultColor[0], defaultColor[1], defaultColor[2])
 		for color in colors:
 			# normalize color components
-			normalizeColor(color)
+			normalize_color(color)
 			# set tuple
 			self.color.set_rgb(color)
 			self.assertEqual(self.color.get_rgb(), color, 'Different colors encountered after setting/getting')
@@ -123,7 +123,7 @@ class Test_Color(unittest.TestCase):
 		colors = [ [1,1,1], [-1,-1,-1], [0,64,255], [255,255,255], [-10,-64,-255], [-1000,0,1000], ['10', 10, '10'] ]
 		for color in colors:
 			# normalize color components
-			normalizeColor(color)
+			normalize_color(color)
 				
 			cL = Color(color[0], color[1], color[2])
 			cD = Color(color[0], color[1], color[2])
@@ -143,7 +143,7 @@ class Test_Color(unittest.TestCase):
 		colors = [ [1,1,1], [-1,-1,-1], [0,64,255], [255,255,255], [-10,-64,-255], [-1000,0,1000], ['10', 10, '10'] ]
 		for color in colors:
 			# normalize color components
-			normalizeColor(color)
+			normalize_color(color)
 			# compare strings
 			expectedStr = 'color r=' + str(color[0]) + ' g=' + str(color[1]) + ' b=' + str(color[2])
 			new_color = Color(color[0], color[1], color[2])
@@ -165,11 +165,11 @@ class Test_Color_Helpers(unittest.TestCase):
 		colors = [ [1,1,1], [-1,-1,-1], [0,64,255], [255,255,255], [-10,-64,-255], [-1000,0,1000], ['10', 10, '10'] ]
 		for color in colors:
 			# normalize color components
-			normalizeColor(color)
+			normalize_color(color)
 			# create using all three ways
 			colorMake = make_color(color[0], color[1], color[2])
 			colorNew = new_color(color[0], color[1], color[2])
 			colorManual = Color(color[0], color[1], color[2])
-			self.failUnless(colorEqualsColor(colorMake, colorNew) and colorEqualsColor(colorMake, colorManual), 'Colors not the same (' + str(colorManual) + ')')			
+			self.failUnless(color_equals_color(colorMake, colorNew) and color_equals_color(colorMake, colorManual), 'Colors not the same (' + str(colorManual) + ')')			
 		
 		
