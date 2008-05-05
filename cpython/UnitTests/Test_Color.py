@@ -50,14 +50,14 @@ class TestColor(unittest.TestCase):
 		non-normalized values (e.g. 1000), and str values (e.g. "1")'''
 		# test expectedly normal function calls
 		# Color bounds to [0,255] so we must check that the new and old way are the same
-		inputRGB = ( (0,0,0), (0,0,255), (255,255,255), (-1,-1,-1), (-1000, 64, 1000) )
-		expectedRGB = ( (0,0,0), (0,0,255), (255,255,255), (255,255,255), (24,64,232) )
-		self.failUnless(len(inputRGB) == len(expectedRGB), 'Test arrays are mapped 1:1')
+		input_RGB = ( (0,0,0), (0,0,255), (255,255,255), (-1,-1,-1), (-1000, 64, 1000) )
+		expected_RGB = ( (0,0,0), (0,0,255), (255,255,255), (255,255,255), (24,64,232) )
+		self.failUnless(len(input_RGB) == len(expected_RGB), 'Test arrays are mapped 1:1')
 		
-		for idx in range(len(inputRGB)):
-			r = inputRGB[idx][0]; expr = expectedRGB[idx][0]
-			g = inputRGB[idx][1]; expg = expectedRGB[idx][1]
-			b = inputRGB[idx][2]; expb = expectedRGB[idx][2]
+		for idx in range(len(input_RGB)):
+			r = input_RGB[idx][0]; expr = expected_RGB[idx][0]
+			g = input_RGB[idx][1]; expg = expected_RGB[idx][1]
+			b = input_RGB[idx][2]; expb = expected_RGB[idx][2]
 			self.color = Color(r,g,b)
 			self.assertEqual(self.color.r, expr, 'Invalid red color component (idx=' + str(idx) + ')')
 			self.assertEqual(self.color.g, expg, 'Invalid green color component (idx=' + str(idx) + ')')
