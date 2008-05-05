@@ -7,7 +7,7 @@ from picture import *
 # we MUST set the debug level to 1 to force errors to return
 debugLevel = 1
 
-def color_equals_colorBob(color, coloro):
+def color_equals_color(color, coloro):
 	# helper function to compare two colors
 	return (color.get_red() == coloro.get_red() and
 				color.get_green() == coloro.get_green() and
