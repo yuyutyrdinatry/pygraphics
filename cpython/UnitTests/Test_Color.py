@@ -5,22 +5,15 @@ from picture import *
 #from media import *
 
 # Convention Concerns:
-    # unittest uses different conventions than we are implementing (i.e. camelCase). 
-    # Do we ignore? Do we worry about inconsistency?
+	# unittest uses different conventions than we are implementing (i.e. camelCase). 
+	# Do we ignore? Do we worry about inconsistency?
 
 # we MUST set the debug level to 1 to force errors to return
 debugLevel = 1
 
-def color_equals_color(color1, color2):
-	'''Return True if Color color1 has equivalent RGB values as Color color2.'''
-	# helper function to compare two colors
-	return (color1.get_red() == color2.get_red() and
-				color1.get_green() == color2.get_green() and
-				color1.get_blue() == color2.get_blue())
-
 # Perhaps reserve the variable name "color" for Color objects?
-    # Option: color_array for RGB lists, others?
-    
+	# Option: color_array for RGB lists, others?
+	
 def normalize_color_array(color_array):
 	'''Normalize list color_array to bound values within [0, 255].
 	
@@ -30,15 +23,7 @@ def normalize_color_array(color_array):
 				color_array[idx] = int(color_array[idx]) % 256
 
 class TestColor(unittest.TestCase):
-	''' Tests the media.py Color class members '''
-			
-	def tear_down(self):
-		'''Resets self.color to None'''
-		# delete the color after use
-		try:
-			del self.color
-		except:
-			done = TRUE # 			
+	''' Tests the picture.py Color class members '''
 		
 	def test_constructor_invalid(self):
 		'''Test that Color constructor fails with invalid RGB value input.'''
@@ -58,10 +43,10 @@ class TestColor(unittest.TestCase):
 			r = input_RGB[idx][0]; expr = expected_RGB[idx][0]
 			g = input_RGB[idx][1]; expg = expected_RGB[idx][1]
 			b = input_RGB[idx][2]; expb = expected_RGB[idx][2]
-			self.color = Color(r,g,b)
-			self.assertEqual(self.color.r, expr, 'Invalid red color component (idx=' + str(idx) + ')')
-			self.assertEqual(self.color.g, expg, 'Invalid green color component (idx=' + str(idx) + ')')
-			self.assertEqual(self.color.b, expb, 'Invalid blue color component (idx=' + str(idx) + ')')
+			tester_color = Color(r,g,b)
+			self.assertEqual(tester_color.r, expr, 'Invalid red color component (idx=' + str(idx) + ')')
+			self.assertEqual(tester_color.g, expg, 'Invalid green color component (idx=' + str(idx) + ')')
+			self.assertEqual(tester_color.b, expb, 'Invalid blue color component (idx=' + str(idx) + ')')
 			# ensure that the old way also works (mod works differently in different languages?)
 			oldRGB = [r, g, b]
 			for idx in range(len(oldRGB)):
@@ -69,71 +54,76 @@ class TestColor(unittest.TestCase):
 					oldRGB[idx] += 256
 				while oldRGB[idx] > 255:
 					oldRGB[idx] -= 256
-			self.assertEqual(self.color.r, oldRGB[0], 'Invalid old red color component calc (idx=' + str(idx) + ')')
-			self.assertEqual(self.color.g, oldRGB[1], 'Invalid old green color component calc (idx=' + str(idx) + ')')
-			self.assertEqual(self.color.b, oldRGB[2], 'Invalid old blue color component calc (idx=' + str(idx) + ')')
-			# took out: del self.color in favor of a method
-			self.tear_down()
+			self.assertEqual(tester_color.r, oldRGB[0], 'Invalid old red color component calc (idx=' + str(idx) + ')')
+			self.assertEqual(tester_color.g, oldRGB[1], 'Invalid old green color component calc (idx=' + str(idx) + ')')
+			self.assertEqual(tester_color.b, oldRGB[2], 'Invalid old blue color component calc (idx=' + str(idx) + ')')
 
 			# test non-int inputs
-			self.color = Color(str(r), str(g), str(b))
-			self.assertEqual(self.color.r, expr, 'Invalid red color component (idx=' + str(idx) + ')')
-			self.assertEqual(self.color.g, expg, 'Invalid green color component (idx=' + str(idx) + ')')
-			self.assertEqual(self.color.b, expb, 'Invalid blue color component (idx=' + str(idx) + ')')
-			self.tear_down()
+			tester_color = Color(str(r), str(g), str(b))
+			self.assertEqual(tester_color.r, expr, 'Invalid red color component (idx=' + str(idx) + ')')
+			self.assertEqual(tester_color.g, expg, 'Invalid green color component (idx=' + str(idx) + ')')
+			self.assertEqual(tester_color.b, expb, 'Invalid blue color component (idx=' + str(idx) + ')')
 			
+	def test_eq(self):
+		'''Test the __eq__ method of Color'''
+		colors1 = [Color(0,0,0), Color(255, 255, 255), Color(50, 50, 50)]
+		colors2 = [Color(0,0,0), Color(255, 255, 255), Color(50, 50, 50)]
+		for idx in range(len(colors1)):
+			self.failUnless(colors1[idx] == colors2[idx])
+
+	
 	def test_distance(self):
 		'''Test distance method for finding the euclidean distance between two colors.'''		
-		color1 = ( Color(0,0,0), Color(255,255,255), Color(0,0,255), Color(255,255,255) )
-		color2 = ( Color(0,0,0), Color(255,255,255), Color(255,0,0), Color(0,0,0) )		
+		colors1 = ( Color(0,0,0), Color(255,255,255), Color(0,0,255), Color(255,255,255) )
+		colors2 = ( Color(0,0,0), Color(255,255,255), Color(255,0,0), Color(0,0,0) )		
 		expected_distance = ( 0, 0, sqrt(pow(255, 2)*2), sqrt(pow(255, 2)*3) )
-		self.failUnless(len(color1) == len(color2) == len(expected_distance), 'Test arrays are mapped 1:1')
-		for idx in range(len(color1)):
-			distance1 = color1[idx].distance(color2[idx])
-			distance2 = color2[idx].distance(color1[idx])
+		self.failUnless(len(colors1) == len(colors2) == len(expected_distance), 'Test arrays are mapped 1:1')
+		for idx in range(len(colors1)):
+			distance1 = colors1[idx].distance(colors2[idx])
+			distance2 = colors2[idx].distance(colors1[idx])
 			self.assertEqual(distance1, expected_distance[idx], 'Improper color one distance')
 			self.assertEqual(distance2, expected_distance[idx], 'Improper color two distance')
 			
 	def test_difference_subtraction(self):
 		'''Test Color subtraction and difference methods.'''
 		# test that color subtraction works
-		color1 = ( Color(0,0,0), Color(255,255,255), Color(0,0,255), Color(255,255,255) )
-		color2 = ( Color(0,0,0), Color(255,255,255), Color(255,0,0), Color(0,0,0) )		
+		colors1 = ( Color(0,0,0), Color(255,255,255), Color(0,0,255), Color(255,255,255) )
+		colors2 = ( Color(0,0,0), Color(255,255,255), Color(255,0,0), Color(0,0,0) )		
 		expected_difference_one_minus_two = ( Color(0,0,0), Color(0,0,0), Color(1,0,255), Color(255,255,255) )
 		expected_difference_two_minus_one = ( Color(0,0,0), Color(0,0,0), Color(255,0,1), Color(1,1,1) )
-		self.failUnless(len(color1) == len(color2) == len(expected_difference_one_minus_two) == len(expected_difference_two_minus_one), 'Test arrays are mapped 1:1')
-		for idx in range(len(color1)):
+		self.failUnless(len(colors1) == len(colors2) == len(expected_difference_one_minus_two) == len(expected_difference_two_minus_one), 'Test arrays are mapped 1:1')
+		for idx in range(len(colors1)):
 			# ensure that both difference and subtract work the same
-			sub1 = color1[idx]-color2[idx]
-			difference1 = color1[idx].difference(color2[idx])
-			sub2 = color2[idx]-color1[idx]
-			difference2 = color2[idx].difference(color1[idx])
-			self.failUnless(color_equals_color(sub1, difference1), 'Difference and subtraction differ (one-two)')
-			self.failUnless(color_equals_color(sub2, difference2), 'Difference and subtraction differ (two-one)')
-			self.failUnless(color_equals_color(sub1, expected_difference_one_minus_two[idx]), 'Unexpected difference returned (one-two)')
-			self.failUnless(color_equals_color(sub2, expected_difference_two_minus_one[idx]), 'Unexpected difference returned (two-one)')
+			sub1 = colors1[idx]-colors2[idx]
+			difference1 = colors1[idx].difference(colors2[idx])
+			sub2 = colors2[idx]-colors1[idx]
+			difference2 = colors2[idx].difference(colors1[idx])
+			self.failUnless(sub1 == difference1, 'Difference and subtraction differ (one-two)')
+			self.failUnless(sub2 == difference2, 'Difference and subtraction differ (two-one)')
+			self.failUnless(sub1 == expected_difference_one_minus_two[idx], 'Unexpected difference returned (one-two)')
+			self.failUnless(sub2 == expected_difference_two_minus_one[idx], 'Unexpected difference returned (two-one)')
 	
 	def test_set_get_RGB(self):
 		'''Test setting and getting RGB values from Color object.'''
 		# test the setters/getters of RGB components
 		default_color = [0,0,0]
 		color_arrays = [ [1,1,1], [-1,-1,-1], [0,64,255], [255,255,255], [-10,-64,-255], [-1000,0,1000], ['10', 10, '10'] ]
-		self.color = Color(default_color[0], default_color[1], default_color[2])
+		tester_color = Color(default_color[0], default_color[1], default_color[2])
 		for color_array in color_arrays:
 			# normalize color components
 			normalize_color_array(color_array)
 			# set tuple
-			self.color.set_rgb(color_array)
-			self.assertEqual(self.color.get_rgb(), color_array, 'Different colors encountered after setting/getting')
-			self.color.set_rgb(default_color)
+			tester_color.set_rgb(color_array)
+			self.assertEqual(tester_color.get_rgb(), color_array, 'Different colors encountered after setting/getting')
+			tester_color.set_rgb(default_color)
 			# set individually
-			self.color.set_red(color_array[0])
-			self.color.set_green(color_array[1])
-			self.color.set_blue(color_array[2])
-			self.assertEqual(self.color.get_red(), color_array[0], 'Different red component returned')
-			self.assertEqual(self.color.get_green(), color_array[1], 'Different green component returned')
-			self.assertEqual(self.color.get_blue(), color_array[2], 'Different blue component returned')
-			self.color.set_rgb(default_color)
+			tester_color.set_red(color_array[0])
+			tester_color.set_green(color_array[1])
+			tester_color.set_blue(color_array[2])
+			self.assertEqual(tester_color.get_red(), color_array[0], 'Different red component returned')
+			self.assertEqual(tester_color.get_green(), color_array[1], 'Different green component returned')
+			self.assertEqual(tester_color.get_blue(), color_array[2], 'Different blue component returned')
+			tester_color.set_rgb(default_color)
 			
 	def test_make_lighter_darker(self):
 		'''Test make_lighter and make_darker methods of Color object.'''
@@ -189,6 +179,6 @@ class TestColorHelpers(unittest.TestCase):
 			color_make = make_color(color_array[0], color_array[1], color_array[2])
 			color_new = new_color(color_array[0], color_array[1], color_array[2])
 			color_manual = Color(color_array[0], color_array[1], color_array[2])
-			self.failUnless(color_equals_color(color_make, color_new) and color_equals_color(color_make, color_manual), 'Colors not the same (' + str(color_manual) + ')')			
+			self.failUnless(color_make == color_new and color_make == color_manual, 'Colors not the same (' + str(color_manual) + ')')			
 		
 		
