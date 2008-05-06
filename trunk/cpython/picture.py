@@ -151,7 +151,7 @@ def quit():
 ##
 
 
-class Color:
+class Color(object):
     '''An RGB color.'''
 
     def __init__(self, r, g, b):
@@ -607,11 +607,34 @@ class Pixel:
 
     def __str__(self):
         return "Pixel, color=" + str(self.get_color())
+    
+    def has_color(self, color):
+        '''Return True if this Pixel has Color color.'''
+        return (self.get_red() == color.get_red() and
+                self.get_green() == color.get_green() and
+                self.get_blue() == color.get_blue())
+    
+    def has_color_values(self, color_array):
+        '''Return True if this Pixel has RGB values of list or tuple color_array.
+        
+        Note: color_array is expected to be in the following format, [R, G, B], where RGB are int values.'''
+        return (self.get_red() == color_array[0] and
+                self.get_green() == color_array[1] and
+                self.get_blue() == color_array[2])
 
+    def has_XY(self, x, y):
+        '''Return True if this Pixel has coordinates int x and int y.'''
+        len_x = self.pix.get_width()
+        len_y = self.pix.get_height()
+        if x <= -1 * len_x or x >= len_x or y <= -1 * len_y or y >= len_y:
+            raise IndexError
+        else:
+            return self.get_x() == x and self.get_y() == y
+        
     def set_red(self, r):
         if 0 <= r and r <= 255:
-            (self.pix.pixels)[self.x, self.y] = (r, (self.pix.pixels)[self.x,
-                    self.y][1], (self.pix.pixels)[self.x, self.y][2])
+            (self.pix.pixels)[self.x, self.y] = \
+                (r, (self.pix.pixels)[self.x, self.y][1], (self.pix.pixels)[self.x, self.y][2])
         else:
             raise ValueError('Invalid red component value (' + str(r) +
                              '), expected value within [0, 255]')
@@ -1370,6 +1393,7 @@ def make_lighter(color):
     color.make_lighter()
     return color
 
+# TODO: Duplicate code? decide on make_color or new_color?
 
 def make_color(red, green, blue):
     """Takes three inputs: For the red, green, and blue
