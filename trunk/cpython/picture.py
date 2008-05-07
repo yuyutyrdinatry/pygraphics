@@ -382,6 +382,7 @@ class Picture:
     def __init__(self, auto_repaint=False):
         self.title = "Unnamed"
         self.disp_image = None
+        self.surf = None
         self.win_active = 0
 
     def __initialize_picture(self, surf, filename, title):
@@ -476,15 +477,24 @@ class Picture:
         return self.title
 
     def get_image(self):
-        if self.get_height() == 0 and self.get_width() == 0:
+        if not self.surf:
+            raise AttributeError
+        elif (self.get_height() == 0 and self.get_width() == 0):
             raise ValueError
+        
         return self.surf
 
     def get_width(self):
-        return (self.surf.size)[0]
+        if self.surf:
+            return (self.surf.size)[0]
+        else:
+            raise AttributeError('Uninitialized picture has no width')
 
     def get_height(self):
-        return (self.surf.size)[1]
+        if self.surf:
+            return (self.surf.size)[1]
+        else:
+            raise AttributeError('Uninitialized picture has no height')
 
     def get_pixel(self, x, y):
         return Pixel(self, x, y)
