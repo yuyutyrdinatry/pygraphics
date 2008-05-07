@@ -1,5 +1,5 @@
 # import os.path
-#from TestExecute import *
+from TestExecute import *
 from picture import *
 import nose
 #from media import *
@@ -23,21 +23,8 @@ def normalize_color_array(color_array):
 
 def test_constructor_invalid():
 	'''Test that Color constructor fails with invalid RGB value input.'''
-	try:
-		color = Color(None, None, None)
-		assert False, "None as arguments in Color construction: Exception not raised."
-	except TypeError:
-		assert True
-	except Exception, e:
-		assert False, "None as arguments in Color construction: The wrong exception" + repr(e) + "was raised."
-		
-	try:
-		color = Color('', '', '')
-		assert False, "Empty string as arguments in Color construction: Exception not raised."
-	except ValueError:
-		assert True
-	except Exception, e:
-		assert False, "Empty string as arguments in Color construction: The wrong exception" + repr(e) + "was raised."
+	nose.tools.assert_raises(TypeError, Color, None, None, None)
+	nose.tools.assert_raises(ValueError, Color, '', '', '')
 		
 def test_constructor():
 	'''Test Color constructor. Particularly, that it accepts 
@@ -184,6 +171,15 @@ def test_make_new_color():
 		color_new = new_color(color_array[0], color_array[1], color_array[2])
 		color_manual = Color(color_array[0], color_array[1], color_array[2])
 		assert color_make == color_new and color_make == color_manual, 'Colors not the same (' + str(color_manual) + ')'			
+
+def test_non_color_object_call():
+	'''Test to ensure that all the picture global convenience functions fail on non-Picture objects.'''
+	nose.tools.assert_raises(ValueError, distance, DummyClass(), DummyClass())
+	nose.tools.assert_raises(ValueError, distance, Color(0,0,0), DummyClass())
+	nose.tools.assert_raises(ValueError, distance, DummyClass(), Color(0,0,0))
+	nose.tools.assert_raises(ValueError, make_darker, DummyClass())
+	nose.tools.assert_raises(ValueError, make_lighter, DummyClass())
+
 	
 if __name__ == '__main__':
 	nose.runmodule()
