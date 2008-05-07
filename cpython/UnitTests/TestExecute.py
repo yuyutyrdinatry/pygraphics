@@ -19,12 +19,12 @@ defaultImagesPath = os.path.join(defaultResourcePath, "images")
 defaultSoundsPath = os.path.join(defaultResourcePath, "sounds")
 
 class DummyClass:
-	''' a dummy object to pass into methods which check for class attributes '''
+	''' A dummy object to pass into methods which check for class attributes '''
 	def __init__(self):
 		do = None
 
 def resi(filename):
-    ''' returns a image resource uri given the filename: resources/images/filename '''
+    '''Returns a image resource uri given the filename: resources/images/filename '''
     if not os.path.isabs(filename):
         file = os.path.join(defaultImagesPath, filename)
     else:
@@ -32,7 +32,7 @@ def resi(filename):
     return os.path.abspath(file);
 
 def ress(filename):
-    ''' returns a sound resource uri given the filename: resources/sounds/filename '''
+    '''Returns a sound resource uri given the filename: resources/sounds/filename '''
     if not os.path.isabs(filename):
         file = os.path.join(defaultSoundsPath, filename)
     else:
@@ -68,7 +68,8 @@ def find(search_root, patterns=None, recurse=0, return_dirs=1):
     return matches
 
 
-def main(): 	
+def main():
+	'''Collect all the paths to Test files and runs them.'''
 	print root_path
 	
 	# filter for all [Tt]est_ python files
