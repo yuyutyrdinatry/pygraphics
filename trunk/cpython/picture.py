@@ -28,34 +28,32 @@
 #               no longer dependent on Numerical and Pygame
 
 
-from math import sqrt
 from Tkinter import *
-import Image
-import ImageDraw
 import ImageFont
-import ImageTk as imtk
 import os
 import sys
-import time
 import tkColorChooser
 import tkFileDialog
 import tkMessageBox
-import tkFont
+#import tkFont
 import user
 import thread
-
+from color import *
+from pixel import *
+from pictureclass import *
+from openpicturetool import *
 ##
 ## Global vars -------------------------------------------------------
 ##
 
-ver = "1.3"
-default_frequency = 22050
-default_sample_size = -16  # negative denotes signed number of bits
-default_num_channels = 1  # stereo or mono
+VER = "1.3"
+DEFAULT_FREQUENCY = 22050
+DEFAULT_SAMPLE_SIZE = -16  # negative denotes signed number of bits
+DEFAULT_NUM_CHANNELS = 1  # stereo or mono
 
-default_font = ImageFont.load_default()
+DEFAULT_FONT = ImageFont.load_default()
 
-media_folder = user.home + os.sep
+MEDIA_FOLDER = user.home + os.sep
 
 ##
 ## Global misc functions -------------------------------------------------------
@@ -67,20 +65,20 @@ def open_picture_tool():
 
 
 def version():
-    global ver
-    return ver
+    global VER
+    return VER
 
 
 def set_media_path():
-    global media_folder
+    global MEDIA_FOLDER
     file = pick_a_folder()
-    media_folder = file
-    print "New media folder: " + media_folder
+    MEDIA_FOLDER = file
+    print "New media folder: " + MEDIA_FOLDER
 
 
 def get_media_path(filename):
-    global media_folder
-    file = media_folder + filename
+    global MEDIA_FOLDER
+    file = MEDIA_FOLDER + filename
     if not os.path.isfile(file):
         print "Note: There is no file at " + file
     return file
@@ -101,10 +99,10 @@ def pick_a_file(**options):
     return path
 
 def pick_a_folder(**options):
-    global media_folder
+    global MEDIA_FOLDER
     folder = tkFileDialog.askdirectory()
     if folder == '':
-        folder = media_folder
+        folder = MEDIA_FOLDER
     return folder
 
 
@@ -118,15 +116,15 @@ def pick_a_color(**options):
 
 
 def set_media_folder():
-    global media_folder
+    global MEDIA_FOLDER
     file = pick_a_folder()
-    media_folder = file
-    print "New media folder: " + media_folder
+    MEDIA_FOLDER = file
+    print "New media folder: " + MEDIA_FOLDER
 
 
 def get_media_folder(filename):
-    global media_folder
-    file = media_folder + filename
+    global MEDIA_FOLDER
+    file = MEDIA_FOLDER + filename
     if not os.path.isfile(file) or not os.path.isdir(file):
         print "Note: There is no file at " + file
     return file
@@ -145,751 +143,6 @@ def get_short_path(filename):
 def quit():
     sys.exit(0)
 
-
-##
-## COLOR -----------------------------------------------------------------------
-##
-
-
-class Color(object):
-    '''An RGB color.'''
-
-    def __init__(self, r, g, b):
-        self.r = int(r) % 256
-        self.g = int(g) % 256
-        self.b = int(b) % 256
-
-    def __str__(self):
-        return "color r=" + str(self.get_red()) + " g=" + str(self.get_green()) + \
-            " b=" + str(self.get_blue())
-
-    def __repr__(self):
-        return "Color(" + str(self.get_red()) + ", " + str(self.get_green()) + \
-            ", " + str(self.get_blue()) + ")"
-
-    def __sub__(self, color):
-        return Color(self.r - color.r, self.g - color.g, self.b - color.b)
-
-    def __add__(self, color):
-        return Color(self.r + color.r, self.g + color.g, self.b + color.b)
-
-    def __eq__(self, newcolor):
-        return self.get_red() == newcolor.get_red() and self.get_green() == \
-            newcolor.get_green() and self.get_blue() == newcolor.get_blue()
-
-    def __ne__(self, newcolor):
-        return not self.__eq__(newcolor)
-
-    def distance(self, color):
-        r = pow(self.r - color.r, 2)
-        g = pow(self.g - color.g, 2)
-        b = pow(self.b - color.b, 2)
-        return sqrt(r + g + b)
-
-    def difference(self, color):
-        return self - color
-
-    def get_rgb(self):
-        return [self.r, self.g, self.b]
-
-    def set_rgb(self, atuple):
-        self.r = int(atuple[0]) % 256
-        self.g = int(atuple[1]) % 256
-        self.b = int(atuple[2]) % 256
-
-    def get_red(self):
-        return self.r
-
-    def get_green(self):
-        return self.g
-
-    def get_blue(self):
-        return self.b
-
-    def set_red(self, value):
-        self.r = int(value) % 256
-
-    def set_green(self, value):
-        self.g = int(value) % 256
-
-    def set_blue(self, value):
-        self.b = int(value) % 256
-
-    def make_lighter(self):
-        self.r = int((255 - self.r) * .35 + self.r)
-        self.g = int((255 - self.g) * .35 + self.g)
-        self.b = int((255 - self.b) * .35 + self.b)
-
-    def make_darker(self):
-        self.r = int(self.r * .65)
-        self.g = int(self.g * .65)
-        self.b = int(self.b * .65)
-
-
-##
-## Color Constants -------------------------------------------------------------
-##
-
-aliceblue = Color(240, 248, 255)
-antiquewhite = Color(250, 235, 215)
-aqua = Color(0, 255, 255)
-aquamarine = Color(127, 255, 212)
-azure = Color(240, 255, 255)
-beige = Color(245, 245, 220)
-bisque = Color(255, 228, 196)
-black = Color(0, 0, 0)
-blanchedalmond = Color(255, 235, 205)
-blue = Color(0, 0, 255)
-blueviolet = Color(138, 43, 226)
-brown = Color(165, 42, 42)
-burlywood = Color(222, 184, 135)
-cadetblue = Color(95, 158, 160)
-chartreuse = Color(127, 255, 0)
-chocolate = Color(210, 105, 30)
-coral = Color(255, 127, 80)
-cornflowerblue = Color(100, 149, 237)
-cornsilk = Color(255, 248, 220)
-crimson = Color(220, 20, 60)
-cyan = Color(0, 255, 255)
-darkblue = Color(0, 0, 139)
-darkcyan = Color(0, 139, 139)
-darkgoldenrod = Color(184, 134, 11)
-darkgray = Color(169, 169, 169)
-darkgreen = Color(0, 100, 0)
-darkkhaki = Color(189, 183, 107)
-darkmagenta = Color(139, 0, 139)
-darkolivegreen = Color(85, 107, 47)
-darkorange = Color(255, 140, 0)
-darkorchid = Color(153, 50, 204)
-darkred = Color(139, 0, 0)
-darksalmon = Color(233, 150, 122)
-darkseagreen = Color(143, 188, 143)
-darkslateblue = Color(72, 61, 139)
-darkslategray = Color(47, 79, 79)
-darkturquoise = Color(0, 206, 209)
-darkviolet = Color(148, 0, 211)
-deeppink = Color(255, 20, 147)
-deepskyblue = Color(0, 191, 255)
-dimgray = Color(105, 105, 105)
-dodgerblue = Color(30, 144, 255)
-firebrick = Color(178, 34, 34)
-floralwhite = Color(255, 250, 240)
-forestgreen = Color(34, 139, 34)
-fuchsia = Color(255, 0, 255)
-gainsboro = Color(220, 220, 220)
-ghostwhite = Color(248, 248, 255)
-gold = Color(255, 215, 0)
-goldenrod = Color(218, 165, 32)
-gray = Color(128, 128, 128)
-green = Color(0, 128, 0)
-greenyellow = Color(173, 255, 47)
-honeydew = Color(240, 255, 240)
-hotpink = Color(255, 105, 180)
-indianred = Color(205, 92, 92)
-indigo = Color(75, 0, 130)
-ivory = Color(255, 255, 240)
-khaki = Color(240, 230, 140)
-lavender = Color(230, 230, 250)
-lavenderblush = Color(255, 240, 245)
-lawngreen = Color(124, 252, 0)
-lemonchiffon = Color(255, 250, 205)
-lightblue = Color(173, 216, 230)
-lightcoral = Color(240, 128, 128)
-lightcyan = Color(224, 255, 255)
-lightgoldenrodyellow = Color(250, 250, 210)
-lightgreen = Color(144, 238, 144)
-lightgrey = Color(211, 211, 211)
-lightpink = Color(255, 182, 193)
-lightsalmon = Color(255, 160, 122)
-lightseagreen = Color(32, 178, 170)
-lightskyblue = Color(135, 206, 250)
-lightslategray = Color(119, 136, 153)
-lightsteelblue = Color(176, 196, 222)
-lightyellow = Color(255, 255, 224)
-lime = Color(0, 255, 0)
-limegreen = Color(50, 205, 50)
-linen = Color(250, 240, 230)
-magenta = Color(255, 0, 255)
-maroon = Color(128, 0, 0)
-mediumaquamarine = Color(102, 205, 170)
-mediumblue = Color(0, 0, 205)
-mediumorchid = Color(186, 85, 211)
-mediumpurple = Color(147, 112, 219)
-mediumseagreen = Color(60, 179, 113)
-mediumslateblue = Color(123, 104, 238)
-mediumspringgreen = Color(0, 250, 154)
-mediumturquoise = Color(72, 209, 204)
-mediumvioletred = Color(199, 21, 133)
-midnightblue = Color(25, 25, 112)
-mintcream = Color(245, 255, 250)
-mistyrose = Color(255, 228, 225)
-moccasin = Color(255, 228, 181)
-navajowhite = Color(255, 222, 173)
-navy = Color(0, 0, 128)
-oldlace = Color(253, 245, 230)
-olive = Color(128, 128, 0)
-olivedrab = Color(107, 142, 35)
-orange = Color(255, 165, 0)
-orangered = Color(255, 69, 0)
-orchid = Color(218, 112, 214)
-palegoldenrod = Color(238, 232, 170)
-palegreen = Color(152, 251, 152)
-paleturquoise = Color(175, 238, 238)
-palevioletred = Color(219, 112, 147)
-papayawhip = Color(255, 239, 213)
-peachpuff = Color(255, 218, 185)
-peru = Color(205, 133, 63)
-pink = Color(255, 192, 203)
-plum = Color(221, 160, 221)
-powderblue = Color(176, 224, 230)
-purple = Color(128, 0, 128)
-red = Color(255, 0, 0)
-rosybrown = Color(188, 143, 143)
-royalblue = Color(65, 105, 225)
-saddlebrown = Color(139, 69, 19)
-salmon = Color(250, 128, 114)
-sandybrown = Color(244, 164, 96)
-seagreen = Color(46, 139, 87)
-seashell = Color(255, 245, 238)
-sienna = Color(160, 82, 45)
-silver = Color(192, 192, 192)
-skyblue = Color(135, 206, 235)
-slateblue = Color(106, 90, 205)
-slategray = Color(112, 128, 144)
-snow = Color(255, 250, 250)
-springgreen = Color(0, 255, 127)
-steelblue = Color(70, 130, 180)
-tan = Color(210, 180, 140)
-teal = Color(0, 128, 128)
-thistle = Color(216, 191, 216)
-tomato = Color(255, 99, 71)
-turquoise = Color(64, 224, 208)
-violet = Color(238, 130, 238)
-wheat = Color(245, 222, 179)
-white = Color(255, 255, 255)
-whitesmoke = Color(245, 245, 245)
-yellow = Color(255, 255, 0)
-yellowgreen = Color(154, 205, 50)
-
-
-##
-## PICTURE ---------------------------------------------------------------------
-##
-
-
-class Picture:
-
-    def __init__(self, auto_repaint=False):
-        self.title = "Unnamed"
-        self.disp_image = None
-        self.surf = None
-        self.win_active = 0
-
-    def __initialize_picture(self, surf, filename, title):
-        self.surf = surf
-
-        # we get the pixels array from the surface
-
-        self.pixels = surf.load()
-
-        self.filename = filename
-        self.title = title
-
-    def create_image(self, width, height):
-
-        # fail if dimensions are invalid
-
-        if width < 0 or height < 0:
-            raise ValueError("create_image(" + str(width) + ", " + str(height) +
-                             "): Invalid image dimensions")
-        else:
-            self.__initialize_picture(Image.new("RGB", (width, height)),
-                    '', 'None')
-
-    def load_image(self, filename):
-        # global media_folder
-        # if not os.path.isabs(filename):
-        #    filename = media_folder + filename
-
-        # fail if file does not exist
-
-        if not os.path.isfile(filename):
-            raise ValueError("load_image(" + filename +
-                             "): No such file")
-        else:
-            from Image import open
-            mode = "RGB"
-            image = open(filename).convert(mode)
-            size = image.size
-            data = image.tostring()
-
-            # initialize this picture with new properties
-
-            self.__initialize_picture(image, filename, get_short_path(filename))
-
-    def crop(self, x1, y1, x2, y2):
-        maxX = self.get_width()
-        None
-        maxY = self.get_height()
-        None
-        if not 0 <= x1 <= maxX or not 0 <= y1 <= maxY or not x1 < x2 <= \
-            maxX or not y1 < y2 <= maxY:
-            raise ValueError('Invalid width/height specified')
-
-        image = self.surf.crop((x1, y1, x2, y2))
-        self.__initialize_picture(image, self.filename, self.title)
-
-    def clear(self, color=black):
-
-        # clears the picture pixels to black
-
-        self.set_pixels(color)
-
-    def __str__(self):
-        return "Picture, filename " + self.filename + " height " + str(self.get_height()) + \
-            " width " + str(self.get_width())
-
-    def show(self):
-        #if (sys.platform)[:3] == 'win':
-        #    i = 1
-        #    p = thread.start_new(self.showchild, (i, ))
-        #    time.sleep(0.1)
-        #else:
-        self.surf.show()
-
-        #if raw_input() == 'c': pass
-
-    def showchild(self, tid):
-        self.surf.show()
-
-    def do_pick_color(self, event):
-        x = event.x + 1
-        y = event.y + 1
-        if 0 < x and x <= self.get_width() and 0 < y and y < self.get_height():
-            pixel = self.get_pixel(x, y)
-            print pixel
-            None
-
-    def set_title(self, title):
-        self.title = title
-
-    def get_title(self):
-        return self.title
-
-    def get_image(self):
-        if not self.surf:
-            raise AttributeError
-        elif (self.get_height() == 0 and self.get_width() == 0):
-            raise ValueError
-        
-        return self.surf
-
-    def get_width(self):
-        if self.surf:
-            return (self.surf.size)[0]
-        else:
-            raise AttributeError('Uninitialized picture has no width')
-
-    def get_height(self):
-        if self.surf:
-            return (self.surf.size)[1]
-        else:
-            raise AttributeError('Uninitialized picture has no height')
-
-    def get_pixel(self, x, y):
-        return Pixel(self, x, y)
-
-    def get_pixels(self):
-        collect = []
-
-        # we want the width and the height inclusive since Pixel() is one based
-        # we increase the ranges so that we don't have to add in each iteration
-        #Changed to 0-based!
-
-        for x in range(0, self.get_width()):
-            for y in range(0, self.get_height()):
-                collect.append(Pixel(self, x, y))
-
-        return collect
-
-    def set_pixels(self, color):
-        """set all the pixels in this picture to a given color"""
-
-        try:
-            image = Image.new(self.surf.mode, self.surf.size, tuple(color.get_rgb()))
-            self.__initialize_picture(image, self.filename, self.title)
-        except:
-            raise AttributeError('set_pixels(color): Picture has not yet been initialized.')
-
-    def write_to(self, filename):
-        # if not os.path.isabs(filename):
-        #    filename = media_folder + filename
-
-        self.surf.save(filename)
-
-    def add_rect_filled(self, acolor, x, y, w, h):
-        draw = ImageDraw.Draw(self.surf)
-        draw.rectangle([x, y, x + w, y + h], outline=tuple(acolor.get_rgb()),
-                       fill=tuple(acolor.get_rgb()))
-        del draw
-
-    def add_rect(self, acolor, x, y, w, h, width1=1):
-        draw = ImageDraw.Draw(self.surf)
-        draw.rectangle([x, y, x + w, y + h], outline=tuple(acolor.get_rgb()))
-        del draw
-
-    # Draws a polygon on the image.
-    def add_polygon(self, acolor, point_list):
-        draw = ImageDraw.Draw(self.surf)
-        draw.polygon(point_list, outline=tuple(acolor.get_rgb()))
-        del draw
-
-    def add_polygon_filled(self, acolor, point_list):
-        draw = ImageDraw.Draw(self.surf)
-        draw.polygon(point_list, outline=tuple(acolor.get_rgb()), fill=
-                     tuple(acolor.get_rgb()))
-        del draw
-
-    def add_oval_filled(self, acolor, x, y, w, h):
-        draw = ImageDraw.Draw(self.surf)
-        draw.ellipse([x, y, x + w, y + h], outline=tuple(acolor.get_rgb()),
-                     fill=tuple(acolor.get_rgb()))
-        del draw
-
-    def add_oval(self, acolor, x, y, w, h):
-        draw = ImageDraw.Draw(self.surf)
-        draw.ellipse([x, y, x + w, y + h], outline=tuple(acolor.get_rgb()))
-        del draw
-
-    def add_arc_filled(self, acolor, x, y, w, h, start, end):
-        draw = ImageDraw.Draw(self.surf)
-        draw.arc([x, y, x + w, y + h], start, end, outline=tuple(acolor.get_rgb()),
-                 fill=tuple(acolor.get_rgb()))
-        del draw
-
-    def add_arc(self, acolor, x, y, w, h, start, end):
-        draw = ImageDraw.Draw(self.surf)
-        draw.arc([x, y, x + w, y + h], start, end, outline=tuple(acolor.get_rgb()))
-        del draw
-
-    def add_line(self, acolor, x1, y1, x2, y2, width1=1):
-        draw = ImageDraw.Draw(self.surf)
-        draw.line([x1, y1, x2, y2], fill=tuple(acolor.get_rgb()), width=
-                  width1)
-        del draw
-
-    def add_text(self, acolor, x, y, string):
-        global default_font
-        self.add_text_with_style(acolor, x, y, string, default_font)
-
-    def add_text_with_style(self, acolor, x, y, string, font1):
-        draw = ImageDraw.Draw(self.surf)
-        draw.text((x, y), text=string, fill=tuple(acolor.get_rgb()),
-                  font=font1)
-        del draw
-
-#
-# PIXEL ------------------------------------------------------------------------
-#
-
-
-class Pixel:
-    '''A pixel in an image with a color and an x and y location.'''
-
-    def __init__(self, picture, x, y):
-
-        if not picture.__class__ == Picture:
-            raise ValueError("Pixel(picture, x, y): picture input is not a Picture")
-
-        len_x = picture.get_width()
-        len_y = picture.get_height()
-        if x <= -1 * len_x or x >= len_x or y <= -1 * len_y or y >= \
-            len_y:
-            raise IndexError
-        if len_x > 0 and len_y > 0:
-            self.x = x % len_x
-            self.y = y % len_y
-
-            self.pix = picture
-        else:
-            raise ValueError('Invalid image dimensions (' + str(len_x) +
-                             ", " + str(len_y) + ")")
-
-    def __str__(self):
-        return "Pixel, color=" + str(self.get_color())
-    
-    def has_color(self, color):
-        '''Return True if this Pixel has Color color.'''
-        return (self.get_red() == color.get_red() and
-                self.get_green() == color.get_green() and
-                self.get_blue() == color.get_blue())
-    
-    def has_color_values(self, color_array):
-        '''Return True if this Pixel has RGB values of list or tuple color_array.
-        
-        Note: color_array is expected to be in the following format, [R, G, B], where RGB are int values.'''
-        return (self.get_red() == color_array[0] and
-                self.get_green() == color_array[1] and
-                self.get_blue() == color_array[2])
-
-    def has_XY(self, x, y):
-        '''Return True if this Pixel has coordinates int x and int y.'''
-        len_x = self.pix.get_width()
-        len_y = self.pix.get_height()
-        if x <= -1 * len_x or x >= len_x or y <= -1 * len_y or y >= len_y:
-            raise IndexError
-        else:
-            return self.get_x() == x and self.get_y() == y
-        
-    def set_red(self, r):
-        if 0 <= r and r <= 255:
-            (self.pix.pixels)[self.x, self.y] = \
-                (r, (self.pix.pixels)[self.x, self.y][1], (self.pix.pixels)[self.x, self.y][2])
-        else:
-            raise ValueError('Invalid red component value (' + str(r) +
-                             '), expected value within [0, 255]')
-
-    def set_green(self, g):
-        if 0 <= g and g <= 255:
-            (self.pix.pixels)[self.x, self.y] = ((self.pix.pixels)[self.x,
-                    self.y][0], g, (self.pix.pixels)[self.x, self.y][2])
-        else:
-            raise ValueError('Invalid green component value (' + str(g) +
-                             '), expected value within [0, 255]')
-
-    def set_blue(self, b):
-        if 0 <= b and b <= 255:
-            (self.pix.pixels)[self.x, self.y] = ((self.pix.pixels)[self.x,
-                    self.y][0], (self.pix.pixels)[self.x, self.y][1], b)
-        else:
-            raise ValueError('Invalid blue component value (' + str(b) +
-                             '), expected value within [0, 255]')
-
-    def get_red(self):
-        return int((self.pix.pixels)[self.x, self.y][0])
-
-    def get_green(self):
-        return int((self.pix.pixels)[self.x, self.y][1])
-
-    def get_blue(self):
-        return int((self.pix.pixels)[self.x, self.y][2])
-
-    def get_color(self):
-        return Color(self.get_red(), self.get_green(), self.get_blue())
-
-    def set_color(self, color):
-        self.set_red(color.get_red())
-        self.set_green(color.get_green())
-        self.set_blue(color.get_blue())
-
-    def get_x(self):
-        return self.x
-
-    def get_y(self):
-        return self.y
-
-
-##
-## Picture Tool ----------------------------------------------------------------
-##
-
-
-class OpenPictureTool:
-
-    def __init__(self, file_name):
-        self.file_name = file_name  #'C:/img_1037.jpg'
-        self.picture = make_picture(self.file_name)
-
-    def run_tool(self, safe):
-        self.root = Tk()
-
-        self.top = Menu(self.root, bd=2)
-        self.root.config(menu=self.top)
-
-        self.zoom = Menu(self.top, tearoff=0)
-        self.zoom.add_command(label='25%', command=lambda : self.zoomf(0.25),
-                              underline=0)
-        self.zoom.add_command(label='50%', command=lambda : self.zoomf(0.5),
-                              underline=0)
-        self.zoom.add_command(label='75%', command=lambda : self.zoomf(0.75),
-                              underline=0)
-        self.zoom.add_command(label='100%', command=lambda : self.zoomf(1.0),
-                              underline=0)
-        self.zoom.add_command(label='150%', command=lambda : self.zoomf(1.5),
-                              underline=0)
-        self.zoom.add_command(label='200%', command=lambda : self.zoomf(2.0),
-                              underline=0)
-        self.zoom.add_command(label='500%', command=lambda : self.zoomf(5.0),
-                              underline=0)
-
-        self.top.add_cascade(label='Zoom', menu=self.zoom, underline=0)
-
-        #
-        # create a frame and pack it
-        #
-
-        self.frame1 = Frame(self.root)
-
-        self.frame1.pack(side=BOTTOM, fill=X)
-
-        self.root.im = Image.open(self.file_name).convert("RGB")
-        self.root.original = self.root.im
-        self.root.zoomMult = 1.0
-
-        self.root.photo1 = imtk.PhotoImage(image=self.root.im)
-
-        self.root.title(self.file_name)
-
-        #Canvas for the Image, with scroll bars
-
-        self.canvas1 = Canvas(self.frame1, width=self.root.photo1.width() -
-                              1, height=self.root.photo1.height() - 1,
-                              cursor="crosshair", borderwidth=0)
-        self.root.vbar = Scrollbar(self.frame1)
-        self.root.hbar = Scrollbar(self.frame1, orient='horizontal')
-        self.root.vbar.pack(side=RIGHT, fill=Y)
-        self.root.hbar.pack(side=BOTTOM, fill=X)
-
-        self.canvas1.pack(side="bottom", padx=0, pady=0, anchor=NW, fill=
-                          BOTH, expand=YES)
-        self.root.vbar.config(command=self.canvas1.yview)  # call on scroll move
-        self.root.hbar.config(command=self.canvas1.xview)
-        self.canvas1.config(yscrollcommand=self.root.vbar.set)  # call on canvas move
-        self.canvas1.config(xscrollcommand=self.root.hbar.set)
-        self.drawImage(self.root.im)
-
-        self.canvas1.bind('<Button-1>', self.canvClick)
-
-        #Entry fields and Enter button
-
-        fields = ('X:', 'Y:')
-
-        self.root.bind('<Return>', lambda event: self.fetch(self.ents))  #enter key available
-
-        flag = 1
-        self.ents = []
-        self.v = StringVar()
-        self.v.set("R:      G:      B:     ")
-        for field in fields:
-            row = Frame(self.root)  # make a new row
-            lab = Label(row, width=5, text=field)  # add label, entry
-            ent = Entry(row)
-            if flag == 1:
-                font = tkFont.Font(size=10)
-                colorLabel = Label(row, textvariable=self.v, font=font)
-                self.canvas2 = Canvas(row, width=35, bd=2, relief=RIDGE,
-                        height=20)
-            row.pack(side=TOP, fill=X)  # pack row on top
-            lab.pack(side=LEFT)
-            ent.pack(side=LEFT, expand=NO, fill=X)  # grow horizontal
-            if flag == 1:
-                colorLabel.pack(side=LEFT, padx=100, pady=1)
-                self.canvas2.pack(side=LEFT, padx=2, pady=1)
-                flag -= 1
-            self.ents.append(ent)
-
-        button1 = Button(row, width=25, overrelief=GROOVE, bg=
-                         "lightGrey", text="Enter", command=lambda : \
-                         self.fetch(self.ents)).pack(side=TOP, padx=6,
-                pady=1, anchor=CENTER, fill=BOTH)
-
-        #
-        # start the event loop
-        #
-
-        self.root.mainloop()
-        if(not safe): #used when not running on darwin(Mac) OS
-            sys.exit(0)
-
-    def zoomf(self, factor):
-
-        # zoom in or out in increments
-
-        imgpil = self.root.original
-        (wide, high) = imgpil.size
-
-        #root.zoomMult *= factor
-        #if factor < 1.0:                     # antialias best if shrink
-        #    filter = Image.ANTIALIAS         # also nearest, bilinear
-        #else:
-        #    filter = Image.BICUBIC
-
-        new = imgpil.resize((int(wide * factor), int(high * factor)))  #, filter)
-        self.drawImage(new)
-
-    def restore(self):
-        self.drawImage(self.root.original)
-
-    def drawImage(self, imgpil, forcesize=()):
-        self.root.im = imgpil
-        self.root.photo1 = imtk.PhotoImage(image=imgpil)  # not file=imgpath
-        (scrwide, scrhigh) = forcesize or self.root.maxsize()  # wm screen size x,y
-        scrhigh -= 115  # leave room for top display/button at max photo size
-        imgwide = self.root.photo1.width()  # size in pixels
-        imghigh = self.root.photo1.height()  # same as imgpil.size
-
-        fullsize = (0, 0, imgwide, imghigh)  # scrollable
-        viewwide = min(imgwide, scrwide)  # viewable
-        viewhigh = min(imghigh, scrhigh)
-
-        self.canvas1.delete('all')  # clear prior photo
-        self.canvas1.config(height=viewhigh, width=viewwide)  # viewable window size
-        self.canvas1.config(scrollregion=fullsize)  # scrollable area size
-
-        self.root.img = self.canvas1.create_image(0, 0, image=self.root.photo1,
-                anchor=NW)
-
-        if imgwide <= scrwide and imghigh <= scrhigh:  # too big for display?
-            self.root.state('normal')  # no: win size per img
-        elif (sys.platform)[:3] == 'win':
-
-            # do windows fullscreen
-
-            self.root.state('zoomed')  # others use geometry( )
-
-    def canvClick(self, event):
-        try:
-            x = self.canvas1.canvasx(event.x)
-            y = self.canvas1.canvasy(event.y)
-            if x >= 0 and x < self.root.photo1.width() and y >= 0 and y < \
-                self.root.photo1.height():
-                tk_rgb = "#%02x%02x%02x" % self.root.im.getpixel((x, y))
-                self.canvas2.config(bg=tk_rgb)
-                rgb = "R: %d; G: %d; B: %d;" % self.root.im.getpixel((x,
-                        y))
-                self.v.set(rgb)
-                (evX, evY) = self.ents
-                evX.delete(0, END)
-                evX.insert(0, str(int(x)))
-                evY.delete(0, END)
-                evY.insert(0, str(int(y)))
-            else:
-                rgb = "X,Y Out of Range"
-                self.v.set(rgb)
-        except ValueError:
-            pass
-
-    #do at Button press or Enter key press
-
-    def fetch(self, entries):
-        (strX, strY) = entries
-        try:
-            x = int(strX.get())
-            y = int(strY.get())
-            if x >= 0 and x < self.root.photo1.width() and y >= 0 and y < \
-                self.root.photo1.height():
-                tk_rgb = "#%02x%02x%02x" % self.root.im.getpixel((x, y))
-                self.canvas2.config(bg=tk_rgb)
-                rgb = "R: %d; G: %d; B: %d;" % self.root.im.getpixel((x,
-                        y))
-                self.v.set(rgb)
-            else:
-                rgb = "X,Y Out of Range"
-                self.v.set(rgb)
-        except ValueError:
-            rgb = "X,Y Coordinates must be integers!"
-            self.v.set(rgb)
-            pass
 
 
 ##
