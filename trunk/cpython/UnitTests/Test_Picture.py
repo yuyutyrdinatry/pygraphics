@@ -3,7 +3,13 @@
 from TestExecute import *
 from picture import *
 import nose
+from pixel import *
 #from media import *
+
+IMAGE_TYPES = ['bmp', 'gif', 'jpg']
+BLESSED_SAVE_LOC_PREFIX = resi('saved.')
+SAVE_LOC_PREFIX = resi('saved.tmp.')
+
 
 ###############################################################################
 # Setup/Teardown Functions
@@ -11,18 +17,15 @@ import nose
 def setup_function():
 	'''A setup function to be called by nose at the beginning of every test.
 	Creates global variables used in most tests.'''
-	global pict, image_types, blessed_save_loc_prefix, save_loc_prefix
+	global pict
 	pict = Picture()
-	image_types = ['bmp', 'gif', 'jpg']
-	blessed_save_loc_prefix = resi('saved.')
-	save_loc_prefix = resi('saved.tmp.')
 
 
 def teardown_function():
 	'''A teardown function to be called by nose at the end of every test.
 	Destroys global variables created in setup.'''
-	global pict, image_types, blessed_save_loc_prefix, save_loc_prefix
-	del pict, image_types, blessed_save_loc_prefix, save_loc_prefix
+	global pict
+	del pict
 
 
 ###############################################################################
@@ -80,27 +83,19 @@ def ensure_picture_has_color(picture, color):
 @nose.with_setup(setup_function, teardown_function)		
 def test_empty_constructor():
 	'''Test the Picture class constructor'''
-	assert pict.disp_image == None, 'New Picture contains display image'
+	assert pict.surf == None, 'New Picture contains display image'
 	assert pict.win_active == 0, 'New Picture is active'
 
 @nose.with_setup(setup_function, teardown_function)	
 def test_create_image_zero_dimensions():
 	'''Test create_image of Picture class with zero dimensions'''
-	pict.create_image(0, 0)
-	assert pict.surf.size == (0, 0), "Wrong Picture dimensions"
-	assert pict.get_width() == 0, "Wrong number of Picture pixels"
-	assert pict.filename == '', "Non-empty filename for empty image"
-	assert pict.title == 'None', "Pict title was, " + str(pict.title)
+	nose.tools.assert_raises(ValueError, pict.create_image, 0, 0)
 
 @nose.with_setup(setup_function, teardown_function)	
 def test_create_image_questionable_dimensions():
 	'''Test create_image of Picture class with strange dimensions (0, 1)'''
 	# TODO: should we even be creating the surface if one of the sides <= 0?
-	pict.create_image(0, 1) # what is a zero by 1 image?
-	assert pict.surf.size == (0, 1), "Wrong Picture dimensions"
-	assert pict.get_width() == 0, "Wrong number of Picture pixels"
-	assert pict.filename == '', "Non-empty filename for empty image"
-	assert pict.title == 'None', "Pict title was, " + str(pict.title)
+	nose.tools.assert_raises(ValueError, pict.create_image, 0, 1)
 
 @nose.with_setup(setup_function, teardown_function)	
 def test_create_image_invalid_dimensions():
@@ -122,7 +117,7 @@ def test_load_image():
 	failed = False
 	error_res = ''
 	# for each of the supported file types
-	for suffix in image_types:
+	for suffix in IMAGE_TYPES:
 		filename = filename_prefix + suffix
 		file = resi(filename)
 		# try and load the test file of that type
@@ -147,12 +142,8 @@ def test_to_string_invalid_image():
 	nose.tools.assert_raises(AttributeError, str, pict)
 	nose.tools.assert_raises(ValueError, pict.create_image, -1, -1)
 	nose.tools.assert_raises(AttributeError, str, pict)
-
-@nose.with_setup(setup_function, teardown_function) 
-def test_to_string_dimensionless_image():
-	'''Test str() functionality with a dimensionless Picture'''
-	pict.create_image(0, 0)
-	assert str(pict) == 'Picture, filename  height 0 width 0', "Invalid str for dimensionless image"
+	nose.tools.assert_raises(ValueError, pict.create_image, 0, 0)
+	nose.tools.assert_raises(AttributeError, str, pict)
 
 @nose.with_setup(setup_function, teardown_function)
 def test_to_string():
@@ -161,7 +152,7 @@ def test_to_string():
 	failed = False
 	error_res = ''
 	# for each of the supported file types
-	for suffix in image_types:
+	for suffix in IMAGE_TYPES:
 		filename = filename_prefix + suffix
 		file = resi(filename)
 		# try and load the test file of that type
@@ -176,20 +167,25 @@ def test_to_string():
 		assert False, error_res
 
 @nose.with_setup(setup_function, teardown_function)
-def test_title():
-	'''Test title of Picture class'''
-	# setting after initial load
+def test_title_no_image():
+	'''Test title functionality of Picture without image'''
 	assert pict.get_title() == 'Unnamed', "Improper initial title"
 	pict.set_title('')
 	assert pict.get_title() == '', "Improper title " + pict.get_title()
 	pict.set_title('asdf')
 	assert pict.get_title() == 'asdf', "Improper title " + pict.get_title()
-	# setting after creating a new image
-	pict.create_image(0, 0)
+
+@nose.with_setup(setup_function, teardown_function)
+def test_title_created_image():
+	'''Test title functionality of Picture with a created image'''
+	pict.create_image(1, 1)
 	assert pict.get_title() == 'None', "Improper title " + pict.get_title()
 	pict.set_title('asdf')
 	assert pict.get_title() == 'asdf', "Improper title " + pict.get_title()
-	# setting after loading an image
+
+@nose.with_setup(setup_function, teardown_function)
+def test_title_loaded_image():
+	'''Test title functionality of Picture with a loaded image'''
 	pict.load_image(resi('white.bmp'))
 	assert pict.get_title() == os.path.join('images', 'white.bmp'), "Improper title " + pict.get_title()
 	pict.set_title('asdf')
@@ -202,8 +198,8 @@ def test_get_image_invalid_image():
 	nose.tools.assert_raises(AttributeError, pict.get_image)
 	nose.tools.assert_raises(ValueError, pict.create_image, -1, -1)
 	nose.tools.assert_raises(AttributeError, pict.get_image)
-	pict.create_image(0, 0)
-	nose.tools.assert_raises(ValueError, pict.get_image)
+	nose.tools.assert_raises(ValueError, pict.create_image, 0, 0)
+	nose.tools.assert_raises(AttributeError, pict.get_image)
 
 @nose.with_setup(setup_function, teardown_function)
 def test_get_image():
@@ -246,7 +242,7 @@ def test_get_width_height_invalid_image():
 def test_get_width_height():
 	'''Test get_height and get_width with a valid Picture'''
 	# create image
-	dimension = [(0,0), (50, 50), (0, 5), (10, 0)]
+	dimension = [(1,1), (50, 50), (1, 5), (10, 1)]
 	for idx in range(len(dimension)):
 		tester_pict = Picture()
 		w = dimension[idx][0]
@@ -283,8 +279,12 @@ def test_get_pixel():
 	# out of bounds indices
 	# IMAGE SIZE: 0
 	tester_pict = Picture()
-	tester_pict.create_image(0, 0)
-	nose.tools.assert_raises(IndexError, tester_pict.get_pixel, 0, 0)	
+	tester_pict.create_image(1, 1)
+	try:
+		p = tester_pict.get_pixel(0, 0)
+	except Exception, e:
+		assert False, "Exception: " + str(e) + " thrown when getting valid pixel"
+	
 	nose.tools.assert_raises(IndexError, tester_pict.get_pixel, -1, 0)	
 	nose.tools.assert_raises(IndexError, tester_pict.get_pixel, -1, -1)	
 	nose.tools.assert_raises(IndexError, tester_pict.get_pixel, 50, 50)	
@@ -329,8 +329,8 @@ def test_get_pixels_invalid_image():
 @nose.with_setup(setup_function, teardown_function)
 def test_get_pixels():
 	'''Test get_pixels on a valid Picture'''
-	dimensions = [(0,0), (10, 0), (0, 10), (1, 1), (10, 10)]
-	expected_len = [0, 0, 0, 1, 100]
+	dimensions = [(1,1), (10, 1), (1, 10), (10, 10)]
+	expected_len = [1, 10, 10, 100]
 	assert len(dimensions) == len(expected_len), 'Test arrays are mapped 1:1'
 	
 	for idx in range(len(dimensions)):
@@ -374,29 +374,25 @@ def test_clear():
 @nose.with_setup(setup_function, teardown_function)
 def test_write_to_invalid_image():
 	'''Test writing an invalid Picture to a file'''
-	nose.tools.assert_raises(AttributeError, pict.write_to, save_loc_prefix + 'tmp')
+	nose.tools.assert_raises(AttributeError, pict.write_to, SAVE_LOC_PREFIX + 'tmp')
 	nose.tools.assert_raises(ValueError, pict.create_image, -1, -1)
-	nose.tools.assert_raises(AttributeError, pict.write_to, save_loc_prefix + 'tmp')
-
-@nose.with_setup(setup_function, teardown_function)
-def test_write_to_empty_image():
-	'''Test writing an empty Picture to a file'''
-	pict.create_image(0, 0)
-	nose.tools.assert_raises(KeyError, pict.write_to, save_loc_prefix + 'tmp')
+	nose.tools.assert_raises(AttributeError, pict.write_to, SAVE_LOC_PREFIX + 'tmp')
+	nose.tools.assert_raises(ValueError, pict.create_image, 0, 0)
+	nose.tools.assert_raises(AttributeError, pict.write_to, SAVE_LOC_PREFIX + 'tmp')
 
 @nose.with_setup(setup_function, teardown_function)
 def test_write_to_large_image():
 	'''Test writing a large valid Picture to a file'''
 	# invalid file types
 	pict.create_image(10, 10)
-	nose.tools.assert_raises(KeyError, pict.write_to, save_loc_prefix + 'tmp')
+	nose.tools.assert_raises(KeyError, pict.write_to, SAVE_LOC_PREFIX + 'tmp')
 	# ensure all of our types hold
-	for suffix in image_types:
+	for suffix in IMAGE_TYPES:
 		try:				
-			pict.write_to(save_loc_prefix + suffix)
+			pict.write_to(SAVE_LOC_PREFIX + suffix)
 			# compare with saved copies
-#				print "\n"+blessed_save_loc_prefix +'.'+ suffix, save_loc_prefix +'.'+ suffix+"\n"
-			ensure_images_equal(blessed_save_loc_prefix + suffix, save_loc_prefix + suffix)
+#				print "\n"+BLESSED_SAVE_LOC_PREFIX +'.'+ suffix, SAVE_LOC_PREFIX +'.'+ suffix+"\n"
+			ensure_images_equal(BLESSED_SAVE_LOC_PREFIX + suffix, SAVE_LOC_PREFIX + suffix)
 		except KeyError:
 			assert False, 'Failed saving created image to (' + suffix + ') files'
 
@@ -405,7 +401,7 @@ def test_write_to_loaded_image():
 	'''Test writing a loaded Picture to a file'''
 	tester_save_loc_prefix = resi('white.tmp.')
 	blessed_tester_save_loc_prefix = resi('white.')
-	for suffix in image_types:
+	for suffix in IMAGE_TYPES:
 		tester_pict = Picture()
 		tester_pict.load_image(blessed_tester_save_loc_prefix + suffix)
 		try:

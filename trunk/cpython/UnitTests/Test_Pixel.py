@@ -107,7 +107,8 @@ def test_set_RGB_inbounds():
 	assert tester_pixel.has_color_values([255, 0, 128]), 'Improper color component, should be [255, 0, 128]'
 	tester_pixel.set_green(64) # set green
 	assert tester_pixel.has_color_values([255, 64, 128]), 'Improper color component, should be [255, 64, 128]'
-	tester_pixel.set_blue(255); tester_pixel.set_green(255)
+	tester_pixel.set_blue(255)
+	tester_pixel.set_green(255)
 	assert tester_pixel.has_color_values(white_array), 'Improper color component, should be [255, 255, 255]'
 
 @nose.with_setup(setup_function, teardown_function)
