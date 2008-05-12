@@ -77,7 +77,6 @@ def main():
 	print test_case_paths
 	nose.run(test_case_paths)
 	
-	return 0
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

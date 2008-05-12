@@ -168,9 +168,8 @@ def test_make_new_color():
 		normalize_color_array(color_array)
 		# create using all three ways
 		color_make = make_color(color_array[0], color_array[1], color_array[2])
-		color_new = new_color(color_array[0], color_array[1], color_array[2])
 		color_manual = Color(color_array[0], color_array[1], color_array[2])
-		assert color_make == color_new and color_make == color_manual, 'Colors not the same (' + str(color_manual) + ')'			
+		assert color_make == color_manual, 'Colors not the same (' + str(color_manual) + ')'			
 
 def test_non_color_object_call():
 	'''Test to ensure that all the picture global convenience functions fail on non-Picture objects.'''
