@@ -1,24 +1,26 @@
-from pictureclass import *
+import picture
 from color import *
 
 class Pixel(object):
     '''A pixel in an image with a color and an x and y location.'''
 
-    def __init__(self, picture, x, y):
+    def __init__(self, pict, x, y):
 
-        if not picture.__class__ == Picture:
-            raise ValueError("Pixel(picture, x, y): picture input is not a Picture")
+        if not pict.__class__ == picture.Picture:
+            raise ValueError("Pixel(pict, x, y): pict input is not a Picture")
 
-        len_x = picture.get_width()
-        len_y = picture.get_height()
+        len_x = pict.get_width()
+        len_y = pict.get_height()
+        # ADD COMMENT about wraparound, use negative indices, throw error
         if x <= -1 * len_x or x >= len_x or y <= -1 * len_y or y >= \
             len_y:
             raise IndexError
+        # Figure out mod
         if len_x > 0 and len_y > 0:
             self.x = x % len_x
             self.y = y % len_y
 
-            self.pix = picture
+            self.pix = pict
         else:
             raise ValueError('Invalid image dimensions (' + str(len_x) +
                              ", " + str(len_y) + ")")
@@ -59,8 +61,7 @@ class Pixel(object):
 
     def set_green(self, g):
         if 0 <= g and g <= 255:
-            (self.pix.pixels)[self.x, self.y] = ((self.pix.pixels)[self.x,
-                    self.y][0], g, (self.pix.pixels)[self.x, self.y][2])
+            (self.pix.pixels)[self.x, self.y] = ((self.pix.pixels)[self.x, self.y][0], g, (self.pix.pixels)[self.x, self.y][2])
         else:
             raise ValueError('Invalid green component value (' + str(g) +
                              '), expected value within [0, 255]')
