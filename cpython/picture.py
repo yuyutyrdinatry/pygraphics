@@ -677,10 +677,14 @@ class Picture(object):
         elif width != None and height != None:
             self.create_image(width, height)
         else:
-            raise ValueError('''Picture constructor takes at least one of the following arguments: 
-            - named str argument filename (full path to a picture file) 
-            - named int arguments width and height
-            - named Image argument image (PIL Image object)''')
+            raise ValueError('Picture constructor takes at least one of the following arguments: \n- named str argument filename (full path to a picture file) \n- named int arguments width and height \n- named Image argument image (PIL Image object)')
+
+    def in_bounds(self, x, y):
+        '''Return True if int x and int y are in-bounds coordinates for this Picture.'''
+        # Zero-based coordinates
+        last_x = self.get_width() - 1
+        last_y = self.get_height() - 1
+        return (x >= 0 and x < last_x) and (y >= 0 and y < last_y)
 
     def __initialize_picture(self, image):
         '''Set the PIL Image object image in this Picture object 
@@ -745,14 +749,12 @@ class Picture(object):
             raise ValueError('Invalid width/height specified')
 
         # Create cropped Image from self.image
-        crop = (x1, y1, x2, y2)
-        placement = (0, 0)
-        new_size = (x2 - x1, y2 - y1)
-        crop = ImageTransform.ExtentTransform(crop)
-        cropped = self.image.transform(new_size, crop)
+        corners = (x1, y1, x2, y2)
+        temp = self.image.crop(corners)
+        new = temp.copy()
         
         # Load new image into this Picture object
-        self.load_image(cropped)
+        self.load_image(new)
 
     def clear(self, color=black):
         '''Clear this Picture to Color color. Default is black.'''
@@ -811,7 +813,9 @@ class Picture(object):
 
     def get_pixel(self, x, y):
         '''Return the Pixel at coordinates x and y.'''
-        return Pixel(self, x, y)
+        if not self.in_bounds(x, y):
+            raise IndexError
+        return PixelNew(self.pixels, x, y)
 
     def get_pixels(self):
         '''Return a list of Pixel objects in this Picture.
@@ -819,7 +823,7 @@ class Picture(object):
         collect = []
         for x in range(0, self.get_width()):
             for y in range(0, self.get_height()):
-                collect.append(Pixel(self, x, y))
+                collect.append(PixelNew(self.pixels, x, y))
         return collect
 
     def __iter__(self):
@@ -827,7 +831,7 @@ class Picture(object):
         from left to right then top down.'''
         for x in range(0, self.get_width()):
             for y in range(0, self.get_height()):
-                yield Pixel(self, x, y)
+                yield PixelNew(self.pixels, x, y)
 
     def set_pixels(self, color):
         """Set the Image of this Picture to a given color."""
@@ -1039,3 +1043,8 @@ def prompt_ok_cancel(prompt_msg, title):
 #
 
 debug_level = 0
+
+if __name__ == '__main__':
+    p = Picture(1,1)
+    print 'hi'
+    pix = p.get_pixel
