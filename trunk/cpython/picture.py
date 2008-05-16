@@ -644,8 +644,6 @@ def make_lighter(color):
     color.make_lighter()
     return color
 
-# TODO: Duplicate code? decide on make_color or new_color?
-
 def make_color(red, green, blue):
     """Takes three inputs: For the red, green, and blue
        components (in order), then returns a color object.
@@ -942,11 +940,3 @@ class Picture(object):
         draw = ImageDraw.Draw(self.image)
         draw.text((x, y), text=string, fill=tuple(acolor.get_rgb()),
                   font=font1)
-
-if __name__ == '__main__':
-    p = Picture(100,100)
-    print p.get_height()
-    p.show()
-    p.crop(0,0, 49, 49)
-    print p.get_height()
-    p.show()
