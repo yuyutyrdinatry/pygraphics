@@ -278,8 +278,6 @@ def test_get_pixel_image_larger():
 	pict.create_image(10, 10)
 	try:
 		# should not fail
-		pict.get_pixel(-9, -9) # last wrap around value
-		pict.get_pixel(-1, -1) # negative indices
 		pict.get_pixel(0, 0) # first index
 		pict.get_pixel(0, 9) 
 		pict.get_pixel(9, 0)
@@ -287,6 +285,8 @@ def test_get_pixel_image_larger():
 	except IndexError:
 		assert False, 'Failed accessing expected pixel'
 	nose.tools.assert_raises(IndexError, pict.get_pixel, 10, 10) # should fail
+	nose.tools.assert_raises(IndexError, pict.get_pixel, -1, -1)
+	nose.tools.assert_raises(IndexError, pict.get_pixel, 11, 11)
 
 @nose.with_setup(setup_function, teardown_function)
 def test_get_pixels():

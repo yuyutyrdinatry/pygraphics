@@ -37,53 +37,29 @@ def teardown_function():
 ##############################################################################
 
 @nose.with_setup(setup_function, teardown_function)
-def test_constructor_invalid():
-	'''Test the constructor of Pixel on improper input, Errors expected.'''
-	# NOTE: pixels is of type [x=[y=[RGB]]], and x,y are ONE based
-	nose.tools.assert_raises(ValueError, Pixel, None, 0, 0)
-	nose.tools.assert_raises(IndexError, Pixel, pict, 2, 2)
-	nose.tools.assert_raises(IndexError, Pixel, pict, -10, 10)
-	
-@nose.with_setup(setup_function, teardown_function)
 def test_constructor():
 	'''Test the constructor of Pixel on proper input.'''
 	try:
 		#positive pixel coordinates
 		for x in range(pict.image.size[0]):
 			for y in range(pict.image.size[1]):
-				tester_pixel = Pixel(pict, x, y) # x=0, y=0
+				tester_pixel = Pixel(pict.pixels, x, y) # x=0, y=0
 				assert tester_pixel.x == x, 'Invalid x coordinate initialized'
 				assert tester_pixel.y == y, 'Invalid y coordinate initialized'
 				if x == y:
-					assert list(tester_pixel.pix.pixels[tester_pixel.x,tester_pixel.y]) == black_array, 'Invalid pixel color initialized'
+					assert list(tester_pixel.pixels[tester_pixel.x,tester_pixel.y]) == black_array, 'Invalid pixel color initialized'
 				else:
-					assert list(tester_pixel.pix.pixels[tester_pixel.x,tester_pixel.y]) == white_array, 'Invalid pixel color initialized'
-	except Exception, e:
-		assert False, "Failed on proper construction input: " + str(e)
-
-@nose.with_setup(setup_function, teardown_function)
-def test_constructor_negative_indices():
-	'''Test the constructor of Pixel on proper input. Use negative coordinates.'''
-	try:
-		for x in range(0, -pict.image.size[0], -1):
-			for y in range(0, pict.image.size[1], -1):
-				tester_pixel = Pixel(pict, x, y) # x=0, y=0
-				assert tester_pixel.x == abs(x), 'Invalid x coordinate initialized'
-				assert tester_pixel.y == abs(y), 'Invalid y coordinate initialized'
-				if x == y:
-					assert list(tester_pixel.pix.pixels[tester_pixel.x,tester_pixel.y]) == black_array, 'Invalid pixel color initialized'
-				else:
-					assert list(tester_pixel.pix.pixels[tester_pixel.x,tester_pixel.y]) == white_array, 'Invalid pixel color initialized'
+					assert list(tester_pixel.pixels[tester_pixel.x,tester_pixel.y]) == white_array, 'Invalid pixel color initialized'
 	except Exception, e:
 		assert False, "Failed on proper construction input: " + str(e)
 
 @nose.with_setup(setup_function, teardown_function)
 def test_has_color():
 	'''Test the has_color and has_color_values methods of Pixel.'''
-	tester_pixel = Pixel(pict, 0, 0)
+	tester_pixel = Pixel(pict.pixels, 0, 0)
 	tester_color_arrays = [(0, 0, 0), (255, 255, 255), (128, 128, 128)]
 	for color_array in tester_color_arrays:
-		tester_pixel.pix.pixels[tester_pixel.x, tester_pixel.y] = color_array
+		tester_pixel.pixels[tester_pixel.x, tester_pixel.y] = color_array
 		tester_color = Color(0,0,0)
 		tester_color.set_rgb(color_array)
 		assert tester_pixel.has_color(tester_color), "has_color failed on proper Color input"
@@ -93,7 +69,7 @@ def test_has_color():
 def test_set_RGB_inbounds():
 	'''Test setting RGB values for Pixel.'''
 	# TODO: also test for Alpha if we add support for that
-	tester_pixel = Pixel(pict, 0, 0)
+	tester_pixel = Pixel(pict.pixels, 0, 0)
 	assert tester_pixel.has_color_values(black_array), 'Improper color component, should be [0, 0, 0]'
 	tester_pixel.set_red(0) # empty set
 	tester_pixel.set_green(0)
@@ -113,7 +89,7 @@ def test_set_RGB_inbounds():
 def test_set_RGB_outbounds():
 	'''Test setting RGB values that are out of bounds for Pixel.'''
 	outbounds = [-1, -10, 256, 300]
-	tester_pixel = Pixel(pict, 0, 0)
+	tester_pixel = Pixel(pict.pixels, 0, 0)
 	for value in outbounds:
 		nose.tools.assert_raises(ValueError, tester_pixel.set_red, value)
 		nose.tools.assert_raises(ValueError, tester_pixel.set_green, value)
@@ -123,7 +99,7 @@ def test_set_RGB_outbounds():
 @nose.with_setup(setup_function, teardown_function)
 def test_get_RGB():
 	'''Test getting Pixel RGB values methods.'''
-	tester_pixel = Pixel(pict, 0, 0)
+	tester_pixel = Pixel(pict.pixels, 0, 0)
 	assert tester_pixel.has_color_values(black_array), 'Improper color gotten'
 	assert tester_pixel.get_red() == 0, 'Improper color gotten'
 	assert tester_pixel.get_green() == 0, 'Improper color gotten'
@@ -141,7 +117,7 @@ def test_get_RGB():
 def test_set_get_color():
 	'''Test the setting and getting Color for Pixel.'''
 	colors = [Color(0, 0, 0), Color(-1, -1, -1), Color(0, 64, 32), Color(255, 255, 255)]
-	tester_pixel = Pixel(pict, 0, 0)
+	tester_pixel = Pixel(pict.pixels, 0, 0)
 	for color in colors:
 		# ensure that the colors are the same after setting and getting
 		tester_pixel.set_color(color)
@@ -157,27 +133,21 @@ def test_has_XY():
 	# test in range x, y
 	for x in range(len_x):
 		for y in range(len_y):
-			tester_pixel = Pixel(large_pict, x, y)
+			tester_pixel = Pixel(large_pict.pixels, x, y)
 			assert tester_pixel.has_XY(x, y), "has_XY failed on proper in-bound input"
 			
-	# test out of range x, y (IndexError expected)
-	for x in range(len_x, len_x * 2):
-		for y in range(len_y, len_y * 2):
-			tester_pixel = Pixel(large_pict, x % len_x, y % len_y)
-			nose.tools.assert_raises(IndexError, tester_pixel.has_XY, x, y)
-
 @nose.with_setup(setup_function, teardown_function)
 def test_get_XY():
 	'''Test that get_x and get_y return valid indices within ranges x=[0, width], y=[0, height]'''
 	width = large_pict.get_width()
 	height = large_pict.get_height()
 	
-	input_coordinates = [(0, 0), (3, 3), (-1, -1), (-2, -2), (-3, -3)]
-	expected_coordinates = [(0, 0), (3, 3), (3, 3), (2, 2), (1, 1)]	# wrap around values will be bounded
+	input_coordinates = [(0, 0), (3, 3), (2, 2), (1, 1)]
+	expected_coordinates = [(0, 0), (3, 3), (2, 2), (1, 1)]	# wrap around values will be bounded
 	assert len(input_coordinates) == len(expected_coordinates), 'Test arrays are not mapped 1:1'
 	# test each of the input coordinates, making sure they map to the correct expected coords
 	for idx in range(len(input_coordinates)):
-		tester_pixel = Pixel(large_pict, input_coordinates[idx][0], input_coordinates[idx][1])
+		tester_pixel = Pixel(large_pict.pixels, input_coordinates[idx][0], input_coordinates[idx][1])
 		assert tester_pixel.has_XY(expected_coordinates[idx][0], expected_coordinates[idx][1]), 'Improper XY coordinates (' + str(tester_pixel.get_x()) + ', ' + str(tester_pixel.get_y()) + ')'	
 
 @nose.with_setup(setup_function, teardown_function)
