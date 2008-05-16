@@ -782,11 +782,8 @@ class Picture(object):
     def set_filename_and_title(self, filename):
         '''Set filename and title of this Picture. 
         
-        If filename is not None set the Pictures filename
-        to the input str filename. Set title to 
-        the short path of input str filename.
-        
-        Otherwise set both to the empty str.'''
+        If filename is not None set the Pictures filename to the input str filename. 
+        Set title to the short path of input str filename. Otherwise set both to the empty str.'''
         if filename != None:
             self.filename = filename
             self.title = get_short_path(filename)
