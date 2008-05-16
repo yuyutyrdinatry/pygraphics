@@ -103,9 +103,3 @@ class Pixel(object):
     def get_y(self):
         '''Return the y value of this Pixel.'''
         return self.y
-    
-if __name__ == '__main__':
-    from picture import *
-    pic = Picture(10,10)
-    p = pic.get_pixel(1,1)
-    print repr(p)
