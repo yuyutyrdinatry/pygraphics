@@ -664,8 +664,8 @@ class Picture(object):
         '''Constructor for the Picture object class. 
         
         Requires one of:
+        - int arguments width and height
         - named str argument filename (full path to a picture file) 
-        - named int arguments width and height
         - named Image argument image (PIL Image object)'''
         # Invalid input is handled by methods
         self.set_filename_and_title(filename)
@@ -677,14 +677,19 @@ class Picture(object):
         elif width != None and height != None:
             self.create_image(width, height)
         else:
-            raise ValueError('Picture constructor takes at least one of the following arguments: \n- named str argument filename (full path to a picture file) \n- named int arguments width and height \n- named Image argument image (PIL Image object)')
+            raise ValueError('Picture constructor takes at least one of the ' +\
+                             'following arguments: \n - named str argument' +\
+                             ' filename (full path to a picture file) \n' +\
+                             '- named int arguments width and height \n' +\
+                             '- named Image argument image (PIL Image object)')
 
     def in_bounds(self, x, y):
-        '''Return True if int x and int y are in-bounds coordinates for this Picture.'''
+        '''Return True if int x and int y are in-bounds coordinates 
+        for this Picture.'''
         # Zero-based coordinates
-        last_x = self.get_width() - 1
-        last_y = self.get_height() - 1
-        return (x >= 0 and x < last_x) and (y >= 0 and y < last_y)
+        len_x = self.get_width()
+        len_y = self.get_height()
+        return (x >= 0 and x < len_x) and (y >= 0 and y < len_y)
 
     def __initialize_picture(self, image):
         '''Set the PIL Image object image in this Picture object 
@@ -732,24 +737,18 @@ class Picture(object):
             self.set_filename_and_title(filename)
 
     def crop(self, x1, y1, x2, y2):
-        '''Replace this Picture with a rectangular region with upper left corner (x1, y1)
-        and upper right corner (x2, y2) from the current Picture.
+        '''Replace this Picture with a rectangular region with upper left corner 
+        (x1, y1) and upper right corner (x2, y2) from the current Picture.
            
         Note: coordinates are zero-based so to get a 50x50 image starting from
         top left corner the coordinates would be: 0,0,49,49.'''
-        max_x = self.get_width()
-        max_y = self.get_height()
-        
-        # To have 0 based coordinates
-        x2, y2 = x2 + 1, y2 + 1
-        
         # Check for invalid dimensions
-        if not 0 <= x1 <= max_x or not 0 <= y1 <= max_y or not x1 < x2 <= \
-            max_x or not y1 < y2 <= max_y:
+        if not self.in_bounds(x1, y1) or not self.in_bounds(x2, y2) or not x1 < x2 or not y1 < y2:
             raise ValueError('Invalid width/height specified')
 
         # Create cropped Image from self.image
-        corners = (x1, y1, x2, y2)
+        # Crop is not inclusive of the last pixel
+        corners = (x1, y1, x2 + 1, y2 + 1)
         temp = self.image.crop(corners)
         new = temp.copy()
         
@@ -761,21 +760,19 @@ class Picture(object):
         self.set_pixels(color)
 
     def __str__(self):
+        '''Return a str of this Picture with its filename, width, and height.'''
+        return "Picture, filename " + self.filename + " height " + \
+            str(self.get_height()) + " width " + str(self.get_width())
+            
+    def __repr__(self):
         '''Return a str representation of this Picture.'''
-        return "Picture, filename " + self.filename + " height " + str(self.get_height()) + \
-            " width " + str(self.get_width())
+        return "Picture(width=%d, height=%d, filename=%s)" % (self.get_width(),
+                                                              self.get_height(),
+                                                              self.filename)
 
     def show(self):
         '''Display this Picture in a separate window.'''
         self.image.show()
-
-#    def do_pick_color(self, event):
-#        x = event.x + 1
-#        y = event.y + 1
-#        if 0 < x and x <= self.get_width() and 0 < y and y < self.get_height():
-#            pixel = self.get_pixel(x, y)
-#            print pixel
-#            None
 
     def set_title(self, title):
         '''Set title of this Picture to str title.'''
@@ -815,7 +812,7 @@ class Picture(object):
         '''Return the Pixel at coordinates x and y.'''
         if not self.in_bounds(x, y):
             raise IndexError
-        return PixelNew(self.pixels, x, y)
+        return Pixel(self.pixels, x, y)
 
     def get_pixels(self):
         '''Return a list of Pixel objects in this Picture.
@@ -823,7 +820,7 @@ class Picture(object):
         collect = []
         for x in range(0, self.get_width()):
             for y in range(0, self.get_height()):
-                collect.append(PixelNew(self.pixels, x, y))
+                collect.append(Pixel(self.pixels, x, y))
         return collect
 
     def __iter__(self):
@@ -831,7 +828,7 @@ class Picture(object):
         from left to right then top down.'''
         for x in range(0, self.get_width()):
             for y in range(0, self.get_height()):
-                yield PixelNew(self.pixels, x, y)
+                yield Pixel(self.pixels, x, y)
 
     def set_pixels(self, color):
         """Set the Image of this Picture to a given color."""
@@ -946,105 +943,10 @@ class Picture(object):
         draw.text((x, y), text=string, fill=tuple(acolor.get_rgb()),
                   font=font1)
 
-##
-## DEBUG -----------------------------------------------------------------------
-##
-
-# the following allows us to wrap an error message and display specific
-# information depending on the context
-
-
-def exception_hook(type, value, traceback):
-    try:
-        global debug_level
-        cur_level = debug_level
-    except:
-        cur_level = 0
-
-    # handle each level
-
-    if cur_level == 0:
-
-        # user mode
-
-        print str(value)
-        sys.exc_clear()
-    elif cur_level == 1:
-        raise value
-    else:
-
-        # normal error mode
-
-        tb = traceback
-        framestack = []
-        while tb:
-
-            # get the current frame
-
-            framestack.append(tb.tb_frame)
-
-            # and traverse back to the top
-
-            tb = tb.tb_next
-        framestack.reverse()
-
-        # print the message and each calling method
-
-        print "Message: (%s)\n    %s" % (str(type), value)
-        print "Stack Trace:"
-        for temp_frame in framestack:
-            print "    [%s:(%d)] - %s()" % (temp_frame.f_code.co_filename,
-                    temp_frame.f_lineno, temp_frame.f_code.co_name)
-        sys.exc_clear()
-
-
-# set the hook
-
-sys.excepthook = exception_hook
-
-# graphical warnings and prompts
-
-
-def show_warning(msg, title="Warning"):
-    tkMessageBox.showwarning(title, msg)
-
-
-def show_error(msg, title="Error"):
-    tkMessageBox.showerror(title, msg)
-
-
-#
-# all prompts return:
-#       -1 for cancel (if there are > 2 choices)
-#       0 for no/cancel (only if there are 2 choices)
-#       1 for yes/ok
-#
-
-
-def prompt_yes_no(prompt_msg, title):
-    result = tkMessageBox.askquestion(title, prompt_msg, default=
-            tkMessageBox.NO)
-    if result == 'yes':
-        return 1
-    else:
-        return 0
-
-
-def prompt_ok_cancel(prompt_msg, title):
-    return int(tkMessageBox.askokcancel(title, prompt_msg, default=
-               tkMessageBox.CANCEL))
-
-
-#
-# set the default debug level
-# 0 - print user friendly error msgs only (default)
-# 1 - throw normal errors
-# 2 - show simple errors & stack trace
-#
-
-debug_level = 0
-
 if __name__ == '__main__':
-    p = Picture(1,1)
-    print 'hi'
-    pix = p.get_pixel
+    p = Picture(100,100)
+    print p.get_height()
+    p.show()
+    p.crop(0,0, 49, 49)
+    print p.get_height()
+    p.show()
