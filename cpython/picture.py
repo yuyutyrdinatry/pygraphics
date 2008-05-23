@@ -58,96 +58,6 @@ DEFAULT_FONT = ImageFont.load_default()
 MEDIA_FOLDER = user.home + os.sep
 
 ##
-## Global misc functions -------------------------------------------------------
-##
-
-
-def open_picture_tool():
-    OpenPictureTool()
-
-
-def version():
-    global VER
-    return VER
-
-
-def set_media_path():
-    global MEDIA_FOLDER
-    file = pick_a_folder()
-    MEDIA_FOLDER = file
-    print "New media folder: " + MEDIA_FOLDER
-
-
-def get_media_path(filename):
-    global MEDIA_FOLDER
-    file = MEDIA_FOLDER + filename
-    if not os.path.isfile(file):
-        print "Note: There is no file at " + file
-    return file
-
-
-def pick_a_file(**options):
-    root = Tk()
-    root.title("Choose File")
-    root.focus_force()
-    root.geometry("0x0")
-#   root.geometry("+100+200")
-    if((sys.platform)[:3] == 'win'):
-        root.attributes("-alpha",0.0)
-    #root.withdraw()
-    path = tkFileDialog.askopenfilename()
-
-    root.destroy()
-    return path
-
-def pick_a_folder(**options):
-    global MEDIA_FOLDER
-    folder = tkFileDialog.askdirectory()
-    if folder == '':
-        folder = MEDIA_FOLDER
-    return folder
-
-
-def pick_a_color(**options):
-    color = tkColorChooser.askcolor()
-    new_color = Color(color[0][0], color[0][1], color[0][2])
-    return new_color
-
-
-#And for those who think of things as folders (5/14/03 AW)
-
-
-def set_media_folder():
-    global MEDIA_FOLDER
-    file = pick_a_folder()
-    MEDIA_FOLDER = file
-    print "New media folder: " + MEDIA_FOLDER
-
-
-def get_media_folder(filename):
-    global MEDIA_FOLDER
-    file = MEDIA_FOLDER + filename
-    if not os.path.isfile(file) or not os.path.isdir(file):
-        print "Note: There is no file at " + file
-    return file
-
-
-def get_short_path(filename):
-    dirs = filename.split(os.sep)
-    if len(dirs) < 1:  # does split() ever get to this stage?
-        return "."
-    elif len(dirs) == 1:
-        return dirs[0]
-    else:
-        return dirs[len(dirs) - 2] + os.sep + dirs[len(dirs) - 1]
-
-
-def quit():
-    sys.exit(0)
-
-
-
-##
 ## Global picture functions ----------------------------------------------------
 ##
 
@@ -734,14 +644,12 @@ class Picture(object):
             raise ValueError("load_file(" + filename +
                              "): No such file")
         else:
-                        
-            # Image.open raises an IOError if it is not a valid image file
-            image = Image.open(filename)
             
-            # Set the mode to RGB
             mode = "RGB"
-            image.convert(mode)
-
+            
+            # Image.open raises an IOError if it is not a valid image file
+            image = Image.open(filename).convert(mode)
+            
             self.__initialize_picture(image)
             self.set_filename_and_title(filename)
 
@@ -789,8 +697,9 @@ class Picture(object):
     def set_filename_and_title(self, filename):
         '''Set filename and title of this Picture. 
         
-        If filename is not None set the Pictures filename to the input str filename. 
-        Set title to the short path of input str filename. Otherwise set both to the empty str.'''
+        If filename is not None set this Picture's filename to the str filename. 
+        Set title to the short path of input str filename. 
+        Otherwise set both to the empty str.'''
         
         if filename != None:
             self.filename = filename
@@ -960,3 +869,91 @@ class Picture(object):
         draw = ImageDraw.Draw(self.image)
         draw.text((x, y), text=string, fill=tuple(acolor.get_rgb()),
                   font=font)
+
+##
+## Global misc functions -------------------------------------------------------
+##
+
+
+def open_picture_tool():
+    OpenPictureTool()
+
+
+def version():
+    global VER
+    return VER
+
+
+def set_media_path():
+    global MEDIA_FOLDER
+    file = pick_a_folder()
+    MEDIA_FOLDER = file
+    print "New media folder: " + MEDIA_FOLDER
+
+
+def get_media_path(filename):
+    global MEDIA_FOLDER
+    file = MEDIA_FOLDER + filename
+    if not os.path.isfile(file):
+        print "Note: There is no file at " + file
+    return file
+
+
+def pick_a_file(**options):
+    root = Tk()
+    root.title("Choose File")
+    root.focus_force()
+    root.geometry("0x0")
+#   root.geometry("+100+200")
+    if((sys.platform)[:3] == 'win'):
+        root.attributes("-alpha",0.0)
+    #root.withdraw()
+    path = tkFileDialog.askopenfilename()
+
+    root.destroy()
+    return path
+
+def pick_a_folder(**options):
+    global MEDIA_FOLDER
+    folder = tkFileDialog.askdirectory()
+    if folder == '':
+        folder = MEDIA_FOLDER
+    return folder
+
+
+def pick_a_color(**options):
+    color = tkColorChooser.askcolor()
+    new_color = Color(color[0][0], color[0][1], color[0][2])
+    return new_color
+
+
+#And for those who think of things as folders (5/14/03 AW)
+
+
+def set_media_folder():
+    global MEDIA_FOLDER
+    file = pick_a_folder()
+    MEDIA_FOLDER = file
+    print "New media folder: " + MEDIA_FOLDER
+
+
+def get_media_folder(filename):
+    global MEDIA_FOLDER
+    file = MEDIA_FOLDER + filename
+    if not os.path.isfile(file) or not os.path.isdir(file):
+        print "Note: There is no file at " + file
+    return file
+
+
+def get_short_path(filename):
+    dirs = filename.split(os.sep)
+    if len(dirs) < 1:  # does split() ever get to this stage?
+        return "."
+    elif len(dirs) == 1:
+        return dirs[0]
+    else:
+        return dirs[len(dirs) - 2] + os.sep + dirs[len(dirs) - 1]
+
+
+def quit():
+    sys.exit(0)
