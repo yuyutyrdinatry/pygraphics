@@ -659,13 +659,13 @@ def make_color(red, green, blue):
 class Picture(object):
 
     def __init__(self, width=None, height=None, image=None, filename=None):
-        '''Constructor for the Picture object class. 
+        '''Create a Picture object. 
         
         Requires one of:
         - int arguments width and height
         - named str argument filename (full path to a picture file) 
-        - named Image argument image (PIL Image object)'''
-        # Invalid input is handled by methods
+        - named Image argument image (PIL Image object).'''
+        
         self.set_filename_and_title(filename)
 
         if image != None:
@@ -684,6 +684,7 @@ class Picture(object):
     def in_bounds(self, x, y):
         '''Return True if int x and int y are in-bounds coordinates 
         for this Picture.'''
+        
         # Zero-based coordinates
         len_x = self.get_width()
         len_y = self.get_height()
@@ -691,28 +692,33 @@ class Picture(object):
 
     def __initialize_picture(self, image):
         '''Set the PIL Image object image in this Picture object 
-        and load the pixel array from the Image.'''
+        and load the PixelAccess object from the Image.'''
+        
         # PIL Image is stored in the Picture class
         self.image = image
+        
         # Load pixels 2D array from the Image
         self.pixels = image.load()
 
     def create_image(self, width, height):
-        '''Create a black PIL Image with int width, int height 
-        and load it into this Picture.
-        Raise ValueError if dimensions are invalid.'''
+        '''Create a black PIL Image with int width, int height and load it 
+        into this Picture. Raise ValueError if dimensions are invalid.'''
+        
         # Raise ValueError if dimensions are invalid
         if width <= 0 or height <= 0:
             raise ValueError("create_image(" + str(width) + ", " + str(height) +
                              "): Invalid image dimensions")
         else:
+            
             # Create new PIL Image object
             image = Image.new("RGB", (width, height))
+            
             self.__initialize_picture(image)
             
     def load_image(self, image):
         '''Load PIL Image object image into this Picture.
         Raise ValueError if image is not a PIL Image.'''
+        
         if image.__class__ != Image.Image:
             raise ValueError("load_image(" + repr(image) + "): Not an image")
         else:
@@ -722,15 +728,20 @@ class Picture(object):
         '''Load PIL Image object from filename and into this Picture.
         Raise ValueError if filename is not a file, or IOError if filename
         is not an image.'''
+        
         # Fail if file does not exist
         if not os.path.isfile(filename):
             raise ValueError("load_file(" + filename +
                              "): No such file")
         else:
-            # Use RGB mode and open file to PIL Image object, then initialize
-            mode = "RGB"
+                        
             # Image.open raises an IOError if it is not a valid image file
-            image = Image.open(filename).convert(mode)
+            image = Image.open(filename)
+            
+            # Set the mode to RGB
+            mode = "RGB"
+            image.convert(mode)
+
             self.__initialize_picture(image)
             self.set_filename_and_title(filename)
 
@@ -740,11 +751,12 @@ class Picture(object):
            
         Note: coordinates are zero-based so to get a 50x50 image starting from
         top left corner the coordinates would be: 0,0,49,49.'''
+        
         # Check for invalid dimensions
-        if not self.in_bounds(x1, y1) or not self.in_bounds(x2, y2) or not x1 < x2 or not y1 < y2:
+        if not self.in_bounds(x1, y1) or not self.in_bounds(x2, y2) \
+        or not x1 < x2 or not y1 < y2:
             raise ValueError('Invalid width/height specified')
 
-        # Create cropped Image from self.image
         # Crop is not inclusive of the last pixel
         corners = (x1, y1, x2 + 1, y2 + 1)
         temp = self.image.crop(corners)
@@ -755,25 +767,23 @@ class Picture(object):
 
     def clear(self, color=black):
         '''Clear this Picture to Color color. Default is black.'''
+        
         self.set_pixels(color)
 
     def __str__(self):
         '''Return a str of this Picture with its filename, width, and height.'''
+        
         return "Picture, filename " + self.filename + " height " + \
             str(self.get_height()) + " width " + str(self.get_width())
             
-    def __repr__(self):
-        '''Return a str representation of this Picture.'''
-        return "Picture(width=%d, height=%d, filename=%s)" % (self.get_width(),
-                                                              self.get_height(),
-                                                              self.filename)
-
     def show(self):
         '''Display this Picture in a separate window.'''
+        
         self.image.show()
 
     def set_title(self, title):
         '''Set title of this Picture to str title.'''
+        
         self.title = title
         
     def set_filename_and_title(self, filename):
@@ -781,6 +791,7 @@ class Picture(object):
         
         If filename is not None set the Pictures filename to the input str filename. 
         Set title to the short path of input str filename. Otherwise set both to the empty str.'''
+        
         if filename != None:
             self.filename = filename
             self.title = get_short_path(filename)
@@ -790,24 +801,29 @@ class Picture(object):
 
     def get_title(self):
         '''Return the title of this Picture.'''
+        
         return self.title
 
     def get_image(self):
-        '''Return the Image object in this Picture.'''      
+        '''Return the Image object in this Picture.'''
+           
         return self.image
 
     def get_width(self):
         '''Return the width of this Picture in the number of Pixels 
         from left to right.'''
+        
         return self.image.size[0]
 
     def get_height(self):
         '''Return the height of this Picture in the number of Pixels 
         from top to bottom.'''
+        
         return self.image.size[1]
 
     def get_pixel(self, x, y):
         '''Return the Pixel at coordinates x and y.'''
+        
         if not self.in_bounds(x, y):
             raise IndexError
         return Pixel(self.pixels, x, y)
@@ -815,6 +831,7 @@ class Picture(object):
     def get_pixels(self):
         '''Return a list of Pixel objects in this Picture.
         Iterates across the Picture from left to right then top down.'''
+        
         collect = []
         for x in range(0, self.get_width()):
             for y in range(0, self.get_height()):
@@ -824,17 +841,20 @@ class Picture(object):
     def __iter__(self):
         '''An iterator for this Picture class. Returns Pixel objects as it iterates 
         from left to right then top down.'''
+        
         for x in range(0, self.get_width()):
             for y in range(0, self.get_height()):
                 yield Pixel(self.pixels, x, y)
 
     def set_pixels(self, color):
         """Set the Image of this Picture to a given color."""
+        
         image = Image.new(self.image.mode, self.image.size, tuple(color.get_rgb()))
         self.load_image(image)
 
     def write_to(self, filename):
         '''Write the Image of this Picture to filename filename.'''
+        
         self.image.save(filename)
 
     def add_rect_filled(self, acolor, x, y, w, h):
@@ -844,6 +864,7 @@ class Picture(object):
         y: the y-coordinate of the upper left-hand corner of the rectangle
         w: the width of the oval
         h: the height of the oval'''
+        
         draw = ImageDraw.Draw(self.image)
         draw.rectangle([x, y, x + w, y + h], outline=tuple(acolor.get_rgb()),
                        fill=tuple(acolor.get_rgb()))
@@ -855,6 +876,7 @@ class Picture(object):
         y: the y-coordinate of the upper left-hand corner of the rectangle
         w: the width of the oval
         h: the height of the oval'''
+        
         draw = ImageDraw.Draw(self.image)
         draw.rectangle([x, y, x + w, y + h], outline=tuple(acolor.get_rgb()))
 
@@ -866,6 +888,7 @@ class Picture(object):
         point_list is a list containing vertices xy coordinates 
         (ex. [x1,y1,x2,y2,x3,y3]) It should contain at least 
         three coordinate pairs'''
+        
         draw = ImageDraw.Draw(self.image)
         draw.polygon(point_list, outline=tuple(acolor.get_rgb()))
 
@@ -877,6 +900,7 @@ class Picture(object):
         point_list is a list containing vertices xy coordinates 
         (ex. [x1,y1,x2,y2,x3,y3]) It should contain at least 
         three coordinate pairs'''
+        
         draw = ImageDraw.Draw(self.image)
         draw.polygon(point_list, outline=tuple(acolor.get_rgb()), fill=
                      tuple(acolor.get_rgb()))
@@ -888,6 +912,7 @@ class Picture(object):
         y: the y-coordinate of the upper left-hand corner of the oval
         w: the width of the oval
         h: the height of the oval'''
+        
         draw = ImageDraw.Draw(self.image)
         draw.ellipse([x, y, x + w, y + h], outline=tuple(acolor.get_rgb()),
                      fill=tuple(acolor.get_rgb()))
@@ -899,17 +924,9 @@ class Picture(object):
         y: the y-coordinate of the upper left-hand corner of the oval
         w: the width of the oval
         h: the height of the oval'''
+        
         draw = ImageDraw.Draw(self.image)
         draw.ellipse([x, y, x + w, y + h], outline=tuple(acolor.get_rgb()))
-
-#    def add_arc_filled(self, acolor, x, y, w, h, start, end):
-#        draw = ImageDraw.Draw(self.image)
-#        draw.arc([x, y, x + w, y + h], start, end, outline=tuple(acolor.get_rgb()),
-#                 fill=tuple(acolor.get_rgb()))
-#
-#    def add_arc(self, acolor, x, y, w, h, start, end):
-#        draw = ImageDraw.Draw(self.image)
-#        draw.arc([x, y, x + w, y + h], start, end, outline=tuple(acolor.get_rgb()))
 
     def add_line(self, acolor, x1, y1, x2, y2, width1=1):
         """Draw a line of Color acolor in this Picture 
@@ -920,6 +937,7 @@ class Picture(object):
         y1: the y position you want the line to start
         x2: the x position you want the line to end 
         y2: the y position you want the line to end"""
+        
         draw = ImageDraw.Draw(self.image)
         draw.line([x1, y1, x2, y2], fill=tuple(acolor.get_rgb()), width=
                   width1)
@@ -929,14 +947,16 @@ class Picture(object):
         
         x: the x-coordinate where you want to start writing the text
         y: the y-coordinate where you want to start writing the text"""
-        global default_font
-        self.add_text_with_style(acolor, x, y, string, default_font)
+        
+        global DEFAULT_FONT
+        self.add_text_with_style(acolor, x, y, string, DEFAULT_FONT)
 
     def add_text_with_style(self, acolor, x, y, string, font):
         """Draw str string with Color acolor and font font into this Picture.
         
         x: the x-coordinate where you want to start writing the text
         y: the y-coordinate where you want to start writing the text"""
+        
         draw = ImageDraw.Draw(self.image)
         draw.text((x, y), text=string, fill=tuple(acolor.get_rgb()),
-                  font=font1)
+                  font=font)
