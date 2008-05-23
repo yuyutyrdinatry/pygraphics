@@ -10,16 +10,17 @@ class Pixel(object):
         self.x = x
         self.y = y
         
-        # This is a PixelAccess object implemented in C
-        # It is a two-dimensional array (e.g. PixelAccess[x, y])
+        # This is intended for a PixelAccess object implemented in C
+        # It is a two-dimensional array (e.g. self.pixels[x, y])
         # used to access color tuples.
         self.pixels = pixels
         try:
             
             # This raises an IndexError if out of bounds
             self.pixels[x, y]
-        except:
-            raise IndexError
+        except IndexError:
+            raise IndexError(
+                         "(" + str(x) + ", " + str(y) + ") is out of bounds.")
     
     def __str__(self):
         '''Return a str with location and color information
@@ -27,32 +28,7 @@ class Pixel(object):
    
         return "Pixel (%d, %d): color=%s" % (self.x, self.y,
                                             str(self.get_color()))
-  
-   #GET RID OF ME
-    def has_color(self, color):
-        '''Return True if this Pixel has Color color.'''
-        
-        return (self.get_red() == color.get_red() and
-                self.get_green() == color.get_green() and
-                self.get_blue() == color.get_blue())
-
-   #GET RID OF ME
-    def has_color_values(self, color_array):
-        '''Return True if this Pixel has RGB values of list color_array.
-        
-        Note: color_array is expected to be in the following format, [R, G, B], 
-        where RGB are int values.'''
-        
-        return (self.get_red() == color_array[0] and
-                self.get_green() == color_array[1] and
-                self.get_blue() == color_array[2])
-
-   #GET RID OF ME
-    def has_XY(self, x, y):
-        '''Return True if this Pixel has coordinates int x and int y.'''
-        
-        return self.get_x() == x and self.get_y() == y
-        
+          
     def set_red(self, r):
         '''Set the red value of this Pixel to int r. Raise ValueError if r 
         is not a valid color value in the range [0, 255].'''
