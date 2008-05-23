@@ -62,35 +62,35 @@ MEDIA_FOLDER = user.home + os.sep
 ##
 
 
-def open_picture_tool(filename):
-    """Allows you to find information about digital images.
-       The PictureTool's Toolbar:
-        Once you have opened an image, you can view information about its individual
-        pixels by looking at the toolbar. To select a pixel drag (click and hold down)
-        the mouse to the position you want and then release it to hold that position's
-        information in the toolbar.
-        The following information in the toolbar changes to reflect the properties of
-        the pixel you selected:
-        X = the x coordinate of the pixel (its horizontal position, counting from the left)
-        Y = the y coordinate of the pixel (its vertical position, counting from the top)
-        R = the Red value of the pixel (0 to 255)
-        G = the Green value of the pixel (0 to 255)
-        B = the Blue value of the pixel (0 to 255)
-        In addition, the box at the far right displays the color of the pixel.
-       Zooming in/out:
-        To Zoom, select the amount of zoom you want from the zoom menu.
-        Less than 100% zooms out and more than 100% zooms in. The 100% zoom level will
-        always return you to your orginal picture.
-       
-       filename: a string represeting the location and name of picture"""
+#def open_picture_tool(filename):
+#    """Allows you to find information about digital images.
+#       The PictureTool's Toolbar:
+#        Once you have opened an image, you can view information about its individual
+#        pixels by looking at the toolbar. To select a pixel drag (click and hold down)
+#        the mouse to the position you want and then release it to hold that position's
+#        information in the toolbar.
+#        The following information in the toolbar changes to reflect the properties of
+#        the pixel you selected:
+#        X = the x coordinate of the pixel (its horizontal position, counting from the left)
+#        Y = the y coordinate of the pixel (its vertical position, counting from the top)
+#        R = the Red value of the pixel (0 to 255)
+#        G = the Green value of the pixel (0 to 255)
+#        B = the Blue value of the pixel (0 to 255)
+#        In addition, the box at the far right displays the color of the pixel.
+#       Zooming in/out:
+#        To Zoom, select the amount of zoom you want from the zoom menu.
+#        Less than 100% zooms out and more than 100% zooms in. The 100% zoom level will
+#        always return you to your orginal picture.
+#       
+#       filename: a string represeting the location and name of picture"""
+#
+#    tool = OpenPictureTool(filename)
+#    if (sys.platform)[:3] == 'dar':
+#        tool.run_tool(True)
+#    else:
+#        p = thread.start_new_thread(tool.run_tool, (False,))
 
-    tool = OpenPictureTool(filename)
-    if (sys.platform)[:3] == 'dar':
-        tool.run_tool(True)
-    else:
-        p = thread.start_new_thread(tool.run_tool, (False,))
-
-def open_picture_tool_safe(filename):
+def open_picture_tool_from_file(filename):
     """Allows you to find information about digital images.
        The PictureTool's Toolbar:
         Once you have opened an image, you can view information about its individual
@@ -112,10 +112,32 @@ def open_picture_tool_safe(filename):
         
        filename: a string represeting the location and name of picture"""
 
-    tool = OpenPictureTool(filename)
+    tool = OpenPictureTool(filename=filename)
     tool.run_tool(True)
     
+def open_picture_tool_from_picture(picture):
+    """Allows you to find information about digital images.
+       The PictureTool's Toolbar:
+        Once you have opened an image, you can view information about its individual
+        pixels by looking at the toolbar. To select a pixel drag (click and hold down)
+        the mouse to the position you want and then release it to hold that position's
+        information in the toolbar.
+        The following information in the toolbar changes to reflect the properties of
+        the pixel you selected:
+        X = the x coordinate of the pixel (its horizontal position, counting from the left)
+        Y = the y coordinate of the pixel (its vertical position, counting from the top)
+        R = the Red value of the pixel (0 to 255)
+        G = the Green value of the pixel (0 to 255)
+        B = the Blue value of the pixel (0 to 255)
+        In addition, the box at the far right displays the color of the pixel.
+       Zooming in/out:
+        To Zoom, select the amount of zoom you want from the zoom menu.
+        Less than 100% zooms out and more than 100% zooms in. The 100% zoom level will
+        always return you to your orginal picture.
+        
+       filename: a string represeting the location and name of picture"""
 
+    picture.show_in_picture_tool()
 
 def make_picture(filename):
     """Create a Picture.
@@ -157,7 +179,7 @@ def crop_picture(picture, x1, y1, x2, y2):
 
     if not picture.__class__ == Picture:
         raise ValueError("crop_picture(picture,x1,y1,x2,y2): First input is not a picture")
-    picture.crop(x1, y1, x2 + 1, y2 + 1)
+    picture.crop(x1, y1, x2, y2)
 
 def set_pixels(picture, color):
     """Set all the pixels of the picture given as first argument
@@ -567,6 +589,8 @@ def make_color(red, green, blue):
     return Color(red, green, blue)
 
 class Picture(object):
+    '''A picture object.'''
+
 
     def __init__(self, width=None, height=None, image=None, filename=None):
         '''Create a Picture object. 
@@ -689,6 +713,11 @@ class Picture(object):
         
         self.image.show()
 
+    def show_in_picture_tool(self):
+        '''Display this Picture in the OpenPictureTool.'''
+        tool = OpenPictureTool(image=self.image)
+        tool.run_tool(True)
+
     def set_title(self, title):
         '''Set title of this Picture to str title.'''
         
@@ -748,8 +777,8 @@ class Picture(object):
         return collect
 
     def __iter__(self):
-        '''An iterator for this Picture class. Returns Pixel objects as it iterates 
-        from left to right then top down.'''
+        '''An iterator for this Picture class. Returns Pixel objects as it 
+        iterates from left to right then top down.'''
         
         for x in range(0, self.get_width()):
             for y in range(0, self.get_height()):
@@ -758,7 +787,8 @@ class Picture(object):
     def set_pixels(self, color):
         """Set the Image of this Picture to a given color."""
         
-        image = Image.new(self.image.mode, self.image.size, tuple(color.get_rgb()))
+        image = Image.new(self.image.mode, self.image.size, 
+                          tuple(color.get_rgb()))
         self.load_image(image)
 
     def write_to(self, filename):
@@ -874,32 +904,9 @@ class Picture(object):
 ## Global misc functions -------------------------------------------------------
 ##
 
-
-def open_picture_tool():
-    OpenPictureTool()
-
-
-def version():
-    global VER
-    return VER
-
-
-def set_media_path():
-    global MEDIA_FOLDER
-    file = pick_a_folder()
-    MEDIA_FOLDER = file
-    print "New media folder: " + MEDIA_FOLDER
-
-
-def get_media_path(filename):
-    global MEDIA_FOLDER
-    file = MEDIA_FOLDER + filename
-    if not os.path.isfile(file):
-        print "Note: There is no file at " + file
-    return file
-
-
 def pick_a_file(**options):
+    '''Prompt user to pick a file. Return the path to that file.'''
+    
     root = Tk()
     root.title("Choose File")
     root.focus_force()
@@ -914,6 +921,8 @@ def pick_a_file(**options):
     return path
 
 def pick_a_folder(**options):
+    '''Prompt user to pick a folder. Return the path to that folder.'''
+
     global MEDIA_FOLDER
     folder = tkFileDialog.askdirectory()
     if folder == '':
@@ -922,30 +931,52 @@ def pick_a_folder(**options):
 
 
 def pick_a_color(**options):
+    '''Prompt user to pick a color. Return a RGB Color object.'''
+
+    root = Tk()
+    root.title("Choose Color")
+    root.focus_force()
+    root.geometry("0x0")
+    if((sys.platform)[:3] == 'win'):
+        root.attributes("-alpha",0.0)
+
     color = tkColorChooser.askcolor()
-    new_color = Color(color[0][0], color[0][1], color[0][2])
-    return new_color
+    
+    root.destroy()
+    
+    if color[0]:
+        new_color = Color(color[0][0], color[0][1], color[0][2])
+        return new_color
+
+def version():
+    '''Return the current version number of PyGraphics.'''
+    
+    global VER
+    return VER
 
 
-#And for those who think of things as folders (5/14/03 AW)
-
-
-def set_media_folder():
+def set_media_path():
+    '''Prompt user to pick a media path, and set global media path.'''
+    
     global MEDIA_FOLDER
     file = pick_a_folder()
     MEDIA_FOLDER = file
     print "New media folder: " + MEDIA_FOLDER
 
 
-def get_media_folder(filename):
+def add_media_path(filename):
+    '''Return the path to file filename in the current media path.'''
+    
     global MEDIA_FOLDER
     file = MEDIA_FOLDER + filename
-    if not os.path.isfile(file) or not os.path.isdir(file):
+    if not os.path.isfile(file):
         print "Note: There is no file at " + file
     return file
 
-
 def get_short_path(filename):
+    '''Return the short path (containing directory and filename)
+    of str filename.'''
+    
     dirs = filename.split(os.sep)
     if len(dirs) < 1:  # does split() ever get to this stage?
         return "."
@@ -953,7 +984,3 @@ def get_short_path(filename):
         return dirs[0]
     else:
         return dirs[len(dirs) - 2] + os.sep + dirs[len(dirs) - 1]
-
-
-def quit():
-    sys.exit(0)
