@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+
+<installation version="1.0">
+
+	<!-- Installer/Program Info -->
+    <info>
+		<appname>UofT CSC Dev Pack</appname>
+		<appversion>1.0</appversion>
+        <authors>
+            <author name="Hardeep Singh" email=""/>
+            <author name="Chris Maddision" email=""/>
+        </authors>
+        <url>http://www.cdf.utoronto.ca/</url>
+    </info>
+	
+	<!-- GUI related settings -->
+	<guiprefs width="500" height="350" resizable="no"/>
+    <locale>
+        <langpack iso3="eng"/>
+    </locale>
+	
+	<!-- Resources required for panels -->
+    <resources>
+        <res id="LicencePanel.licence" src="LICENCE.txt"/>
+        <res id="InfoPanel.info" src="README.txt"/>
+    </resources>
+	
+	<!-- Panels to show in specified order -->
+    <panels>
+        <panel classname="HelloPanel"/>
+        <panel classname="InfoPanel"/>
+        <panel classname="LicencePanel"/>
+        <panel classname="TargetPanel"/> 
+        <panel classname="PacksPanel"/>
+        <panel classname="InstallPanel"/>
+        <panel classname="ShortcutPanel"/>
+        <panel classname="SimpleFinishPanel"/>
+    </panels>
+	
+	<!-- Pre-install logic -->
+	<conditions>
+		<!-- Check if we are installing on Windows. If not, it must be Mac -->
+		<condition type="java" id="installonwindows">
+			<java>
+				<class>com.izforge.izpack.util.OsVersion</class>
+				<field>IS_WINDOWS</field>
+			</java>
+			<returnvalue type="boolean">true</returnvalue>
+		</condition>
+	</conditions>
+	
+	<!-- The files we want to install -->
+    <packs>
+        <pack name="Python (windows)" required="yes" os="windows">
+			<description>Python 2.5 for Windows</description>
+			<file targetdir="$INSTALL_PATH" src="data/python/win32" unpack="true" />
+		</pack>
+        <pack name="Python (mac)" required="yes" os="mac">
+			<description>Python 2.5 for MacOS</description>
+			<file targetdir="$INSTALL_PATH" src="data/python/mac" unpack="true" />
+		</pack>
+        <pack name="Required Modules" required="yes">
+            <description>Installs the Nose, PIL and PyGraphics modules for Python.</description>
+            <file targetdir="$INSTALL_PATH" src="data/nose" unpack="true"/>
+            <file targetdir="$INSTALL_PATH" src="data/PIL" unpack="true"/>
+            <file targetdir="$INSTALL_PATH" src="data/PyGraphics" unpack="true"/>
+			
+			<!-- Python Install Script (runs after python is installed) -->
+			<file targetdir="$INSTALL_PATH/bin" src="bin" />
+			<parsable targetdir="$INSTALL_PATH/bin" />
+			
+			<!-- Platform Independant Install Scripts -->
+			<file targetdir="$INSTALL_PATH" src="install_win.bat" os="windows" condition="installonwindows" />
+			<file targetdir="$INSTALL_PATH" src="install_mac.sh" os="mac" condition="!installonwindows" />
+			<parsable targetfile="$INSTALL_PATH/install_win.bat" os="windows" condition="installonwindows" />
+			<parsable targetfile="$INSTALL_PATH/install_mac.sh" os="mac" condition="!installonwindows" />			
+			<executable targetfile="$INSTALL_PATH/install_win.bat" failure="abort" stage="postinstall" os="windows" condition="installonwindows" />
+			<executable targetfile="$INSTALL_PATH/install_mac.sh" failure="abort" stage="postinstall" os="mac" condition="!installonwindows" />
+        </pack>
+        <pack name="WingIDE (windows)" required="no" preselected="yes" os="windows">
+            <description>The WingIDE for windows.</description>
+            <file targetdir="$INSTALL_PATH/wing" src="data/wing/win" unpack="true"/>
+        </pack>
+        <pack name="WingIDE (mac)" required="no" preselected="yes" os="mac">
+            <description>The WingIDE for MacOS.</description>
+            <file targetdir="$INSTALL_PATH/wing" src="data/wing/mac" unpack="true"/>
+        </pack>
+    </packs>
+	
+</installation>
