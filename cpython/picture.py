@@ -867,7 +867,7 @@ class Picture(object):
         draw = ImageDraw.Draw(self.image)
         draw.ellipse([x, y, x + w, y + h], outline=tuple(acolor.get_rgb()))
 
-    def add_line(self, acolor, x1, y1, x2, y2, width1=1):
+    def add_line(self, acolor, x1, y1, x2, y2, width=1):
         """Draw a line of Color acolor in this Picture 
         from the starting point (x1, y1) to the ending point (x2, y2) 
         in the picture.
@@ -879,7 +879,7 @@ class Picture(object):
         
         draw = ImageDraw.Draw(self.image)
         draw.line([x1, y1, x2, y2], fill=tuple(acolor.get_rgb()), width=
-                  width1)
+                  width)
 
     def add_text(self, acolor, x, y, string):
         """Draw str string with Color acolor into this Picture.
