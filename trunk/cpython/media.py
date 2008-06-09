@@ -261,7 +261,7 @@ def choose_save_filename():
     
     root = tk.Tk()
     root.withdraw()
-    path = tkFileDialog.asksaveasfilename()
+    path = tkFileDialog.asksaveasfilename(parent=root)
     root.destroy()
     if path:
         return path
@@ -272,7 +272,7 @@ def choose_file():
     
     root = tk.Tk()
     root.withdraw()
-    path = tkFileDialog.askopenfilename()
+    path = tkFileDialog.askopenfilename(parent=root)
     root.destroy()
     if path:
         return path
@@ -283,7 +283,7 @@ def choose_folder():
 
     root = tk.Tk()
     root.withdraw()
-    folder = tkFileDialog.askdirectory()
+    folder = tkFileDialog.askdirectory(parent=root)
     root.destroy()
     if folder:
         return folder
@@ -294,7 +294,7 @@ def choose_color():
     
     root = Tk()
     root.withdraw()
-    color = tkColorChooser.askcolor()
+    color = tkColorChooser.askcolor(parent=root)
     root.destroy() 
     if color[0]:
         return Color(color[0][0], color[0][1], color[0][2])
