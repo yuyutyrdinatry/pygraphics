@@ -39,6 +39,8 @@ class Picture(object):
     		raise ValueError("No arguments were given to the Picture constructor.")
         
         self.set_image(image)
+	
+	self.show_window = None
 
 
     def __str__(self):
@@ -91,9 +93,14 @@ class Picture(object):
 
     
     def show(self, poll=None):
-    	'''Display this Picture in a separate window.'''
-    	
-	self.show_window = ShowOMatic(self, poll)
+    	'''Display this Picture in a separate window. If the optional int poll
+	is given, the display window will automatically update every poll
+	seconds.'''
+	
+    	if ( self.show_window is None ):
+	    self.show_window = ShowOMatic(self, poll)
+	else:
+	    self.show_window.show(self)
 
     def inspect(self):
         '''Inspect this Picture in an OpenPictureTool.'''
