@@ -99,6 +99,7 @@ class Picture(object):
 	
     	if ( self.show_window is None ):
 	    self.show_window = ShowOMatic(self, poll)
+	    self.show_window.set_destroy_bind(self._handle_show_window_destroy)
 	else:
 	    self.show_window.show(self)
 
@@ -306,7 +307,8 @@ class Picture(object):
         self.image.save(filename)
         self.set_filename_and_title(filename)
         
-        
+    def _handle_show_window_destroy(self):
+	self.show_window = None
 ##
 ## Helper functions ---------------------------------------------------
 ##
