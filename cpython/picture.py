@@ -1,3 +1,4 @@
+from ShowOMatic import *
 from color import *
 from mediawindows import *
 from pixel import *
@@ -89,11 +90,10 @@ class Picture(object):
         return pic
 
     
-    def show(self):
+    def show(self, poll=None):
     	'''Display this Picture in a separate window.'''
     	
-    	self.image.show()
-        
+	self.show_window = ShowOMatic(self, poll)
 
     def inspect(self):
         '''Inspect this Picture in an OpenPictureTool.'''
