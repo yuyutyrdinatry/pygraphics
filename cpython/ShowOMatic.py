@@ -87,7 +87,7 @@ class ShowOMatic(tk.Frame):
         self.pic = None
         self.photo = None
         self.thread_started = None
-        self.poll = False
+        self.poll = None
         
         self.scroll_width = 16
         self.scroll_spacing = self.scroll_width + 5
@@ -169,6 +169,9 @@ class ShowOMatic(tk.Frame):
             # This will almost always occur because the canvas is destroyed
             # before a thread stops and finishes working on it. So this will
             # just suppress the possibly confusing message for new programmers.
+            pass
+        except ValueError:
+            # Same as above
             pass
         
     def __update_photo(self):
