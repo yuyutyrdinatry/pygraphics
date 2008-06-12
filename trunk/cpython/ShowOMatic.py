@@ -79,6 +79,9 @@ class ShowOMatic(tk.Frame):
         
         self.__threads_start()
         self.__update_canvas()
+        
+    def set_destroy_bind(self, bind):
+        self.window_destroyed = bind
             
     # Initial configuratio and creation helpers --------------------------------
     def __init_vars(self):
@@ -204,6 +207,7 @@ class ShowOMatic(tk.Frame):
         
         self.thread_show = None
         self.master.destroy()
+        self.window_destroyed()
         
     def handler_configure_window_main(self, event):
         '''Bind for the <Configure> event on the main application window.
