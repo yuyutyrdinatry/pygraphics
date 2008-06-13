@@ -10,10 +10,10 @@ class ShowWrapperThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self, None, self.run, "wxShow")
         self.setDaemon(1)
+                
+    def run(self):
         self.app = wx.App()
         self.frame = wxShow(None,-1,'my threaded window')
-        
-    def run(self):
         self.app.MainLoop()
 
 class wxShow(wx.Frame):
@@ -24,7 +24,7 @@ class wxShow(wx.Frame):
 
     def __init_window(self):
         self.Show(True)
-        
+ 
 if __name__ == "__main__":
     a = ShowWrapperThread()
     a.start()
