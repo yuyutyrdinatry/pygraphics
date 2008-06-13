@@ -1,5 +1,7 @@
 import threading
 import wx
+import wx.lib.scrolledpanel as scrolled
+import wx.lib.dragscroller
 import time
 
 class ShowWrapperThread(threading.Thread):
@@ -16,6 +18,7 @@ class ShowWrapperThread(threading.Thread):
         self.frame = None
         
     def run(self):
+        # TODO: use wx.PySimpleApp() for MacOS
         self.app = wx.App(redirect=False)
         self.frame = wxShow()
         self.app.MainLoop()
@@ -30,6 +33,10 @@ class ShowWrapperThread(threading.Thread):
         
     def _update_window(self):
         self.frame.display(self.pic)
+        
+class DisplayCanvas(wx.ScrolledWindow):
+    def __init__(self, *args, **kwargs):
+        wx.ScrolledWindow.__init__(self, *args, **kwargs)
 
 class wxShow(wx.Frame):
     def __init__(self, parent=None, id=-1, title="Show Window"):
@@ -39,6 +46,21 @@ class wxShow(wx.Frame):
 
     def __init_window(self):
         self.Show(True)
+        self._set_sizer()
+        self._create_scroller()
+        
+    def _set_sizer(self):
+        self.box = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(self.box)
+        self.SetAutoLayout(True)
+        self.SetSizeHints(250, 200)
+        self.SetSize(wx.Size(600, 400))
+        
+    def _create_scroller(self):
+        self.dc = DisplayCanvas(self, -1)
+        self.dc.EnableScrolling(True, True)
+        self.dc.SetBackgroundColour(wx.WHITE)
+        self.box.Add(self.dc, 1, wx.EXPAND)
         
     def display(self, pic):
         self.pic = pic
@@ -46,15 +68,17 @@ class wxShow(wx.Frame):
         self._update_display()
         
     def _update_display(self):
-        wx.StaticBitmap(self, -1, self.bitmap, (0, 0))
+        wx.StaticBitmap(self.dc, -1, self.bitmap, (0, 0))
+        self.dc.SetScrollbars(1, 1, self.bitmap.GetWidth(), self.bitmap.GetHeight())
+        pass
         
     def _convert_picture_to_bitmap(self):
         if ( self.pic is not None ):
             pilImage = self.pic.get_image()
-            image = _piltoimage(pilImage)
+            image = _pil_to_image(pilImage)
             return wx.BitmapFromImage(image)
         
-def _piltoimage(pil, alpha=True):
+def _pil_to_image(pil, alpha=True):
     """Convert PIL Image to wx.Image."""
     if alpha:
         image = apply( wx.EmptyImage, pil.size )
@@ -67,7 +91,7 @@ def _piltoimage(pil, alpha=True):
         image.SetData(data)
     return image
 
-def _imagetopil(image):
+def _image_to_pil(image):
     """Convert wx.Image to PIL Image."""
     pil = Image.new('RGB', (image.GetWidth(), image.GetHeight()))
     pil.fromstring(image.GetData())
@@ -78,5 +102,5 @@ if __name__ == "__main__":
     a.start()
     
     import picture
-    b = picture.Picture(200,200)
+    b = picture.Picture(2000,200)
     a.update_picture(b)
