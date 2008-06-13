@@ -50,17 +50,19 @@ class wxShow(wx.Frame):
         self._create_scroller()
         
     def _set_sizer(self):
-        self.box = wx.BoxSizer(wx.VERTICAL)
-        self.SetSizer(self.box)
+        self.box = wx.GridBagSizer()
+        self.box.AddGrowableCol(0)
+        self.box.AddGrowableRow(0)
+        
+        self.SetSizerAndFit(self.box)
         self.SetAutoLayout(True)
-        self.SetSizeHints(250, 200)
-        self.SetSize(wx.Size(600, 400))
+        self.SetSizeHints(200, 200)
         
     def _create_scroller(self):
         self.dc = DisplayCanvas(self, -1)
         self.dc.EnableScrolling(True, True)
         self.dc.SetBackgroundColour(wx.WHITE)
-        self.box.Add(self.dc, 1, wx.EXPAND)
+        self.box.Add(self.dc, (0,0), (1,1), wx.EXPAND)
         
     def display(self, pic):
         self.pic = pic
@@ -70,7 +72,7 @@ class wxShow(wx.Frame):
     def _update_display(self):
         wx.StaticBitmap(self.dc, -1, self.bitmap, (0, 0))
         self.dc.SetScrollbars(1, 1, self.bitmap.GetWidth(), self.bitmap.GetHeight())
-        pass
+        self.SetSize((self.bitmap.GetWidth(), self.bitmap.GetHeight()))
         
     def _convert_picture_to_bitmap(self):
         if ( self.pic is not None ):
@@ -102,5 +104,5 @@ if __name__ == "__main__":
     a.start()
     
     import picture
-    b = picture.Picture(2000,200)
+    b = picture.Picture(400,200)
     a.update_picture(b)
