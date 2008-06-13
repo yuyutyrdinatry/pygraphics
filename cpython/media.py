@@ -263,8 +263,8 @@ def choose_save_filename():
     app = wx.App()
        
     formats = get_formats()
-    dlg = wx.FileDialog(None, message="Choose a filename", defaultDir=os.getcwd(), 
-                        wildcard=formats, style=wx.SAVE)
+    dlg = wx.FileDialog(None, message="Choose a filename:", 
+                        defaultDir=os.getcwd(), wildcard=formats, style=wx.SAVE)
     if dlg.ShowModal() == wx.ID_OK:
         path = dlg.GetPath()
         os.chdir(os.path.dirname(path))
