@@ -98,10 +98,10 @@ class Picture(object):
 	seconds.'''
 	
     	if ( self.show_window is None ):
-	    self.show_window = ShowOMatic(self, poll)
-	    self.show_window.set_destroy_bind(self._handle_show_window_destroy)
-	else:
-	    self.show_window.show(self)
+    	    self.show_window = ShowOMatic(self, poll)
+    	    self.show_window.set_destroy_bind(self._handle_show_window_destroy)
+    	else:
+    	    self.show_window.show(self)
 
     def inspect(self):
         '''Inspect this Picture in an OpenPictureTool.'''
@@ -308,7 +308,7 @@ class Picture(object):
         self.set_filename_and_title(filename)
         
     def _handle_show_window_destroy(self):
-	self.show_window = None
+    	self.show_window = None
 ##
 ## Helper functions ---------------------------------------------------
 ##
