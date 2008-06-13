@@ -1,10 +1,10 @@
 from color import *
 from picture import *
 from pixel import *
-import Tkinter as tk
-import tkColorChooser
-import tkFileDialog
+import wx
+import os
 
+IMAGE_FORMATS = ['*.jpg', '*.bmp', '*.gif']
 ##
 ## Global picture functions ---------------------------------------------------
 ##
@@ -257,44 +257,75 @@ def copy(obj):
 
 def choose_save_filename():
     '''Prompt user to pick a directory and filename. Return the path
-    to the new file.'''
+    to the new file. Change the current working directory to the directory 
+    where the file chosen by the user is.'''
     
-    root = tk.Tk()
-    root.withdraw()
-    path = tkFileDialog.asksaveasfilename(parent=root)
-    root.destroy()
-    if path:
+    app = wx.App()
+       
+    formats = get_formats()
+    dlg = wx.FileDialog(None, message="Choose a filename", defaultDir=os.getcwd(), 
+                        wildcard=formats, style=wx.SAVE)
+    if dlg.ShowModal() == wx.ID_OK:
+        path = dlg.GetPath()
+        os.chdir(os.path.dirname(path))
         return path
+    dlg.Destroy()
 
 
 def choose_file():
-    '''Prompt user to pick a file. Return the path to that file.'''
+    '''Prompt user to pick a file. Return the path to that file. 
+    Change the current working directory to the directory 
+    where the file chosen by the user is'''
     
-    root = tk.Tk()
-    root.withdraw()
-    path = tkFileDialog.askopenfilename(parent=root)
-    root.destroy()
-    if path:
+    app = wx.App()
+         
+    dlg = wx.FileDialog(None, message="Choose a file:", defaultDir=os.getcwd(),
+                        style=wx.OPEN)
+    if dlg.ShowModal() == wx.ID_OK:
+        path = dlg.GetPath()
+        os.chdir(os.path.dirname(path))
         return path
-
+    dlg.Destroy()
 
 def choose_folder():
-    '''Prompt user to pick a folder. Return the path to that folder.'''
+    '''Prompt user to pick a folder. Return the path to that folder. 
+    Change the current working directory to the directory where the folder
+    chosen by the user is.'''
+   
+    app = wx.App()
 
-    root = tk.Tk()
-    root.withdraw()
-    folder = tkFileDialog.askdirectory(parent=root)
-    root.destroy()
-    if folder:
-        return folder
-
+    dlg = wx.DirDialog(None, title="Choose a directory:", 
+                       defaultPath=os.getcwd())
+    if dlg.ShowModal() == wx.ID_OK:
+        path = dlg.GetPath()
+        os.chdir(os.path.dirname(path))
+        return path
+    dlg.Destroy()
 
 def choose_color():
     '''Prompt user to pick a color. Return a RGB Color object.'''
     
-    root = Tk()
-    root.withdraw()
-    color = tkColorChooser.askcolor(parent=root)
-    root.destroy() 
-    if color[0]:
-        return Color(color[0][0], color[0][1], color[0][2])
+    app = wx.App()
+     
+    dlg = wx.ColourDialog(None)
+    dlg.GetColourData().SetChooseFull(True)
+    if dlg.ShowModal() == wx.ID_OK:
+        data = dlg.GetColourData().GetColour().Get()
+        return Color(data[0], data[1], data[2])
+    dlg.Destroy()
+    
+def get_formats():
+    '''Return a string from the global variable IMAGE_FORMATS.
+    
+    This string is usable by the wxPython wxFileDialog object to specify
+    the available file formats.'''
+    
+    formats = ''
+    for format in IMAGE_FORMATS:
+        format = format[-3:].upper() + ' file (' + format + ')|' + format + '|'
+        formats += format
+    
+    return formats[:-1]
+
+if __name__ == '__main__':
+    print choose_file()
