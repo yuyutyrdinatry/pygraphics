@@ -1,7 +1,6 @@
 import threading
 import wx
-import wx.lib.scrolledpanel as scrolled
-import wx.lib.dragscroller
+import os
 import time
 
 class ShowWrapperThread(threading.Thread):
@@ -19,7 +18,10 @@ class ShowWrapperThread(threading.Thread):
         
     def run(self):
         # TODO: use wx.PySimpleApp() for MacOS
-        self.app = wx.App(redirect=False)
+        if ( os.sys.platform == 'darwin' ):
+            self.app = wx.PySimpleApp(redirect=False)
+        else:
+            self.app = wx.App(redirect=False)
         self.frame = wxShow()
         self.app.MainLoop()
         
@@ -48,6 +50,7 @@ class wxShow(wx.Frame):
         self.Show(True)
         self._set_sizer()
         self._create_scroller()
+        self.Center()
         
     def _set_sizer(self):
         self.box = wx.GridBagSizer()
@@ -61,7 +64,6 @@ class wxShow(wx.Frame):
     def _create_scroller(self):
         self.dc = DisplayCanvas(self, -1)
         self.dc.EnableScrolling(True, True)
-        self.dc.SetBackgroundColour(wx.WHITE)
         self.box.Add(self.dc, (0,0), (1,1), wx.EXPAND)
         
     def display(self, pic):
