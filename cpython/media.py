@@ -289,6 +289,7 @@ def choose_file():
         return path
     dlg.Destroy()
 
+
 def choose_folder():
     '''Prompt user to pick a folder. Return the path to that folder. 
     Change the current working directory to the directory chosen by the user.'''
@@ -314,7 +315,8 @@ def choose_color():
         data = dlg.GetColourData().GetColour().Get()
         return Color(data[0], data[1], data[2])
     dlg.Destroy()
-    
+
+ 
 def get_formats():
     '''Return a string from the global variable IMAGE_FORMATS.
     
@@ -327,6 +329,7 @@ def get_formats():
         formats += format
     
     return formats[:-1]
+
 
 if __name__ == '__main__':
     print choose_file()
