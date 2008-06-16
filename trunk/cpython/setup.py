@@ -1,5 +1,5 @@
-#By: Leo Kaliazine
-#Date: August 11, 2007
+# By: Leo Kaliazine
+# Date: August 11, 2007
 
 from distutils.core import setup
 setup(name='PyGraphics',
