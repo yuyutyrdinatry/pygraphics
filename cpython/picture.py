@@ -1,4 +1,3 @@
-from ShowOMatic import *
 from color import *
 from mediawindows import *
 from pixel import *
@@ -10,7 +9,7 @@ import os
 DEFAULT_FONT = ImageFont.load_default()
 
 class Picture(object):
-    '''A picture object.'''
+    '''A Picture class as a wrapper for PIL's Image class.'''
     
     
     def __init__(self, w=None, h=None, col=white, image=None, filename=None):
@@ -18,7 +17,7 @@ class Picture(object):
     	
     	Requires one of:
     	- ints w, h, and Color col, e.g. Picture(100, 100, Color(0, 0, 0))
-    	- named PIL Image argument image, e.g. Picture(image=Image)
+    	- named PIL RGB Image argument image, e.g. Picture(image=Image)
         - named str argument filename, e.g. Picture(filename='image.jpg').'''
     	
     	self.set_filename_and_title(filename)
@@ -27,12 +26,12 @@ class Picture(object):
     		image = image
     	elif filename != None:
             
-            # Image.open raises an IOError if filename is not a path
+            # This raises an IOError if filename is not a path
             # to a file or a valid image file.
-            image = Image.open(filename).convert("RGB")
+            image = load_image(filename)
     	elif w != None and h != None:
-            if w >= 0 and h >= 0:
-                image = Image.new("RGB", (w, h), color=col.get_rgb())
+            if w > 0 and h > 0:
+                image = create_image(w, h, col)
             else:
                 raise ValueError('Invalid width/height specified.')
         else:
@@ -40,7 +39,7 @@ class Picture(object):
         
         self.set_image(image)
 	
-	self.show_window = None
+    	self.show_window = None
 
 
     def __str__(self):
@@ -66,7 +65,7 @@ class Picture(object):
 
     
     def set_image(self, image):
-    	'''Set the PIL Image image in this Picture and load 
+    	'''Set the PIL RGB Image image in this Picture and load 
     	the PixelAccess object from the Image.'''
     	
         if image.__class__ != Image.Image:
@@ -79,7 +78,7 @@ class Picture(object):
 
 
     def get_image(self):
-        '''Return this Picture's Image object.'''
+        '''Return this Picture's PIL Image object.'''
            
         return self.image
 
@@ -94,14 +93,11 @@ class Picture(object):
     
     def show(self, poll=None):
     	'''Display this Picture in a separate window. If the optional int poll
-	is given, the display window will automatically update every poll
-	seconds.'''
+	    is given, the display window will automatically update every poll
+	    seconds.'''
+    
+        self.image.show()
 	
-    	if ( self.show_window is None ):
-    	    self.show_window = ShowOMatic(self, poll)
-    	    self.show_window.set_destroy_bind(self._handle_show_window_destroy)
-    	else:
-    	    self.show_window.show(self)
 
     def inspect(self):
         '''Inspect this Picture in an OpenPictureTool.'''
@@ -312,6 +308,19 @@ class Picture(object):
 ##
 ## Helper functions ---------------------------------------------------
 ##
+
+
+def load_image(f):
+    '''Return a new PIL RGB Image object loaded from filename f.'''
+    
+    return Image.open(f).convert("RGB")
+
+
+def create_image(w, h, col=white):
+    '''Return a new PIL RGB Image object of Color col, 
+    w pixels wide, and h pixels high.'''
+    
+    return Image.new("RGB", (w, h), color=col.get_rgb())
 
 
 def get_short_path(filename):
