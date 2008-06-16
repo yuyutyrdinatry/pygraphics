@@ -5,6 +5,7 @@ import wx
 import os
 
 IMAGE_FORMATS = ['*.jpg', '*.bmp', '*.gif']
+
 ##
 ## Global picture functions ---------------------------------------------------
 ##
@@ -129,10 +130,11 @@ def add_polygon_filled(pic, point_list, col):
 def save_as(pic):
     '''Prompt user to pick a directory and filename then write Picture pic
     to that filename. Requires that file format is specified in filename 
-    by extensions (e.g. ".jpg", ".gif", ".bmp").'''
+    by extensions %s.''' % IMAGE_FORMATS
     
-    filename = choose_save_location()
-    pic.save_as(filename)
+    filename = choose_save_filename()
+    if filename:
+        pic.save_as(filename)
 
     
 def save(pic):
@@ -289,8 +291,7 @@ def choose_file():
 
 def choose_folder():
     '''Prompt user to pick a folder. Return the path to that folder. 
-    Change the current working directory to the directory where the folder
-    chosen by the user is.'''
+    Change the current working directory to the directory chosen by the user.'''
    
     app = wx.App()
 
@@ -317,12 +318,12 @@ def choose_color():
 def get_formats():
     '''Return a string from the global variable IMAGE_FORMATS.
     
-    This string is usable by the wxPython wxFileDialog object to specify
+    This string is usable by the wxFileDialog object to specify
     the available file formats.'''
     
     formats = ''
     for format in IMAGE_FORMATS:
-        format = format[-3:].upper() + ' file (' + format + ')|' + format + '|'
+        format = format[-3:].upper() + ' files (' + format + ')|' + format + '|'
         formats += format
     
     return formats[:-1]
