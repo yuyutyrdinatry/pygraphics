@@ -304,6 +304,7 @@ def choose_folder():
         return path
     dlg.Destroy()
 
+
 def choose_color():
     '''Prompt user to pick a color. Return a RGB Color object.'''
     
