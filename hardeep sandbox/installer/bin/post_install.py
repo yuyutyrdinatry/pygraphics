@@ -8,7 +8,8 @@ from subprocess import call
 # Parse (do not modify)
 #===============================================================================
 root_path = "$INSTALL_PATH"
-root_path = "C:\\Program Files\\UofT CSC Dev Pack 2008" # testing only
+#root_path = "C:\\Program Files\\UofT CSC Dev Pack 2008" # testing only
+debug = True
 
 #===============================================================================
 # Config (edit as needed)
@@ -30,12 +31,24 @@ mod_path['PyG'] = os.path.join(root_path, 'PyGraphics', 'setup.py')
 # You shouldn't need to edit below this line
 # ---------------------------------------------------------------------------- #
 
+if ( debug ):
+    print 'root_path', root_path
+    print 'wing_file', wing_file
+    print 'python_path', python_path
+    print 'mod_path', mod_path
+
 #===============================================================================
 # Install Wing
 #===============================================================================
 if ( os.name == 'nt' ): #Windows
-    call([os.path.join(root_path, 'wing', 'win', wing_file['win']), '/SILENT'])
+    install_path = os.path.join(root_path, "wing-ide")
+    if ( debug ):
+        print 'wing cmd ::', os.path.join(root_path, 'wing', 'win', wing_file['win']), '/SILENT /dir=%s' % install_path
+        print 'install_path', install_path
+    call([os.path.join(root_path, 'wing', 'win', wing_file['win']), '/SILENT /dir=%s' % install_path])
 elif ( os.name == 'mac' ): #MacOS
+    if ( debug ):
+        print 'wing cmd ::', os.path.join(root_path, 'wing', 'mac', wing_file['mac'])
     call([os.path.join(root_path, 'wing', 'mac', wing_file['mac'])]) # Figure out if this actually works...
 else:
     # Not going to support linux at this time
@@ -56,6 +69,11 @@ if ( os.name == 'nt' ):
     path = WR.get_value("Path")
     path = path + ';' + python_path['win']
     WR.set_value("Path", path, None, _winreg.REG_EXPAND_SZ)
+    
+    if ( debug ):
+        print 'registry'
+        print '\tpath', path
+        print '\tdir', python_path['win']
 
 #===============================================================================
 # Install nose
