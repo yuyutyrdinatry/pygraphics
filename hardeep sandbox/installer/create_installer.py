@@ -11,6 +11,7 @@ izInstallXML = "izpack_installer.xml"
 # Path to all executables required
 izCompile = os.path.join(izPath, 'bin', 'compile.bat')
 iz2EXE = os.path.join(izPath, 'utils', 'izpack2exe', 'izpack2exe.exe')
+iz2APP = os.path.join(izPath, 'utils', 'izpack2app', 'izpack2app.exe')
 iz7ZA = os.path.join(izPath, 'utils', 'izpack2exe', '7za.exe')
 
 # Create commands
@@ -20,17 +21,28 @@ cmd_exe = '"%s" --file="%s" --output="%s" --with-7z="%s"' % \
              'install.jar',  
              'install.exe',  
              iz7ZA)
+cmd_app = '"%s" "%s" "%s"' % \
+            (iz2APP,  
+             'install.jar',  
+             'install.app')
 
 # Run commands with output
-print "\n\n\n"
 print "Compiling installer jar..."
 print cmd_compile
 print "________________________________________________________________________"
 call(cmd_compile)
 print "\n\n\n"
+
 print "Creating self-extracting executable"
 print cmd_exe
 print "________________________________________________________________________"
 call(cmd_exe)
 print "\n\n\n"
+
+print "Creating MacOS .app"
+print cmd_app
+print "________________________________________________________________________"
+call(cmd_app)
+print "\n\n\n"
+
 a = raw_input("Done... press enter to close")
