@@ -4,6 +4,16 @@
 <!-- By: Hardeep Singh  -->
 <!-- Note that this installer depends on a working copy of IzPack  -->
 <!-- IzPack: http://izpack.org/ -->
+<!--    -->
+<!-- Dev Notes                                                              -->
+<!-- Please keep the following in mind when updating or editing this file   -->
+<!-- and anything else related to the installer.                            -->
+<!--                                                                        -->
+<!-- 1) If the file names change for either Python or Wing (i.e. new update -->
+<!--    or revisions, etc...) then make sure the file names are also        -->
+<!--    changed in the install scripts (install_win.bat, install_mac.sh and -->
+<!--    bin/post_install.py) as required.                                   -->
+<!--    -->
 
 <installation version="1.0">
 
@@ -57,11 +67,11 @@
 	<!-- The files we want to install -->
     <packs>
         <pack name="Python (windows)" required="yes" os="windows">
-			<description>Python 2.5 for Windows</description>
+			<description>Python for Windows</description>
 			<file targetdir="$INSTALL_PATH" src="data/python/win32" unpack="true" />
 		</pack>
         <pack name="Python (mac)" required="yes" os="mac">
-			<description>Python 2.5 for MacOS</description>
+			<description>Python for MacOS</description>
 			<file targetdir="$INSTALL_PATH" src="data/python/mac" unpack="true" />
 		</pack>
         <pack name="Required Modules" required="yes">
@@ -72,15 +82,15 @@
 			
 			<!-- Python Install Script (runs after python is installed) -->
 			<file targetdir="$INSTALL_PATH/bin" src="bin" />
-			<parsable targetdir="$INSTALL_PATH/bin" />
+			<parsable targetfile="$INSTALL_PATH/bin/post_install.py" />
 			
 			<!-- Platform Dependant Install Scripts -->
 			<file targetdir="$INSTALL_PATH" src="install_win.bat" os="windows" condition="installonwindows" />
-			<file targetdir="$INSTALL_PATH" src="install_mac.sh" os="mac" condition="!installonwindows" />
+			<file targetdir="$INSTALL_PATH" src="install_mac.py" os="mac" condition="!installonwindows" />
 			<parsable targetfile="$INSTALL_PATH/install_win.bat" os="windows" condition="installonwindows" />
-			<parsable targetfile="$INSTALL_PATH/install_mac.sh" os="mac" condition="!installonwindows" />			
+			<parsable targetfile="$INSTALL_PATH/install_mac.py" os="mac" condition="!installonwindows" />			
 			<executable targetfile="$INSTALL_PATH/install_win.bat" failure="abort" stage="postinstall" os="windows" condition="installonwindows" />
-			<executable targetfile="$INSTALL_PATH/install_mac.sh" failure="abort" stage="postinstall" os="mac" condition="!installonwindows" />
+			<executable targetfile="$INSTALL_PATH/install_mac.py" failure="abort" stage="postinstall" os="mac" condition="!installonwindows" />
         </pack>
         <pack name="WingIDE (windows)" required="no" preselected="yes" os="windows">
             <description>The WingIDE for windows.</description>
