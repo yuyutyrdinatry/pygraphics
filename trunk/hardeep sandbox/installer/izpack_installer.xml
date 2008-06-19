@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
 
+<!-- IzPack Install Definitions  -->
+<!-- By: Hardeep Singh  -->
+<!-- Note that this installer depends on a working copy of IzPack  -->
+<!-- IzPack: http://izpack.org/ -->
+
 <installation version="1.0">
 
 	<!-- Installer/Program Info -->
@@ -14,7 +19,7 @@
     </info>
 	
 	<!-- GUI related settings -->
-	<guiprefs width="500" height="350" resizable="no"/>
+	<guiprefs width="500" height="350" resizable="yes"/>
     <locale>
         <langpack iso3="eng"/>
     </locale>
@@ -69,7 +74,7 @@
 			<file targetdir="$INSTALL_PATH/bin" src="bin" />
 			<parsable targetdir="$INSTALL_PATH/bin" />
 			
-			<!-- Platform Independant Install Scripts -->
+			<!-- Platform Dependant Install Scripts -->
 			<file targetdir="$INSTALL_PATH" src="install_win.bat" os="windows" condition="installonwindows" />
 			<file targetdir="$INSTALL_PATH" src="install_mac.sh" os="mac" condition="!installonwindows" />
 			<parsable targetfile="$INSTALL_PATH/install_win.bat" os="windows" condition="installonwindows" />
