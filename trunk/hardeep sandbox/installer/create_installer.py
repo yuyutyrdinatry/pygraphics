@@ -10,6 +10,11 @@ izPath = os.path.join('c:\\', 'Program Files', 'IzPack')
 # For windows only! Must have valid ImgBurn install
 # ImgBurn: http://www.imgburn.com/
 img_burn = os.path.join('C:\\', 'Program Files', 'ImgBurn', 'ImgBurn.exe')
+# For linux, consider using http://en.wikipedia.org/wiki/Cdrkit
+# For mac, use built in tools
+#    http://www.macosxhints.com/article.php?story=20020311215452999
+#    http://pymachine.blogspot.com/2007/05/creating-image-disk-dmg-from-command.html
+#        hdiutil create -fs HFS+ -srcfolder SRCFOLDER -volname VOLNAME IMGNAME
 
 #===============================================================================
 # Path to the install xml definition
@@ -79,5 +84,8 @@ if ( os.name == 'nt' ):
     print "________________________________________________________________________"
     call(cmd_img)
     print "\n\n\n"
+    
+# Consider creating pkg file for mac os?
+# http://www.osxgnu.org/info/osxpackages.html
 
 a = raw_input("Done... press enter to close")
