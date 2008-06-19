@@ -1,1 +1,8 @@
-the readme
+REQUIREMENTS
+----------------------
+
+Windows
+ * 
+ 
+Mac
+ * 

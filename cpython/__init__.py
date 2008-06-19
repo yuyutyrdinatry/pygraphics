@@ -3,7 +3,7 @@ import os
 # IGNORE_FILES is a list of strings, which describe the file names to be 
 # ignored.
 #    i.e. file.name
-IGNORE_FILES = ['os_test.py', '__init__.py', 'pictureclass.py']
+IGNORE_FILES = ['os_test.py', '__init__.py', 'pictureclass.py', 'setup.py']
 
 __all__ = []
 for root, dirs, files in os.walk(os.getcwd()):
