@@ -25,18 +25,21 @@ root_path = "$INSTALL_PATH"
 # Configure
 #===============================================================================
 python_image = 'python-2.5.2-macosx.dmg'
+mount_path = '/Volumes/Universal MacPython 2.5.2'
 
 #===============================================================================
 # Generate Commands
 #===============================================================================
 cmd_mount = "hdiutil mount %s" % os.path.join(root_path, 'mac', python_image)
-cmd_cp = "sudo cp -R \"/Volumes/Python/Python.app\" /Applications" # need to figure out exact command for this
+#cmd_cp = "sudo cp -R \"/Volumes/Universal MacPython 2.5.2/Python.app\" /Applications" # need to figure out exact command for this
 
 # Don't know if need the following yet:
-# cmd_install = sudo installer -package /path/to/package -target "/Volumes/Macintosh HD"
+cmd_install = 'sudo installer -package %s/MacPython.mpkg -target "%s"' % (
+              mount_path, 
+              os.path.join(root_path, 'Python'))
 
 cmd_unmount_1 = "cd ~"
-cmd_unmount_2 = "hdiutil unmount \"/Volumes/Python/\""
+cmd_unmount_2 = "hdiutil unmount \"/Volumes/Universal MacPython 2.5.2/\""
 
 # Test this:
 cmd_post_install = "%s %s" % (os.path.join('usr', 'local', 'bin', 'python'), 
@@ -45,8 +48,8 @@ cmd_post_install = "%s %s" % (os.path.join('usr', 'local', 'bin', 'python'),
 # Execute
 #===============================================================================
 call(cmd_mount)
-call(cmd_cp)
-# call(cmd_install)
+#call(cmd_cp)
+call(cmd_install)
 call(cmd_unmount_1)
 call(cmd_unmount_2)
 call(cmd_post_install)
