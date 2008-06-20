@@ -1,11 +1,23 @@
-# quick script to build the installer
+# One-click (or command :P) builder for the installer. Paths may need to be
+# configured first!
+#  - Hardeep Singh
+
 import os
 from subprocess import call
+from shutil import copy2
 
 #===============================================================================
 # Paths (configure me)
 #===============================================================================
+# Path to izPack Installation Root
 izPath = os.path.join('c:\\', 'Program Files', 'IzPack')
+
+# Path to the PyGraphics Root. This folder should contain both a setup.py file
+# and the cpython folder!
+pyGraphicsPath = os.path.join('s:\\', 'workspace', 'PyGraphics')
+
+# Windows-specific path settings
+pyGraphicsPathDrive = 's' #i.e. c, d, x, etc... only the drive letter!
 
 # For windows only! Must have valid ImgBurn install
 # ImgBurn: http://www.imgburn.com/
@@ -32,6 +44,7 @@ iz7ZA = os.path.join(izPath, 'utils', 'izpack2exe', '7za.exe')
 #===============================================================================
 # Create commands
 #===============================================================================
+cur_dir = os.getcwd()
 cmd_compile = '"%s" "%s" %s %s %s' % (izCompile, izInstallXML, '-b .', 
                                       '-o install.jar', '-k standard')
 cmd_exe = '"%s" --file="%s" --output="%s" --with-7z="%s"' % \
@@ -48,12 +61,45 @@ cmd_img = '%s /MODE BUILD /BUILDMODE IMAGEFILE /SRC "%s\\" /DEST "%s" /FILESYSTE
           os.path.join(os.getcwd(), 'install.app', ''), 
           os.path.join(os.getcwd(), 'install.dmg'), 
           os.path.join(os.getcwd(), 'ImgBurn.log'))
+
+cmd_pygraphics = 'python "%s" sdist' % os.path.join(pyGraphicsPath, 'setup.py')
+cmd_pygraphics_win = os.path.join(pyGraphicsPath, 'win_compile.bat')
             
 #===============================================================================
-# Create the PyGraphics distutils package
+# Create the PyGraphics distutils package and copy to data folder
 #===============================================================================
-# call('python setup.py sdist')
+if ( os.name == 'nt' ):
+    out = '%s:\n cd \\\n cd \"%s\"\n python setup.py sdist' % (
+           pyGraphicsPathDrive, pyGraphicsPath)
+    
+    f = open(cmd_pygraphics_win, 'w')
+    f.write(out)
+    f.close()
+    
+    cmd_pygraphics = cmd_pygraphics_win
+else:
+    os.chroot(pyGraphicsPath)
+    
+print "Compiling PyGraphics distributable..."
+print cmd_pygraphics
+print "________________________________________________________________________"
+call(cmd_pygraphics)
+print "\n\n\n"
 
+# Copy file to data folder
+dist_path = os.path.join(pyGraphicsPath, 'dist')
+files = os.listdir(dist_path)
+
+print "Copy distributable file to data folder..."
+print "Copy [%s] -> [%s]" % (os.path.join(dist_path, files[0]), 
+                             os.path.join(os.getcwd(), 'data', 'PyGraphics.zip'))
+print "________________________________________________________________________"
+copy2(os.path.join(dist_path, files[0]), os.path.join(os.getcwd(), 'data', 
+                                                      'PyGraphics.zip'))
+print "\n\n\n"
+
+if ( os.name != 'nt' ):
+    os.chroot(cur_dir)
 #===============================================================================
 # Run commands with output
 #===============================================================================
