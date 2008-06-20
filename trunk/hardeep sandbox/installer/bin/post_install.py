@@ -43,7 +43,7 @@ if ( debug ):
 if ( os.name == 'nt' ): #Windows
     install_path = os.path.join(root_path, "wing-ide")
     if ( debug ):
-        print 'wing cmd ::', os.path.join(root_path, 'wing', 'win', wing_file['win']), '/SILENT /DIR=%s' % install_path
+        print 'wing cmd ::', os.path.join(root_path, 'wing', 'win', wing_file['win']), '/SILENT'
         print 'install_path', install_path
     call([os.path.join(root_path, 'wing', 'win', wing_file['win']), '/SILENT /dir=%s' % install_path])
 elif ( os.name == 'mac' ): #MacOS
@@ -68,7 +68,7 @@ if ( os.name == 'nt' ):
     WR = WinRegistry()
     path = WR.get_value("Path")
     path = path + ';' + python_path['win']
-    WR.set_value("Path", path, None, _winreg.REG_EXPAND_SZ)
+    WR.set_value("Path", path)
     
     if ( debug ):
         print 'registry'
