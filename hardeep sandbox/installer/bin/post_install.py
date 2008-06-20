@@ -45,7 +45,7 @@ if ( os.name == 'nt' ): #Windows
     if ( debug ):
         print 'wing cmd ::', os.path.join(root_path, 'wing', 'win', wing_file['win']), '/SILENT'
         print 'install_path', install_path
-    call([os.path.join(root_path, 'wing', 'win', wing_file['win']), '/SILENT /dir=%s' % install_path])
+    call([os.path.join(root_path, 'wing', 'win', wing_file['win']), '/SILENT'])
 elif ( os.name == 'mac' ): #MacOS
     if ( debug ):
         print 'wing cmd ::', os.path.join(root_path, 'wing', 'mac', wing_file['mac'])
