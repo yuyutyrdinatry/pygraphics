@@ -20,7 +20,7 @@ class WinRegistry:
         key = self.key + "\\" + subkey
         _winreg.DeleteKey(self.reg, key)
     
-    def set_value(self, value_name="", value="", subkey=None, value_type=_winreg.REG_SZ):
+    def set_value(self, value_name="", value="", subkey=None, value_type=_winreg.REG_EXPAND_SZ):
         key = self.key
         if subkey:
             key += "\\" + subkey
