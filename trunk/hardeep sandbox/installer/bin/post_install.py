@@ -74,20 +74,45 @@ if ( os.name == 'nt' ):
         print 'registry'
         print '\tpath', path
         print '\tdir', python_path['win']
+        
+###### TODO
+# Need to put all of the below into a command line script to run from the
+# actual directory of each setup.py...bleh
 
 #===============================================================================
 # Install nose
 #===============================================================================
-call(['python', mod_path['nose'], 'install'])
+if ( debug ):
+    print "Installing Nose"
+    print ['python', mod_path['nose'], 'install'] 
+    print "____________________________________________________________________"
+    
+call('python "%s" %s' % (mod_path['nose'], 'install'))
+if ( debug ):
+    print "\n\n\n"
 
 #===============================================================================
 # Install PIL
 #===============================================================================
-call(['python', mod_path['PIL'], 'install'])
+if ( debug ):
+    print "Installing PIL"
+    print ['python', mod_path['PIL'], 'install'] 
+    print "____________________________________________________________________"
+    
+call('python "%s" %s' % (mod_path['PIL'], 'install'))
+if ( debug ):
+    print "\n\n\n"
 
 #===============================================================================
 # Install PyGraphics
 #===============================================================================
-call(['python', mod_path['PyG'], 'install'])
+if ( debug ):
+    print "Installing PyG"
+    print ['python', mod_path['PyG'], 'install'] 
+    print "____________________________________________________________________"
+    
+call('python "%s" %s' % (mod_path['PyG'], 'install'))
+if ( debug ):
+    print "\n\n\n"
 
 a = raw_input('done...')
