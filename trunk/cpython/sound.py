@@ -1,11 +1,6 @@
-import Tkinter as tk
 import tkSnack
 from sample import *
 import os
-
-root = tk.Tk()
-root.withdraw()
-tkSnack.initializeSnack(root)
 
 class Sound(object):
     '''A Sound class as a wrapper for the tkSnack object.'''
@@ -81,8 +76,9 @@ class Sound(object):
 
     def append_silence(self, s):
         '''Append s seconds of silence to the end of this Sound.'''
-
-        self.tk_sound.length(s, unit="SECONDS")
+        
+        new_samples = len(self) + (s * self.get_sampling_rate())
+        self.tk_sound.length(new_samples)
 
 
     def insert(self, snd, i):
