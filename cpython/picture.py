@@ -35,7 +35,7 @@ class Picture(object):
             else:
                 raise ValueError('Invalid width/height specified.')
         else:
-    		raise ValueError("No arguments were given to the Picture constructor.")
+    		raise TypeError("No arguments were given to the Picture constructor.")
         
         self.set_image(image)
 	
@@ -302,9 +302,8 @@ class Picture(object):
         
         self.image.save(filename)
         self.set_filename_and_title(filename)
-        
-    def _handle_show_window_destroy(self):
-    	self.show_window = None
+
+
 ##
 ## Helper functions ---------------------------------------------------
 ##
