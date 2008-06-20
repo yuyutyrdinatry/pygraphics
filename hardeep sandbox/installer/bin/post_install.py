@@ -44,7 +44,6 @@ if ( os.name == 'nt' ): #Windows
     install_path = os.path.join(root_path, "wing-ide")
     if ( debug ):
         print 'wing cmd ::', os.path.join(root_path, 'wing', 'win', wing_file['win']), '/SILENT'
-        print 'install_path', install_path
     call([os.path.join(root_path, 'wing', 'win', wing_file['win']), '/SILENT'])
 elif ( os.name == 'mac' ): #MacOS
     if ( debug ):
@@ -80,39 +79,64 @@ if ( os.name == 'nt' ):
 # actual directory of each setup.py...bleh
 
 #===============================================================================
-# Install nose
+# Build Module Install Commands
 #===============================================================================
-if ( debug ):
+cmd_nose = 'python "%s" %s' % (mod_path['nose'], 'install')
+cmd_PIL = 'python "%s" %s' % (mod_path['PIL'], 'install')
+cmd_PyG = 'python "%s" %s' % (mod_path['PyG'], 'install')
+
+if ( os.name == 'nt' ):
+    cmd_win_script = os.path.join(root_path, 'install_modules.bat')
+    f = open(cmd_win_script, 'w')
+    
+    write = "@ECHO OFF\n"
+    write += '%s:\n' % root_path[0]
+    write += 'cd /\n'
+    write += 'cd "%s"\n' % root_path
+    
+    # nose
+    write += 'cd nose\n'
+    write += '%s\n' % cmd_nose
+    write += 'cd ..\n'
+    
+    # PIL
+    write += 'cd PIL\n'
+    write += '%s\n' % cmd_PIL
+    write += 'cd ..\n'
+    
+    # PyG
+    write += 'cd PyGraphics-1.3.3.7\n'
+    write += '%s\n' % cmd_PyG
+    write += 'cd ..\n'
+    
+    f.write(write)
+    f.close()
+    
+    call(cmd_win_script)
+else:
+    #===========================================================================
+    # Install nose
+    #===========================================================================
     print "Installing Nose"
-    print ['python', mod_path['nose'], 'install'] 
-    print "____________________________________________________________________"
-    
-call('python "%s" %s' % (mod_path['nose'], 'install'))
-if ( debug ):
+    print cmd_nose
+    print "____________________________________________________________________"    
+    call(cmd_nose)
     print "\n\n\n"
-
-#===============================================================================
-# Install PIL
-#===============================================================================
-if ( debug ):
+    
+    #===========================================================================
+    # Install PIL
+    #===========================================================================
     print "Installing PIL"
-    print ['python', mod_path['PIL'], 'install'] 
-    print "____________________________________________________________________"
-    
-call('python "%s" %s' % (mod_path['PIL'], 'install'))
-if ( debug ):
+    print cmd_PIL
+    print "____________________________________________________________________"    
+    call(cmd_PIL)
     print "\n\n\n"
-
-#===============================================================================
-# Install PyGraphics
-#===============================================================================
-if ( debug ):
+    
+    #===========================================================================
+    # Install PyGraphics
+    #===========================================================================
     print "Installing PyG"
-    print ['python', mod_path['PyG'], 'install'] 
-    print "____________________________________________________________________"
-    
-call('python "%s" %s' % (mod_path['PyG'], 'install'))
-if ( debug ):
+    print cmd_PyG
+    print "____________________________________________________________________"    
+    call(cmd_PyG)
     print "\n\n\n"
-
-a = raw_input('done...')
