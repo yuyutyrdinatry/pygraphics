@@ -3,7 +3,7 @@
 # http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/416087
 # http://socal-piggies.blogspot.com/2005/05/manipulating-windows-registry-values.html    
     
-import os, sys, win32gui, win32con
+import os, sys
 import _winreg
 
 class WinRegistry:
