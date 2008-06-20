@@ -10,6 +10,9 @@ import wx
 
 IMAGE_FORMATS = ['*.jpg', '*.bmp', '*.gif']
 
+root = tk.Tk()
+root.withdraw()
+tkSnack.initializeSnack(root)
 
 ##
 ## Global picture functions ---------------------------------------------------
@@ -267,14 +270,25 @@ def blocking_play_in_range(snd, first, last):
     snd.play(first, last, blocking=1)
 
 
+def stop(snd):
+    
+    snd.stop()
+    
+    
 def get_sampling_rate(snd):
 
     return snd.get_sampling_rate()
 
 
+def set_sampling_rate(snd, freq):
+
+    return snd.set_sampling_rate(freq)
+
+
 def get_sample(snd, i):
 
     return snd.get_sample(i)
+
 
 ##
 ## Global sample functions -----------------------------------------------------
@@ -437,4 +451,6 @@ def get_formats():
 
 
 if __name__ == '__main__':
-    print choose_file()
+    
+    s = load_sound('/work/songsparrow.wav')
+    s.play()
