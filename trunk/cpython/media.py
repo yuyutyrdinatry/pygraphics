@@ -1,10 +1,15 @@
 from color import *
 from picture import *
 from pixel import *
-import wx
+from sample import *
+from sound import *
+import Tkinter as tk
 import os
+import tkSnack
+import wx
 
 IMAGE_FORMATS = ['*.jpg', '*.bmp', '*.gif']
+
 
 ##
 ## Global picture functions ---------------------------------------------------
@@ -127,25 +132,6 @@ def add_polygon_filled(pic, point_list, col):
     pic.add_polygon_filled(col, point_list)
 
 
-def save_as(pic):
-    '''Prompt user to pick a directory and filename then write Picture pic
-    to that filename. Requires that file format is specified in filename 
-    by extensions %s.''' % IMAGE_FORMATS
-    
-    filename = choose_save_filename()
-    if filename:
-        pic.save_as(filename)
-
-    
-def save(pic):
-    '''Write Picture pic back to its previous file.'''
-    
-    if pic.get_filename() == '':
-        save_as(pic)
-    else:
-        pic.save()
-
-
 ##
 ## Global pixel functions ------------------------------------------------------
 ##
@@ -240,13 +226,131 @@ def create_color(r, g, b):
     
     return Color(r, g, b)
 
+
+##
+## Global sound functions ------------------------------------------------------
+##
+
+
+def load_sound(filename):    
+
+    return Sound(filename=filename)
+
+
+def create_empty_sound(sec):
+
+    return Sound(sec)
+
+
+def get_samples(snd):
+
+    return [samp for samp in snd]
+
+
+def play(snd):
+
+    snd.play()
+
+
+def blocking_play(snd):
+
+    snd.play(blocking=1)
+
+
+def play_in_range(snd, first, last):
+
+    snd.play(first, last)
+
+
+def blocking_play_in_range(snd, first, last):
+
+    snd.play(first, last, blocking=1)
+
+
+def get_sampling_rate(snd):
+
+    return snd.get_sampling_rate()
+
+
+def get_sample(snd, i):
+
+    return snd.get_sample(i)
+
+##
+## Global sample functions -----------------------------------------------------
+##
+
+
+def set_value(samp,value):
+
+    return samp.set_value(value)
+
+
+def get_value(samp):
+
+    return samp.get_value()
+
+
+##
+## Global sound graphing functions ---------------------------------------------
+##
+
+# This function plots the sound graph.
+# By default the size of the graph is 1024x300
+# TODO: Make it zoom capable
+def plot_waveform(snd, width=1024, height=300):
+   
+    win = Toplevel()
+
+    c = tkSnack.SnackCanvas(win, background="#060", width=width, height=height)
+    c.pack()
+    c.create_waveform(0, 0, fill="#0f0" , sound=snd.tk_sound, width=width, height=height, zerolevel=1)
+    
+
+def plot_spectrogram(snd, width=1024, height=300):
+
+    win = Toplevel()
+
+    c = tkSnack.SnackCanvas(win, background="#060", width=width, height=height)
+    c.pack()
+    c.create_spectrogram(0, 0, sound=snd.tk_sound, width=width, height=height)
+
+
+def plot_spectrum(snd, width=1024, height=300):
+    
+    win = Toplevel()
+
+    c = tkSnack.SnackCanvas(win, background="#060",width=width, height=height)
+    c.pack()
+    c.create_section(0, 0, fill="#0f0", sound=snd.tk_sound, width=width, height=height)
+
+
 ##
 ## Media functions -------------------------------------------------------
 ##
 
 
+def save_as(obj):
+    '''Prompt user to pick a directory and filename then write media.py object
+    obj to that filename. Requires that file format is specified in filename 
+    by extensions.'''
+    
+    filename = choose_save_filename()
+    if filename:
+        obj.save_as(filename)
+
+    
+def save(obj):
+    '''Write media.py object obj back to its previous file.'''
+    
+    if obj.get_filename() == '':
+        save_as(obj)
+    else:
+        obj.save()
+
+
 def inspect(obj):
-    '''Inspect object obj. Works on most top level media.py objects.'''
+    '''Inspect object obj. Works on most media.py objects.'''
     
     obj.inspect()
 
