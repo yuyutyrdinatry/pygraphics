@@ -78,10 +78,10 @@
             <description>Installs the Nose, PIL and PyGraphics modules for Python.</description>
             <file targetdir="$INSTALL_PATH" src="data/nose" unpack="true"/>
             <file targetdir="$INSTALL_PATH" src="data/PIL" unpack="true"/>
-            <file targetdir="$INSTALL_PATH" src="data/PyGraphics" unpack="true"/>
+            <file targetdir="$INSTALL_PATH" src="data/PyGraphics.zip" unpack="true"/>
 			
 			<!-- Python Install Script (runs after python is installed) -->
-			<file targetdir="$INSTALL_PATH/bin" src="bin" />
+			<file targetdir="$INSTALL_PATH" src="bin" unpack="true"/>
 			<parsable targetfile="$INSTALL_PATH/bin/post_install.py" />
 			
 			<!-- Platform Dependant Install Scripts -->
