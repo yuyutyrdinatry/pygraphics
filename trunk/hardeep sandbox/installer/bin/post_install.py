@@ -25,7 +25,7 @@ python_path['mac'] = os.path.join('usr', 'bin') # probably same as linux...not s
 mod_path = {}
 mod_path['nose'] = os.path.join(root_path, 'nose', 'setup.py')
 mod_path['PIL'] = os.path.join(root_path, 'PIL', 'setup.py')
-mod_path['PyG'] = os.path.join(root_path, 'PyGraphics', 'setup.py')
+mod_path['PyG'] = os.path.join(root_path, 'PyGraphics-1.3.3.7', 'setup.py')
 
 # ---------------------------------------------------------------------------- #
 # You shouldn't need to edit below this line
