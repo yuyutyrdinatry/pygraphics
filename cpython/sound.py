@@ -208,11 +208,11 @@ class Sound(object):
         self.tk_sound.write(self.filename)
 
 
-def sine_wave(freq, amp, sec):
+def sine_wave(freq, amp, samples):
     '''Return a synthesized sound of sec seconds in the form of a sine wave 
     with frequency freq in Hz and amplitude amp in the range [0, 32767].'''
     
-    new_snd = Sound(seconds=sec)
+    new_snd = Sound(samples=samples)
     rate = new_snd.get_sampling_rate()
     interval = 1.0 / freq
     samples_per_cycle = rate * interval
@@ -226,11 +226,11 @@ def sine_wave(freq, amp, sec):
     return new_snd
 
 
-def square_wave(freq, amp, sec):
+def square_wave(freq, amp, samples):
     '''Return a synthesized sound of sec seconds in the form of a square wave 
     with frequency freq in Hz and amplitude amp in the range [0, 32767].'''
 
-    new_snd = Sound(seconds=sec)
+    new_snd = Sound(samples=samples)
     rate = new_snd.get_sampling_rate()
     interval = 1.0 / freq
     samples_per_cycle = rate * interval
