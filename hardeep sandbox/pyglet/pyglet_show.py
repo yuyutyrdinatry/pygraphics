@@ -18,34 +18,45 @@ class ShowWrapperThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.img = None
-    
-    def load_image(self, p):
-        self.pic = p
-        self.img = image_to_psurf(p.get_image())
-        self.w.width = self.img.width
-        self.w.height = self.img.height    
+        self.w = None
         
-    def run(self):
+    def _create_and_init_window(self):
         self.w = window.Window(visible=False, resizable=False)
     
         checks = image.create(32, 32, image.CheckerImagePattern())
-        self.background = background = image.TileableTexture.create_for_image(checks)
+        self.background = image.TileableTexture.create_for_image(checks)
     
         self.w.width = 1
         self.w.height = 1
         self.w.set_visible()
     
         glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)  
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         
+    def _main_loop(self):
         while not self.w.has_exit:
             self.w.dispatch_events()
             
-            background.blit_tiled(0, 0, 0, self.w.width, self.w.height)
+            self.background.blit_tiled(0, 0, 0, self.w.width, self.w.height)
             if ( self.img is not None ):
                 self.img.blit(0, 0, 0)
             
             self.w.flip()
+    
+    def load_image(self, p):
+        if ( self.w is not None ):
+            self.pic = p
+            self.img = image_to_psurf(p.get_image())
+            self.w.width = self.img.width
+            self.w.height = self.img.height    
+        else:
+            while ( self.w is None ):
+                True # Wait until the window is active
+            self.load_image(p)
+        
+    def run(self):
+        self._create_and_init_window()
+        self._main_loop()
             
 def image_to_psurf(im):
     im = im.transpose(FLIP_TOP_BOTTOM)
