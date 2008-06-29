@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# Hmmmm it might be possible to create the show window using pyglet?? :o
 
 import sys
 
@@ -12,7 +11,7 @@ import threading
 
 import media as m
 
-class ShowWrapperThread(threading.Thread):
+class PygletShow(threading.Thread):
     '''Wraps the ShowOMatic into it's own thread.'''
     
     def __init__(self):
@@ -21,7 +20,7 @@ class ShowWrapperThread(threading.Thread):
         self.w = None
         
     def _create_and_init_window(self):
-        self.w = window.Window(visible=False, resizable=False)
+        self.w = window.Window(visible=False, resizable=True)
     
         checks = image.create(32, 32, image.CheckerImagePattern())
         self.background = image.TileableTexture.create_for_image(checks)
@@ -34,12 +33,17 @@ class ShowWrapperThread(threading.Thread):
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         
     def _main_loop(self):
+        while self.img is None:
+            self.w.dispatch_events()
+            self.background.blit_tiled(0, 0, 0, self.w.width, self.w.height)
+            self.w.flip()
+            
         while not self.w.has_exit:
             self.w.dispatch_events()
             
             self.background.blit_tiled(0, 0, 0, self.w.width, self.w.height)
-            if ( self.img is not None ):
-                self.img.blit(0, 0, 0)
+            self.img = image_to_psurf(self.pic.get_image())
+            self.img.blit(0, 0, 0)
             
             self.w.flip()
     
@@ -63,18 +67,25 @@ def image_to_psurf(im):
     return image.ImageData(im.size[0], im.size[1], "RGB", im.tostring())
 
 if __name__ == '__main__':
-    a = ShowWrapperThread()
+    a = PygletShow()
     a.start()
     
-    p1 = m.create_picture(900,200,m.black)
-    p2 = m.create_picture(300,100,m.red)
-    p3 = m.create_picture(150,150,m.green)
-    
+    p1 = m.create_picture(300,300,m.black)
     a.load_image(p1)
-    raw_input('press enter to load next image...')
     
-    a.load_image(p2)
-    raw_input('press enter to load next image...')
+    for p in p1:
+        p.set_red(255)
+        
+    #a.load_image(p1)
+        
+    #p2 = m.create_picture(300,100,m.red)
+    #p3 = m.load_picture(m.choose_file())
     
-    a.load_image(p3)
-    raw_input('press enter to exit...')
+    #a.load_image(p1)
+    #raw_input('press enter to load next image...')
+    
+    #a.load_image(p2)
+    #raw_input('press enter to load next image...')
+    
+    #a.load_image(p3)
+    #raw_input('press enter to exit...')
