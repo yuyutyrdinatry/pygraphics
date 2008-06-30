@@ -344,12 +344,14 @@ def plot_spectrum(snd, width=1024, height=300):
 ##
 
 
-def save_as(obj):
+def save_as(obj, filename=None):
     '''Prompt user to pick a directory and filename then write media.py object
-    obj to that filename. Requires that file format is specified in filename 
+    obj to that filename. Requires that file format is specified in filename
     by extensions.'''
     
-    filename = choose_save_filename()
+    if not filename:
+        filename = choose_save_filename()
+
     if filename:
         obj.save_as(filename)
 
