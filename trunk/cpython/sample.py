@@ -1,15 +1,19 @@
 class MonoSample(object):
-    '''A sample in a sound with an index value'''
+    '''A sample in a Sound with a value.'''
     
     def __init__(self, snd, i):
         '''Create a Sample object from Sound snd at index i.'''
         
-        self.tk_sound = snd
-        self.index = i
+        # negative indices are supported
+        if -snd.length() <= i <= snd.length() - 1:    
+            self.tk_sound = snd
+            self.index = i % snd.length()
+        else:
+            raise IndexError('Sample index out of bounds.')
 
 
     def __str__(self):
-        '''Return a str with index and value information'''
+        '''Return a str with index and value information.'''
         
         return "Sample at " + str(self.index) + " with value " \
                  + str(self.get_value())
@@ -33,30 +37,37 @@ class MonoSample(object):
         return self.index
     
 
-class StereoSample(MonoSample):
-    '''A sample in a two-channeled sound with a left and a right value.'''
+class StereoSample(object):
+    '''A sample in a two-channeled Sound with a left and a right value.'''
 
     
-    def set_value(self, v):
-        '''Raise error for inheritance purposes.'''
-        
-        raise AttributeError("'TwoChannelSample' object has no attribute 'set_value'")
+    def __init__(self, snd, i):
+        '''Create a StereoSample object from Sound snd at index i.'''
+       
+        # negative indices are supported
+        if -snd.length() <= i <= snd.length() - 1:    
+            self.tk_sound = snd
+            self.index = i % snd.length()
+        else:
+            raise IndexError('Sample index out of bounds.')
 
-    def get_value(self):
-        '''Raise error for inheritance purposes.'''
+
+    def __str__(self):
+        '''Return a str with index and value information.'''
         
-        raise AttributeError("'TwoChannelSample' object has no attribute 'get_value'")
+        return "Sample at " + str(self.index) + " with value " \
+                 + str(self.get_values())
 
     
     def set_values(self, left, right):
-        '''Set this TwoChannelSample's left value to left and 
+        '''Set this StereoSample's left value to left and 
         right value to right.'''
         
         self.tk_sound.sample(self.index, int(left), int(right))
     
 
     def get_values(self):        
-        '''Return this TwoChannelSample's left and right values as a tuple 
+        '''Return this StereoSample's left and right values as a tuple 
         (left, right) of two ints.'''
         
         res = self.tk_sound.sample(self.index).split()
@@ -65,40 +76,32 @@ class StereoSample(MonoSample):
 
     
     def set_left(self, v):
-        '''Set this TwoChannelSample's left value to v.'''
+        '''Set this StereoSample's left value to v.'''
         
         self.tk_sound.sample(self.index, left=int(v))
 
 
     def set_right(self, v):
-        '''Set this TwoChannelSample's right value to v.'''
+        '''Set this StereoSample's right value to v.'''
         
         self.tk_sound.sample(self.index, right=int(v))
         
         
     def get_left(self):
-        '''Return this TwoChannelSample's left value.'''
+        '''Return this StereoSample's left value.'''
 
         return self.get_values()[0]
     
     
     def get_right(self):
-        '''Return this TwoChannelSample's right value.'''
+        '''Return this StereoSample's right value.'''
 
         return self.get_values()[1]
 
-class MultiChannelSample(StereoSample):
-    '''TODO: FIX ME UP'''
-    
-    def set_values(self, left, right):
-        '''Set this TwoChannelSample's left value to left and 
-        right value to right.'''
-        
-        pass
 
-    def get_values(self):        
-        '''Return this TwoChannelSample's left and right values as a tuple 
-        (left, right) of two ints.'''
+    def get_index(self):
+        '''Return this Sample's index.'''
         
-        pass
+        return self.index
+
 
