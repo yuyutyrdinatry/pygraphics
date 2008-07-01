@@ -242,7 +242,7 @@ def load_sound(filename):
 
 def create_empty_sound(sec):
 
-    return Sound(sec)
+    return Sound(seconds=sec)
 
 
 def get_samples(snd):
@@ -255,19 +255,9 @@ def play(snd):
     snd.play()
 
 
-def blocking_play(snd):
-
-    snd.play(blocking=1)
-
-
 def play_in_range(snd, first, last):
 
     snd.play(first, last)
-
-
-def blocking_play_in_range(snd, first, last):
-
-    snd.play(first, last, blocking=1)
 
 
 def stop(snd):
