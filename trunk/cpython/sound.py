@@ -259,15 +259,15 @@ class Sound(object):
         '''Play this Sound from sample index first to last. As default play
         the entire Sound.'''
         
-        self.play = self.copy()
-        self.play.crop(first, last)
-        self.play.get_pygame_sound().play()
+        self.player = self.copy()
+        self.player.crop(first, last)
+        self.player.get_pygame_sound().play()
 
 
     def stop(self):
         '''Stop playing this Sound.'''
         
-        self.play.get_pygame_sound().stop()
+        self.player.get_pygame_sound().stop()
         
 
     def get_sampling_rate(self):
@@ -343,94 +343,29 @@ class Sound(object):
         self.save_as(self.get_filename())
         
 ####################------------------------------------------------------------
-## Wave creation functions
+## Wave creation function
 ####################------------------------------------------------------------
 
 def create_sine_wave(freq, amp, samp):
     '''Return a Sound samp samples long in the form of a sine wave 
     with frequency freq in Hz and amplitude amp in the range [0, 32767].'''
     
-    new_snd = Sound(samples=samp)
-    rate = new_snd.get_sampling_rate()
-    period = 1.0 / freq
-    samples_per_period = rate * period
-    max_cycle = 2 * math.pi
+    samples_per_second = DEFAULT_FREQUENCY
+    seconds_per_period = 1.0 / freq
+    samples_per_period = samples_per_second * seconds_per_period
+    period = 2 * math.pi
+    if DEFAULT_CHANNELS == 1:
+        samples = numpy.array(range(samp), 
+                              AUDIO_ENCODINGS[DEFAULT_ENCODING])
+    else:
+        samples = numpy.array([range(samp), range(samp)], 
+                              AUDIO_ENCODINGS[DEFAULT_ENCODING])
+        samples = samples.transpose()
     
-    for i in range(samp):
-        curr = new_snd.get_sample(i)
-        raw_val = math.sin((i / samples_per_period) * max_cycle)
-        val = int(raw_val * amp)
-        if DEFAULT_CHANNELS == 1:
-            curr.set_value(val)
-        else:
-            curr.set_values(val, val)
-    
-    return new_snd
-
-
-def create_square_wave(freq, amp, samp):
-    '''Return a Sound samp samples long in the form of a square wave 
-    with frequency freq in Hz and amplitude amp in the range [0, 32767].'''
-
-    new_snd = Sound(samples=samp)
-    rate = new_snd.get_sampling_rate()
-    period = 1.0 / freq
-    samples_per_period = rate * period
-    samples_per_halfperiod = int(samples_per_period / 2)
-    sample_val = amp
-    
-    s = 0
-    for i in range(samp):
-        if s > samples_per_halfperiod:
-            sample_val = sample_val * -1
-            s = 0
-        
-        curr = new_snd.get_sample(i)
-        if DEFAULT_CHANNELS == 1:
-            curr.set_value(int(sample_val))
-        else:
-            curr.set_values(int(sample_val), int(sample_val))
-        s += 1
-
-    return new_snd
-
-
-def create_triangle_wave(freq, amp, samp):
-    '''Return a Sound samp samples long in the form of a square wave 
-    with frequency freq in Hz and amplitude amp in the range [0, 32767].'''
-
-    new_snd = Sound(samples=samp)
-    rate = new_snd.get_sampling_rate()
-    period = 1.0 / freq
-    samples_per_period = rate * period
-    samples_per_halfperiod = int(samples_per_period / 2)
-    samples_per_quarterperiod = int(samples_per_period / 4)
-    increment = int(amp / samples_per_quarterperiod)
-    sample_val = 0
-    
-    quarter_period = 0
-    half_period = 0
-
-    for i in range(samp):
-        
-        if quarter_period > samples_per_quarterperiod:
-            increment = increment * -1
-            quarter_period = 0
-        if half_period > samples_per_halfperiod:
-            increment = increment * -1
-            half_period = 0
-        
-        curr = new_snd.get_sample(i)
-        sample_val = sample_val + increment
-        if DEFAULT_CHANNELS == 1:
-            curr.set_value(int(sample_val))
-        else:
-            curr.set_values(int(sample_val), int(sample_val))
-        
-        quarter_period += 1
-        half_period += 1
-
-    return new_snd
+    samples = numpy.sin((samples * period) / samples_per_period) * amp
+    samples = numpy.array(samples, AUDIO_ENCODINGS[DEFAULT_ENCODING])
+    pygame_snd = sample_array_to_pygame(samples)
+    return Sound(sound=pygame_snd)
 
 C = create_sine_wave(264, 6000, 11025)
 D = create_sine_wave(297, 6000, 11025)
