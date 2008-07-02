@@ -1,18 +1,26 @@
+import numpy
+import os
+import pygame
+import wx
+
+IMAGE_FORMATS = ['*.jpg', '*.bmp', '*.gif']
+AUDIO_FORMATS = ['*.wav']
+
+DEFAULT_FREQUENCY = 22050
+DEFAULT_ENCODING = -16
+DEFAULT_CHANNELS = 2
+DEFAULT_BUFFERING = 2048
+pygame.mixer.pre_init(DEFAULT_FREQUENCY, 
+                      DEFAULT_ENCODING, 
+                      DEFAULT_CHANNELS, 
+                      DEFAULT_BUFFERING)
+pygame.mixer.init()
+
 from color import *
 from picture import *
 from pixel import *
 from sample import *
 from sound import *
-import Tkinter as tk
-import os
-import tkSnack
-import wx
-
-IMAGE_FORMATS = ['*.jpg', '*.bmp', '*.gif']
-
-root = tk.Tk()
-root.withdraw()
-tkSnack.initializeSnack(root)
 
 ##
 ## Global picture functions ---------------------------------------------------
@@ -436,6 +444,9 @@ def get_formats():
     
     formats = ''
     for format in IMAGE_FORMATS:
+        format = format[-3:].upper() + ' files (' + format + ')|' + format + '|'
+        formats += format
+    for format in AUDIO_FORMATS:
         format = format[-3:].upper() + ' files (' + format + ')|' + format + '|'
         formats += format
     
