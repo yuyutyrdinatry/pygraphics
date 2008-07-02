@@ -353,7 +353,6 @@ def create_sine_wave(freq, amp, samp):
     samples_per_second = DEFAULT_FREQUENCY
     seconds_per_period = 1.0 / freq
     samples_per_period = samples_per_second * seconds_per_period
-    period = 2 * math.pi
     if DEFAULT_CHANNELS == 1:
         samples = numpy.array(range(samp), 
                               AUDIO_ENCODINGS[DEFAULT_ENCODING])
@@ -362,7 +361,7 @@ def create_sine_wave(freq, amp, samp):
                               AUDIO_ENCODINGS[DEFAULT_ENCODING])
         samples = samples.transpose()
     
-    samples = numpy.sin((samples * period) / samples_per_period) * amp
+    samples = numpy.sin((samples * 2 * math.pi) / samples_per_period) * amp
     samples = numpy.array(samples, AUDIO_ENCODINGS[DEFAULT_ENCODING])
     pygame_snd = sample_array_to_pygame(samples)
     return Sound(sound=pygame_snd)
