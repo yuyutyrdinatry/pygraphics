@@ -65,12 +65,12 @@ def sample_array_to_pygame(samp_array):
     # Check if array has the right shape
     if DEFAULT_CHANNELS == 1:
         if len (shape) != 1:
-            raise ValueError, "Array must be 1-dimensional for mono mixer"
+            raise ValueError, "Array must be 1-dimensional for mono sound"
     else:
         if len (shape) != 2:
-            raise ValueError, "Array must be 2-dimensional for stereo mixer"
+            raise ValueError, "Array must be 2-dimensional for stereo sound"
         elif shape[1] != DEFAULT_CHANNELS:
-            raise ValueError, "Array depth must match number of mixer channels"
+            raise ValueError, "Array depth must match number of sound channels"
     
     return pygame.mixer.Sound(samp_array)
 
@@ -336,6 +336,7 @@ class Sound(object):
         wav.setframerate(self.get_sampling_rate())
         wav.setnframes(len(self))
         wav.writeframes(self.pygame_sound.get_buffer().raw)
+        wav.close()
         
     def save(self):
         '''Save this Sound to its filename.'''
@@ -346,12 +347,15 @@ class Sound(object):
 ## Wave creation function
 ####################------------------------------------------------------------
 
-def create_sine_wave(freq, amp, samp):
+def create_sine_wave(hz, amp, samp):
     '''Return a Sound samp samples long in the form of a sine wave 
-    with frequency freq in Hz and amplitude amp in the range [0, 32767].'''
+    with frequency hz and amplitude amp in the range [0, 32767].'''
     
+    # Default frequency is in samples per second
     samples_per_second = DEFAULT_FREQUENCY
-    seconds_per_period = 1.0 / freq
+    
+    # Hz are periods per second
+    seconds_per_period = 1.0 / hz
     samples_per_period = samples_per_second * seconds_per_period
     if DEFAULT_CHANNELS == 1:
         samples = numpy.array(range(samp), 
@@ -361,7 +365,12 @@ def create_sine_wave(freq, amp, samp):
                               AUDIO_ENCODINGS[DEFAULT_ENCODING])
         samples = samples.transpose()
     
+    # For each value in the array multiply it by 2 pi, divide by the 
+    # samples per period, take the sin, and multiply the resulting
+    # value by the amplitude.
     samples = numpy.sin((samples * 2 * math.pi) / samples_per_period) * amp
+    
+    # Convert the array back into one with the appropriate encoding
     samples = numpy.array(samples, AUDIO_ENCODINGS[DEFAULT_ENCODING])
     pygame_snd = sample_array_to_pygame(samples)
     return Sound(sound=pygame_snd)
