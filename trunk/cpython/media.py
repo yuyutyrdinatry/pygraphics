@@ -465,33 +465,37 @@ def ask(s, num=False, hidden=False, choices=None, multi=False):
     
     # Ignore all other parameters, will only show a number entry box!
     if ( num is not False ):
-        dlg, get_bind = _ask_num()
+        dlg, get_bind = _ask_num(s)
     
     # Now we want a password input box, all other parameters ignored.
     elif ( hidden is not False ):
-        dlg, get_bind = _ask_hidden()
+        dlg, get_bind = _ask_hidden(s)
         
     # Choices have been specified, so show a selection dialog
     elif ( choices is not None ):
-        dlg, get_bind = _ask_multi(multi)
+        dlg, get_bind = _ask_multi(s, choices, multi)
+    
+    # Default behaviour, simple text entry dialog
+    else:
+        dlg, get_bind = _ask_default(s)
         
     if ( dlg.ShowModal() == close_check ):
         dlg.Destroy()
         return get_bind()
 
-def _ask_num():
+def _ask_num(s):
     dlg = wx.NumberEntryDialog(None, s, prompt="Input:", 
                                caption="Please enter a number...", value=0,
                                min=0, max=2**30)
     get_bind = dlg.GetValue
     return (dlg, get_bind)
 
-def _ask_hidden():
+def _ask_hidden(s):
     dlg = wx.PasswordEntryDialog(None, s, caption="Please input data...")
     get_bind = dlg.GetValue
     return (dlg, get_bind)
 
-def _ask_multi(multi=False):
+def _ask_multi(s, choices, multi=False):
     # If multi is True, we show a selction box capable of returning multiple
     # selections.
     if ( multi is False ):
@@ -505,6 +509,11 @@ def _ask_multi(multi=False):
         get_bind = dlg.GetSelections
     return (dlg, get_bind)
 
+def _ask_default(s):
+    dlg = wx.TextEntryDialog(None, s, "Please input data...")
+    get_bind = dlg.GetValue
+    return (dlg, get_bind)
+
 def say(s):
     '''Display a dialog containing s and an "OK" button.'''
     
@@ -515,7 +524,15 @@ def say(s):
     dlg.ShowModal() # Shows it
     dlg.Destroy() # finally destroy it when finished.
 
-#if __name__ == '__main__':
+if __name__ == '__main__':
+    L = []
+    L.append(say('this is a say box'))
+    L.append(ask('plain old default ask box'))
+    L.append(ask('we want a number', num=True))
+    L.append(ask('passwords for all! :o', hidden=True))
+    L.append(ask('so many choices...', choices=['choice 1', 'choice 2', 'choice 3']))
+    L.append(ask('so little time...', choices=['oh', 'my', 'gawd'], multi=True))
+    print L
     
 #    s = load_sound('/work/songsparrow.wav')
 #    s.play()
