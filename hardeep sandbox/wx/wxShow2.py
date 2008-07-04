@@ -5,60 +5,72 @@ import wx
 import wx.lib.scrolledpanel as scrolled
 
 # Let's attempt to get this working in a style similar to pyglet...
-class wxShowFrame(threading.Thread):
-    
-    class ImagePanel(scrolled.ScrolledPanel):
-        def __init__(self, parent):
-            scrolled.ScrolledPanel.__init__(self, parent, -1)
-    
+class ShowWindow(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
-        self.ipanel = None
-        self.pic = None
+        self.frame = None
+        
+    def load_image(self, pic):
+        if ( self.frame is not None ):
+            self.frame.load_image(pic)
+        else:
+            while ( self.frame is None ):
+                True
+            self.frame.load_image(pic)
         
     def run(self):
-        self._create_and_init_window()
-        self._set_layout_scheme()
+        self.app = wx.App()
+        self.frame = ImageFrame()
+        self.frame.Show()
         self.app.MainLoop()
+        
+class ImagePanel(scrolled.ScrolledPanel):
+    def __init__(self, parent):
+        scrolled.ScrolledPanel.__init__(self, parent, -1)
+        
+class ImageFrame(wx.Frame):
+    def __init__(self):
+        wx.Frame(self, None, -1, 'Show', (0,0), (100,100), 
+                 wx.DEFAULT_FRAME_STYLE, 'Show')
+        
+        self.CenterOnScreen()
+        self._create_ipanel()
+        self._set_layout_scheme()
+    
+    def _create_ipanel(self):
+        self.ipanel = ImagePanel(self)
+        self.ipanel.CenterOnParent()
+        self.ipanel.EnableScrolling(True, True)
+        
+    def _set_layout_scheme(self):
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        hbox.Add(self.ipanel)
+        
+        vbox = wx.BoxSizer(wx.VERTICAL)
+        vbox.Add(hbox, wx.ALL)
+        
+        self.SetSizer(vbox)
+        self.SetAutoLayout(1)
+        self.SetupScrolling()
         
     def load_image(self, pic):
         if ( self.ipanel is not None ):
             self.pic = pic
             self._update_display()
         else:
-            # Wait until the panel is initialized
             while ( self.ipanel is None ):
                 True
             self.load_image(pic)
         
     def _update_display(self):
-        self.bitmap = self._convert_picture_to_bitmap()
-        wx.StaticBitmap(self.ipanel, -1, self.bitmap, (0, 0))
-        #self.ipanel.SetScrollbars(1, 1, self.bitmap.GetWidth(), self.bitmap.GetHeight())
-        #self.frame.SetSize((self.bitmap.GetWidth(), self.bitmap.GetHeight()))
+        self.bitmap = _convert_picture_to_bitmap(self.pic)
+        wx.StaticBitmap(self.frame.ipanel, -1, self.bitmap, (0, 0))
         
-    def _create_and_init_window(self):
-        self.app = wx.App()
-        
-        self.frame = wx.Frame(None, -1, 'Show', (0,0), (100, 100), 
-                              wx.DEFAULT_FRAME_STYLE, 'Show')
-        self.frame.CenterOnScreen()
-        
-        self.ipanel = self.ImagePanel(self)
-        self.ipanel.CenterOnParent()
-        self.ipanel.EnableScrolling(True, True)
-        
-    def _set_layout_scheme(self):
-        vbox = wx.BoxSizer(wx.VERTICAL)
-        hbox = wx.BoxSizer(wx.HORIZONTAL)
-        hbox.Add(self.ipanel)
-        vbox.Add(hbox, wx.ALL)
-        
-    def _convert_picture_to_bitmap(self):
-        if ( self.pic is not None ):
-            pilImage = self.pic.get_image()
-            image = _pil_to_image(pilImage)
-            return wx.BitmapFromImage(image)
+def _convert_picture_to_bitmap(pic):
+    if ( pic is not None ):
+        pilImage = pic.get_image()
+        image = _pil_to_image(pilImage)
+        return wx.BitmapFromImage(image)
         
 def _pil_to_image(pil, alpha=True):
     '''Convert PIL Image to wx.Image and return the result.'''
@@ -76,27 +88,9 @@ def _pil_to_image(pil, alpha=True):
         
     return image
 
-if __name__ == '__main__':
-    import picture
-    
-    a = wxShowFrame()
-    a.start()
-    
-    b = picture.Picture(400,200)
-    #a.load_image(b)
-#    import wx.lib as wxLib
-#    import wx.lib.floatcanvas.NavCanvas as wxNC
-#    a = wx.App()
-#    
-#    frame = wx.Frame(None, -1, 'title', (0,0), (400,400), wx.DEFAULT_FRAME_STYLE, 'name')
-#    panel = wxNC.NavCanvas(frame, -1, (100,100))
-#    frame.Show(True)
-#    frame.CenterOnScreen()
-#    
-#    a.MainLoop()
-    
-    #dlg.ShowModal()
-    #dlg.Destroy()
-    #dlg = ID(None, 'C:')
-    #dlg.ShowModal()
-    #dlg.Destroy()
+import picture
+
+#a = wxShowFrame()
+#a.start()
+#
+#b = picture.Picture(400,200)
