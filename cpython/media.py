@@ -1,6 +1,6 @@
 import numpy
 import os
-#import pygame
+import pygame
 import wx
 
 IMAGE_FORMATS = ['*.jpg', '*.bmp', '*.gif']
@@ -10,17 +10,17 @@ DEFAULT_FREQUENCY = 22050
 DEFAULT_ENCODING = -16
 DEFAULT_CHANNELS = 2
 DEFAULT_BUFFERING = 2048
-#pygame.mixer.pre_init(DEFAULT_FREQUENCY, 
-#                      DEFAULT_ENCODING, 
-#                      DEFAULT_CHANNELS, 
-#                      DEFAULT_BUFFERING)
-#pygame.mixer.init()
+pygame.mixer.pre_init(DEFAULT_FREQUENCY, 
+                      DEFAULT_ENCODING, 
+                      DEFAULT_CHANNELS, 
+                      DEFAULT_BUFFERING)
+pygame.mixer.init()
 
 from color import *
 from picture import *
 from pixel import *
 from sample import *
-#from sound import *
+from sound import *
 
 ##
 ## Global picture functions ---------------------------------------------------
@@ -564,5 +564,3 @@ if __name__ == '__main__':
     
 #    s = load_sound('/work/songsparrow.wav')
 #    s.play()
-    #say('this is a test message')
-    #print ask('hello!')
