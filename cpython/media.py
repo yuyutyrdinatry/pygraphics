@@ -454,14 +454,22 @@ def get_formats():
 
 
 def ask(s, num=False, hidden=False, choices=None, multi=False):
-# Outdated :P
-#    '''Display a dialog containing s, a text field for a response, and an "OK"
-#    button. When the user clicks "OK", return the contents of the text
-#    field.'''
+    '''Display a dialog containing s, a text field for a response, and an "OK"
+    and "CANCEL" button. The optional parameters modify the look of the dialog
+    in listed priority: 
+        If the optional bool num is given as True, the dialog will contain
+    a numerical input slider. Return an int of the input.
+        If the optional bool hidden is given as True, the entry box will show
+    all text given in a manner similar to a password box. Return a str of the
+    input.
+        If the optional list choices is given which is a list of strings, the 
+    dialog box will show a selection box from where the user may choose one 
+    of the given options. Return an int indicating the index of the chosen
+    option in choices. If the bool multi is given as True, the user may choose
+    multiple options from the given choices. Will return a list of ints
+    indicating the indices of the selected options from the given choices.'''
 
     app = wx.App()
-    
-    close_check = wx.ID_OK
     
     # Ignore all other parameters, will only show a number entry box!
     if ( num is not False ):
@@ -479,11 +487,16 @@ def ask(s, num=False, hidden=False, choices=None, multi=False):
     else:
         dlg, get_bind = _ask_default(s)
         
-    if ( dlg.ShowModal() == close_check ):
+    if ( dlg.ShowModal() == wx.ID_OK ):
         dlg.Destroy()
         return get_bind()
 
 def _ask_num(s):
+    '''Given a str s, show a wxNumberEntryDialog with the given text. The user
+    may input a number between [0, 2**30] inclusive. Return a tuple of the
+    open dialog box and the method which can be used to retrieve the data from
+    the dialog box. Assumes a wxApp is already open.'''
+    
     dlg = wx.NumberEntryDialog(None, s, prompt="Input:", 
                                caption="Please enter a number...", value=0,
                                min=0, max=2**30)
@@ -491,13 +504,23 @@ def _ask_num(s):
     return (dlg, get_bind)
 
 def _ask_hidden(s):
+    '''Given a str s, show a wxPasswordEntryDialog with the given text. The user
+    may input any string. Return a tuple of the open dialog box and the method 
+    which can be used to retrieve the data from the dialog box. Assumes a wxApp
+    is already open.'''
+    
     dlg = wx.PasswordEntryDialog(None, s, caption="Please input data...")
     get_bind = dlg.GetValue
     return (dlg, get_bind)
 
 def _ask_multi(s, choices, multi=False):
-    # If multi is True, we show a selction box capable of returning multiple
-    # selections.
+    '''Given a str s, and a list of strs choices, show a wxSingleChoiceDialog
+    with the given text s. If the optional boolean multi is True, then show a
+    wxMultiChoiceDialog instead. The open dialog will be populated by the
+    options given in choices. Return a tuple of the open dialog box and the 
+    method which can be used to retrieve the data from the dialog box. Assumes a
+    wxApp is already open.'''
+    
     if ( multi is False ):
         dlg = wx.SingleChoiceDialog(None, s, "Please choose an option...",
                                     choices)
@@ -510,6 +533,11 @@ def _ask_multi(s, choices, multi=False):
     return (dlg, get_bind)
 
 def _ask_default(s):
+    '''Given a str s, show a wxTextEntryDialog with the given text. The user may
+    input any string. Return a tuple of the open dialog box and the method which
+    can be used to retrieve the data from the dialog box. Assumes a wxApp is 
+    already open.'''
+    
     dlg = wx.TextEntryDialog(None, s, "Please input data...")
     get_bind = dlg.GetValue
     return (dlg, get_bind)
@@ -521,8 +549,8 @@ def say(s):
     
     dlg = wx.MessageDialog(None, s, caption='Message for you!', 
                            style=wx.OK|wx.ICON_INFORMATION|wx.STAY_ON_TOP)
-    dlg.ShowModal() # Shows it
-    dlg.Destroy() # finally destroy it when finished.
+    dlg.ShowModal()
+    dlg.Destroy()
 
 if __name__ == '__main__':
     L = []
