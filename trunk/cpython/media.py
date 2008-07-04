@@ -453,6 +453,19 @@ def get_formats():
     return formats[:-1]
 
 
+def ask(s):
+    '''Display a dialog containing s, a text field for a response, and an "OK"
+    button. When the user clicks "OK", return the contents of the text
+    field.'''
+
+    pass
+
+
+def say(s):
+    '''Display a dialog containing s and an "OK" button.'''
+
+    pass
+
 if __name__ == '__main__':
     
     s = load_sound('/work/songsparrow.wav')
