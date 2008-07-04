@@ -1,6 +1,6 @@
 import numpy
 import os
-import pygame
+#import pygame
 import wx
 
 IMAGE_FORMATS = ['*.jpg', '*.bmp', '*.gif']
@@ -10,17 +10,17 @@ DEFAULT_FREQUENCY = 22050
 DEFAULT_ENCODING = -16
 DEFAULT_CHANNELS = 2
 DEFAULT_BUFFERING = 2048
-pygame.mixer.pre_init(DEFAULT_FREQUENCY, 
-                      DEFAULT_ENCODING, 
-                      DEFAULT_CHANNELS, 
-                      DEFAULT_BUFFERING)
-pygame.mixer.init()
+#pygame.mixer.pre_init(DEFAULT_FREQUENCY, 
+#                      DEFAULT_ENCODING, 
+#                      DEFAULT_CHANNELS, 
+#                      DEFAULT_BUFFERING)
+#pygame.mixer.init()
 
 from color import *
 from picture import *
 from pixel import *
 from sample import *
-from sound import *
+#from sound import *
 
 ##
 ## Global picture functions ---------------------------------------------------
@@ -453,20 +453,71 @@ def get_formats():
     return formats[:-1]
 
 
-def ask(s):
-    '''Display a dialog containing s, a text field for a response, and an "OK"
-    button. When the user clicks "OK", return the contents of the text
-    field.'''
+def ask(s, num=False, hidden=False, choices=None, multi=False):
+# Outdated :P
+#    '''Display a dialog containing s, a text field for a response, and an "OK"
+#    button. When the user clicks "OK", return the contents of the text
+#    field.'''
 
-    pass
+    app = wx.App()
+    
+    close_check = wx.ID_OK
+    
+    # Ignore all other parameters, will only show a number entry box!
+    if ( num is not False ):
+        dlg, get_bind = _ask_num()
+    
+    # Now we want a password input box, all other parameters ignored.
+    elif ( hidden is not False ):
+        dlg, get_bind = _ask_hidden()
+        
+    # Choices have been specified, so show a selection dialog
+    elif ( choices is not None ):
+        dlg, get_bind = _ask_multi(multi)
+        
+    if ( dlg.ShowModal() == close_check ):
+        dlg.Destroy()
+        return get_bind()
 
+def _ask_num():
+    dlg = wx.NumberEntryDialog(None, s, prompt="Input:", 
+                               caption="Please enter a number...", value=0,
+                               min=0, max=2**30)
+    get_bind = dlg.GetValue
+    return (dlg, get_bind)
+
+def _ask_hidden():
+    dlg = wx.PasswordEntryDialog(None, s, caption="Please input data...")
+    get_bind = dlg.GetValue
+    return (dlg, get_bind)
+
+def _ask_multi(multi=False):
+    # If multi is True, we show a selction box capable of returning multiple
+    # selections.
+    if ( multi is False ):
+        dlg = wx.SingleChoiceDialog(None, s, "Please choose an option...",
+                                    choices)
+        get_bind = dlg.GetSelection
+    else:
+        dlg = wx.MultiChoiceDialog(None, s, 
+                                   "Please choose one or more options...",
+                                   choices)
+        get_bind = dlg.GetSelections
+    return (dlg, get_bind)
 
 def say(s):
     '''Display a dialog containing s and an "OK" button.'''
-
-    pass
-
-if __name__ == '__main__':
     
-    s = load_sound('/work/songsparrow.wav')
-    s.play()
+    app = wx.App()
+    
+    dlg = wx.MessageDialog(None, s, caption='Message for you!', 
+                           style=wx.OK|wx.ICON_INFORMATION|wx.STAY_ON_TOP)
+    dlg.ShowModal() # Shows it
+    dlg.Destroy() # finally destroy it when finished.
+
+#if __name__ == '__main__':
+    
+#    s = load_sound('/work/songsparrow.wav')
+#    s.play()
+    #say('this is a test message')
+    #print ask('hello!')
