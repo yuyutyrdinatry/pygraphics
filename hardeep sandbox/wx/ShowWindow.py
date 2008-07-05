@@ -1,10 +1,8 @@
-# Diving back into the world of wx... yay :o
-
 import threading
 import wx
 import wx.lib.dragscroller
+import time
 
-# Let's attempt to get this working in a style similar to pyglet...
 class ShowWindow(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
@@ -16,15 +14,23 @@ class ShowWindow(threading.Thread):
             True
         self.iWindow.load_image(pic)
         
+        # The +8 and +30 are arbitrary values which just seemed to work
+        self.frame.SetSize((pic.get_width() + 8, pic.get_height() + 30))
+        self.frame.Refresh()
+        
     def run(self):
         self.app = wx.PySimpleApp()
+        
         self.frame = wx.Frame(None)
+        self.frame.xy = [0, 0] #Used to determine if refresh is needed on resize
         self.iWindow = ImageWindow(self.frame)
         self.frame.Show()
+        
         self.app.MainLoop()
         
 class ImageWindow(wx.ScrolledWindow):
     def __init__(self, parent=None, id=-1):
+        self.parent = parent
         wx.ScrolledWindow.__init__(self, parent, id)
         self._set_binds()
         self._init_scroll()        
@@ -32,21 +38,26 @@ class ImageWindow(wx.ScrolledWindow):
         self.xy = [0, 0]
         
     def load_image(self, pic):
-       self.pic = pic
-       # Need to find out how to force an update...
-       #self._update_display(self._get_dc())
-    
+        self.pic = pic
+        self._update_display(wx.BufferedDC(wx.ClientDC(self)))
+        
+    #===========================================================================
+    # Helper Methods
+    #===========================================================================
     def _update_display(self, dc):
+        w, h = self.GetSize()
+        dc.SetBackgroundMode(wx.TRANSPARENT)
         if ( self.pic is not None ):
             bmp = _convert_picture_to_bitmap(self.pic)
             xy = [bmp.GetWidth(), bmp.GetHeight()]
-            w, y = self.GetSize()
             
-            dc.DrawBitmap(bmp, 20, 0, False)
+            pos_x = (w - xy[0]) / 2
+            pos_y = (h - xy[1]) / 2
+            
+            dc.DrawBitmap(bmp, pos_x, pos_y, False)
             if ( self.xy != xy ):
                 self.xy = xy
                 self.SetScrollbars(1, 1, xy[0], xy[1], 0, 0)
-                self.SetSize((xy[0], xy[1]))
                 
     def _set_binds(self):
         self.Bind(wx.EVT_PAINT, self.OnPaint)
@@ -61,9 +72,14 @@ class ImageWindow(wx.ScrolledWindow):
     # Event Handlers
     #===========================================================================
     def OnPaint(self, event):
-        dc = wx.PaintDC(self)
+        dc = wx.BufferedPaintDC(self)
         self.DoPrepareDC(dc)
         self._update_display(dc)
+        
+        xy = self.parent.GetSize()
+        if ( xy != self.parent.xy ):
+            self.parent.xy = xy
+            self.parent.Refresh()
         
     def OnRightDown(self, event):
         self.scroller.Start(event.GetPosition())
@@ -93,10 +109,15 @@ def _pil_to_image(pil, alpha=True):
         
     return image
 
-import picture
-
-a = ShowWindow()
-a.start()
-
-b = picture.Picture(400,200,picture.black)
-a.load_image(b)
+if __name__ == '__main__':
+    import picture
+    import media as m
+    
+    a = ShowWindow()
+    a.start()
+    
+    b = picture.Picture(400,200,picture.white)
+    c = picture.Picture(500,500,picture.red)
+    d = m.load_picture('test.png')
+    
+    a.load_image(b)
