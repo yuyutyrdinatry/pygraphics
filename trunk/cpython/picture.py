@@ -5,6 +5,7 @@ import Image
 import ImageDraw
 import ImageFont
 import os
+import show_window
 
 DEFAULT_FONT = ImageFont.load_default()
 
@@ -40,6 +41,7 @@ class Picture(object):
         self.set_image(image)
 	
     	self.show_window = None
+        self.poll_thread = None
 
 
     def __str__(self):
@@ -93,11 +95,31 @@ class Picture(object):
     
     def show(self, poll=None):
     	'''Display this Picture in a separate window. If the optional int poll
-	    is given, the display window will automatically update every poll
-	    seconds.'''
-    
-        self.image.show()
-	
+        is given, refresh the display every poll seconds with a minimum of a 1
+        second interval.'''
+        
+        # Note: has trouble showing multiple pictures at once. Consider one
+        # unified show window for all pictures? This seems to be because 
+        # multiple wx.App's are started and they mess around with each other.
+        #
+        # TODO: Add in something to handle when the window has been destroyed.
+        #       Need to somehow clean up the threads...or at least re-use them.
+        if ( self.show_window is None ):
+            self.show_window = show_window.ShowWindow()
+            self.show_window.start()
+            
+        if ( poll is not None ):
+            if ( self.poll_thread is None ):
+                while ( self.show_window.frame is None ):
+                    True
+                
+                frame = self.show_window.frame
+                self.poll_thread = show_window.ImagePoller(frame, poll)
+                self.poll_thread.start()
+            else:
+                self.poll_thread.poll = poll
+        
+        self.show_window.load_image(self)            
 
     def inspect(self):
         '''Inspect this Picture in an OpenPictureTool.'''
@@ -333,3 +355,11 @@ def get_short_path(filename):
 		return dirs[0]
 	else:
 		return dirs[len(dirs) - 2] + os.sep + dirs[len(dirs) - 1]
+        
+        
+if __name__ == '__main__':
+    a = Picture(filename='S:\\workspace\\PyGraphics\\hardeep sandbox\\wx\\test.png')
+    a.show()
+    
+    b = Picture(200,300,green)
+    c = Picture(500,500,red)
