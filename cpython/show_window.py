@@ -91,6 +91,7 @@ class ImageWindow(wx.ScrolledWindow):
     def _init_scroll(self):
         self.SetScrollbars(1, 1, 10, 10, 0, 0)
         self.scroller = wx.lib.dragscroller.DragScroller(self)
+        self.scroller.SetSensitivity(self.scroller.GetSensitivity() / 2)
         
     #===========================================================================
     # Event Handlers
