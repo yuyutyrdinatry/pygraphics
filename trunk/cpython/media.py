@@ -2,6 +2,7 @@ import numpy
 import os
 import pygame
 import wx
+import  wx.lib.imagebrowser    as  ib
 
 IMAGE_FORMATS = ['*.jpg', '*.bmp', '*.gif']
 AUDIO_FORMATS = ['*.wav']
@@ -552,14 +553,37 @@ def say(s):
     dlg.ShowModal()
     dlg.Destroy()
 
+def browse(dir=None):
+    '''Display an image browser for directory dir, or the current directory if
+    dir is None.'''
+    
+    app = wx.App()
+    #panel = wx.Panel(app, -1)
+    
+    # set the initial directory for the demo bitmaps
+    initial_dir = os.getcwd()
+
+    # open the image browser dialog
+    dlg = ib.ImageDialog(None, initial_dir)
+
+    dlg.Centre()
+    if dlg.ShowModal() == wx.ID_OK:
+        # show the selected file
+        say("You Selected File: " + dlg.GetFile())        
+    else:
+        say("You pressed Cancel\n")
+
+    dlg.Destroy()
+
 if __name__ == '__main__':
     L = []
-    L.append(say('this is a say box'))
-    L.append(ask('plain old default ask box'))
-    L.append(ask('we want a number', num=True))
-    L.append(ask('passwords for all! :o', hidden=True))
-    L.append(ask('so many choices...', choices=['choice 1', 'choice 2', 'choice 3']))
-    L.append(ask('so little time...', choices=['oh', 'my', 'gawd'], multi=True))
+    L.append(browse())
+    # L.append(say('this is a say box'))
+    # L.append(ask('plain old default ask box'))
+    # L.append(ask('we want a number', num=True))
+    # L.append(ask('passwords for all! :o', hidden=True))
+    # L.append(ask('so many choices...', choices=['choice 1', 'choice 2', 'choice 3']))
+    # L.append(ask('so little time...', choices=['oh', 'my', 'gawd'], multi=True))
     print L
     
 #    s = load_sound('/work/songsparrow.wav')
