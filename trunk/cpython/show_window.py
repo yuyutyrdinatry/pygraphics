@@ -15,7 +15,6 @@ class ShowWindow(threading.Thread):
             True
         self.iWindow.load_image(pic)
         
-        # The +8 and +30 are arbitrary values which just seemed to work
         self.frame.SetSize((pic.get_width(), pic.get_height()))
         self.frame.SetTitle('File: ' + pic.get_filename())
         self.frame.Refresh()
@@ -47,6 +46,7 @@ class ImagePoller(threading.Thread):
                     refresh()
                     sleep(poll)
                 except:
+                    # Block threading-related exceptions from showing
                     pass
         
 class ImageWindow(wx.ScrolledWindow):
