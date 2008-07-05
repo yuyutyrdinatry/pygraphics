@@ -1,7 +1,6 @@
 import threading
 import wx
 import wx.lib.dragscroller
-import time
 
 class ShowWindow(threading.Thread):
     def __init__(self):
