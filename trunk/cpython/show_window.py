@@ -52,8 +52,8 @@ class ImagePoller(threading.Thread):
 class ImageWindow(wx.ScrolledWindow):
     def __init__(self, parent=None, id=-1):
         self.parent = parent
-        wx.ScrolledWindow.__init__(self, parent, id, 
-                                   style=wx.FULL_REPAINT_ON_RESIZE|wx.ALWAYS_SHOW_SB|wx.CLIP_CHILDREN)
+        style = wx.FULL_REPAINT_ON_RESIZE|wx.ALWAYS_SHOW_SB|wx.CLIP_CHILDREN
+        wx.ScrolledWindow.__init__(self, parent, id, style=style)
         self._set_binds()
         self._init_scroll()        
         self.pic = None
