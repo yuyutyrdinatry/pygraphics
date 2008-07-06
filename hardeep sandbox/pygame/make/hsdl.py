@@ -10,8 +10,8 @@ class SDLThread(threading.Thread):
         
         self.m_bKeepGoing = False
         self.screen = screen
-        self.color = (255,0,0)
-        self.rect = (10,10,100,100)
+        
+        self.objects = []
         
     def add_obj(self, o):
         self.objects.append(o)
@@ -27,17 +27,12 @@ class SDLThread(threading.Thread):
         
     def _main_loop(self):
         e = pygame.event.poll()
-        
-        if e.type == pygame.MOUSEBUTTONDOWN:
-            self.color = (255,0,128)
-            self.rect = (e.pos[0], e.pos[1], 100, 100)
-            print e.pos
+
+        self.screen.fill((0,0,0))
             
         for o in self.objects:
-            o.draw()
-            
-        self.screen.fill((0,0,0))
-        self.screen.fill(self.color,self.rect)
+            o.launch_events(e)
+            o.draw(self.screen)
 
 class SDLPanel(wx.Panel):
     def __init__(self,parent,ID,tplSize):

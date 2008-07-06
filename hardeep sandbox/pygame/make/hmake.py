@@ -12,18 +12,14 @@ import os, sys
 import wx
 import threading
 from pygame.locals import *
+
+from hconstants import *
 from hsdl import *
 from hobj import *
-from hShapes import *
+from hshapes import *
+from hevents import *
 
 import pygame
-
-#===============================================================================
-# Constants
-#===============================================================================
-H_WIN_WIDTH = 640
-H_WIN_HEIGHT = 480
-H_WIN_CENTER = (H_WIN_WIDTH / 2, H_WIN_HEIGHT / 2)
 
 class hMain(threading.Thread):
     def __init__(self, window_name="Frame"):
@@ -42,7 +38,8 @@ class hMain(threading.Thread):
         
     def run(self):
         self.app = hMainApp()
-        self.frame = SDLFrame(None, wx.ID_ANY, self.window_name, (H_WIN_WIDTH, H_WIN_HEIGHT))
+        self.frame = SDLFrame(None, wx.ID_ANY, self.window_name, (H_WIN_WIDTH, 
+                                                                  H_WIN_HEIGHT))
         self.frame.Show()
         
         # Convenience references
@@ -56,5 +53,6 @@ class hMainApp(wx.PySimpleApp):
         wx.PySimpleApp.__init__(self)
 
 if __name__ == '__main__':
-    app = hMain('Test')
-    app.start()
+#    app = hMain('Test')
+#    app.start()
+    print H_WIN_CENTER
