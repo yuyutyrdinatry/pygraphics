@@ -39,21 +39,3 @@ class hMainApp(wx.PySimpleApp):
 if __name__ == '__main__':
     app = hMain('Test')
     app.start()
-    
-    # This is what I want the above code to eventually look like. In less than
-    # 10 lines of code, recreate the above!
-    # --------------------------------------------------------------------------
-    ## app = hMain('Test')
-    ## app.start()
-    ## 
-    ## def move_obj(self, event):
-    ##     event.obj.movie(event.mouse.x, event.mouse.y)
-    ## 
-    ## obj = hObj('rectangle')
-    ## obj.look = hShape.rectangle(100,100) #shape, picture, PIL, movie, w/elif
-    ## obj.initial_pos = (0,0)
-    ## obj.add_event('on_click', move_obj)
-    ## 
-    ## app.add_obj(obj)
-    # --------------------------------------------------------------------------
-    # Now THAT would be sick
