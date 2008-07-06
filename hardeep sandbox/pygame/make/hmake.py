@@ -13,17 +13,36 @@ import wx
 import threading
 from pygame.locals import *
 from hsdl import *
+from hobj import *
+from hShapes import *
 
 import pygame
+
+#===============================================================================
+# Constants
+#===============================================================================
+H_WIN_WIDTH = 640
+H_WIN_HEIGHT = 480
+H_WIN_CENTER = (H_WIN_WIDTH / 2, H_WIN_HEIGHT / 2)
 
 class hMain(threading.Thread):
     def __init__(self, window_name="Frame"):
         threading.Thread.__init__(self)
         self.window_name = window_name
+        self.SDL_thread = None
+        
+    def add_obj(self, o):
+        
+        # Wait until the thread is created
+        while ( self.SDL_thread is None ):
+            True
+            
+        self.SDL_thread.add_obj(o)
+        # Register Events Here
         
     def run(self):
         self.app = hMainApp()
-        self.frame = SDLFrame(None, wx.ID_ANY, self.window_name, (640,480))
+        self.frame = SDLFrame(None, wx.ID_ANY, self.window_name, (H_WIN_WIDTH, H_WIN_HEIGHT))
         self.frame.Show()
         
         # Convenience references
