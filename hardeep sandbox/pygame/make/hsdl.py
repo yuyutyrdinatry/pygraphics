@@ -1,41 +1,37 @@
 import os, sys
 import wx
-import thread
+import threading
 
 global pygame
 
-class SDLThread:
+class SDLThread(threading.Thread):
     def __init__(self, screen):
-        self.m_bKeepGoing = self.m_bRunning = False
+        threading.Thread.__init__(self)
+        
+        self.m_bKeepGoing = False
         self.screen = screen
         self.color = (255,0,0)
         self.rect = (10,10,100,100)
 
-    def Start(self):
-        self.m_bKeepGoing = self.m_bRunning = True
-        thread.start_new_thread(self.Run, ())
-
-    def Stop(self):
-        self.m_bKeepGoing = False
-
-    def IsRunning(self):
-        return self.m_bRunning
-
-    def Run(self):
-        # This is the actual game loop!
+    def run(self):
+        self.m_bKeepGoing = True
         while self.m_bKeepGoing:
-            e = pygame.event.poll()
-            
-            if e.type == pygame.MOUSEBUTTONDOWN:
-                self.color = (255,0,128)
-                self.rect = (e.pos[0], e.pos[1], 100, 100)
-                print e.pos
-                
-            self.screen.fill((0,0,0))
-            self.screen.fill(self.color,self.rect)
+            self._main_loop()
             pygame.display.flip()
+
+    def stop(self):
+        self.m_bKeepGoing = False
+        
+    def _main_loop(self):
+        e = pygame.event.poll()
+        
+        if e.type == pygame.MOUSEBUTTONDOWN:
+            self.color = (255,0,128)
+            self.rect = (e.pos[0], e.pos[1], 100, 100)
+            print e.pos
             
-        self.m_bRunning = False;
+        self.screen.fill((0,0,0))
+        self.screen.fill(self.color,self.rect)
 
 class SDLPanel(wx.Panel):
     def __init__(self,parent,ID,tplSize):
@@ -56,10 +52,10 @@ class SDLPanel(wx.Panel):
         
         self.parent = parent
         parent.thread = SDLThread(self.window)
-        parent.thread.Start()
+        parent.thread.start()
 
     def __del__(self):
-        self.parent.Stop()
+        self.parent.stop()
 
 class SDLFrame(wx.Frame):
     def __init__(self, parent, ID, strTitle, tplSize):
