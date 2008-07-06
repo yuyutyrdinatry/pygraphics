@@ -28,15 +28,21 @@ class Game(hMain):
         
 class ThrowableBall(hObj):
     def __init__(self):
-        hObj.__init__()
+        hObj.__init__('ThrowableBall')
         self._set_visual_properties()
         self._set_physical_properties()
         
-        self.add_event('mouse_click', self.event_mouse_click)
+        # Makes it a physical rigid-body object. It will no longer be able to
+        # be controlled directly, all movement must be done through inertia
+        # modifications or by linking to another object! For example, the mouse
+        self.set_physics(True, H_PHYS_RIGID)
         
-    def event_mouse_click(self, e):
+        self.add_event('mouse_left_click', self.event_mouse_left_click)
+        
+    def event_mouse_left_click(self, e):
         x,y = self.pos
         m_x, m_y = e.mouse_pos
+        
         self.set_inertia(m_x - x, m_y - y)
         
     def _set_visual_properties(self):
@@ -45,7 +51,7 @@ class ThrowableBall(hObj):
         self.color = media.black
         self.radius = random.randint(50,200)
         self.look = hShape.circle(radius, color)
-        self.inital_pos = H_CENTER
+        self.inital_pos = H_WIN_CENTER
         
     def _set_physical_properties(self):
         hObj._set_physical_properties(self)
