@@ -1,17 +1,17 @@
 from hmake import *
 from media import *
+from random import randint
 
 app = hMain('Test')
 app.start()
 
-def event_mouse_left_click(self, e):
-    e.obj.set_xy(event.mouse.x, event.mouse.y)
+def event_mouse_left_click(obj, e):
+    obj.set_pos(e.pos)
+    obj.look.set_color((randint(0, 255), randint(0, 255), randint(0, 255)))
 
 obj = hObj('MoveRect')
-obj.look = hShape.rectangle(100, 100, red)
-obj.initial_pos = H_WIN_CENTER
-obj.add_event('mouse_left_click', move_obj)
+obj.look = hShape.rectangle(100, 200, blue)
+obj.set_pos(H_WIN_CENTER)
+obj.add_event(H_EVENT_MOUSE_DOWN, event_mouse_left_click)
 
 app.add_obj(obj)
-# --------------------------------------------------------------------------
-# Now THAT would be sick
