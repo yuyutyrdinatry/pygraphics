@@ -64,4 +64,4 @@ class SDLPanel(wx.Panel):
 class SDLFrame(wx.Frame):
     def __init__(self, parent, ID, strTitle, tplSize):
         wx.Frame.__init__(self, parent, ID, strTitle, size=tplSize)
-        self.pnlSDL = SDLPanel(self, -1, tplSize)
+        self.panel = SDLPanel(self, -1, tplSize)
