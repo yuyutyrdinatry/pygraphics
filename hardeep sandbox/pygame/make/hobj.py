@@ -40,7 +40,7 @@ class hObj(object):
                     if ( len(self.events[key]) == 1 ):
                         self.events[key][0](self, e)
                     else:
-                        for func in self.events[type]:
+                        for func in self.events[key]:
                             func(self, e)
         
     def add_event(self, e, f, overwrite=True):
