@@ -1,7 +1,7 @@
 from hmake import *
 from media import *
 
-app = hMain('Test')
+app = hMain('Example 2 :: Simplified')
 app.start()
 
 def event_mouse_left_click(obj, e):

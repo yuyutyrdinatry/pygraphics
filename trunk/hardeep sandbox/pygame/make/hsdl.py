@@ -65,6 +65,6 @@ class SDLPanel(wx.Panel):
 
 class SDLFrame(wx.Frame):
     def __init__(self, parent, ID, strTitle, tplSize):
-        s = wx.SYSTEM_MENU|wx.CLOSE_BOX|wx.CAPTION
+        s = wx.SYSTEM_MENU|wx.CLOSE_BOX|wx.CAPTION|wx.MINIMIZE_BOX
         wx.Frame.__init__(self, parent, ID, strTitle, size=tplSize, style=s)
         self.panel = SDLPanel(self, -1, tplSize)
