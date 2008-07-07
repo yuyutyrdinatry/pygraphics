@@ -7,6 +7,13 @@
 # http://www.pygame.org/project/780/
 # http://code.google.com/p/pymunk/
 # http://code.google.com/p/pymunk/wiki/SlideAndPinJointsExample
+#
+# What you will need:
+# PyGame 1.8+ http://www.pygame.org/download.shtml
+# PyMunk 0.8+ http://code.google.com/p/pymunk/
+#             If PyMunk is not being installed on windows, MAKE SURE you compile
+#             the Chipmunk library yourself for your own system! It works on
+#             Mac + Linux, but you must compile it. Instructions are on the site
 
 import os, sys
 import wx
