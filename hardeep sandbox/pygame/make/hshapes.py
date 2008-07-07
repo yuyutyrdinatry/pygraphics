@@ -2,10 +2,7 @@ import pygame
 import color
 
 class hShape(object):
-    def circle(self, radius, color):
-        pass
-    
-    class rectangle(object):
+    class base_shape(object):
         def __init__(self, w, h, c):
             self.set_size(w, h)
             self.set_color(c)
@@ -21,4 +18,19 @@ class hShape(object):
                 self.color = c
             
         def draw_at(self, surf, x, y):
-            return pygame.draw.rect(surf, self.color, (x,y,self.w,self.h), 0)
+            return pygame.draw.rect(surf, self.color, (x,y,self.w,self.h), 0)        
+    
+    class rectangle(base_shape):
+        pass
+        
+    class circle(base_shape):
+        def __init__(self, r, c):
+            self.set_size(r)
+            self.set_color(c)
+            
+        def set_size(self, r):
+            hShape.base_shape.set_size(self, r, r)
+            self.r = r
+            
+        def draw_at(self, surf, x, y):
+            return pygame.draw.circle(surf, self.color, (x, y), self.r, 0)

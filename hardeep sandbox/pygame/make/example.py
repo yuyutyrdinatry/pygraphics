@@ -28,7 +28,7 @@ class Game(hMain):
         
 class ThrowableBall(hObj):
     def __init__(self):
-        hObj.__init__('ThrowableBall')
+        hObj.__init__(self, 'ThrowableBall')
         
         # Makes it a physical rigid-body object. It will no longer be able to
         # be controlled directly, all movement must be done through inertia
