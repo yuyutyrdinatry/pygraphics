@@ -21,7 +21,7 @@ import random
 
 class Game(hMain):
     def __init__(self):
-        hMain.__init__(self, 'Gravity')
+        hMain.__init__(self, 'Example 1 :: Gravity')
         
         self.add_obj(ThrowableBall())
         self.set_gravity(0.0, -900.0)

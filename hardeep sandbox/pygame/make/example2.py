@@ -2,7 +2,7 @@ from hmake import *
 from media import *
 from random import randint
 
-app = hMain('Test')
+app = hMain('Example 2')
 app.start()
 
 def event_mouse_left_click(obj, e):

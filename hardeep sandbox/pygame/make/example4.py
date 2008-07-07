@@ -9,7 +9,17 @@ def event_mouse_move(obj, e):
     obj.set_pos(e.pos)
     
 def event_mouse_down(obj, e):
+    global app
     obj.look.set_color((randint(0, 255), randint(0, 255), randint(0, 255)))
+    app.add_obj(_create_new_obj(e.pos))
+
+def _create_new_obj(pos):
+    obj = hObj('new_obj_' + str(randint(0,100000)))
+    obj.look = hShape.circle(10, (randint(0, 255), 
+                                  randint(0, 255), 
+                                  randint(0, 255)))
+    obj.set_pos(pos)
+    return obj
 
 obj = hObj('MoveRect')
 obj.look = hShape.circle(100, green)
