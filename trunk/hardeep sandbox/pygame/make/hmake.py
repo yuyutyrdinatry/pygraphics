@@ -34,7 +34,6 @@ class hMain(threading.Thread):
             True
             
         self.SDL_thread.add_obj(o)
-        # Register Events Here
         
     def run(self):
         self.app = hMainApp()
@@ -53,6 +52,5 @@ class hMainApp(wx.PySimpleApp):
         wx.PySimpleApp.__init__(self)
 
 if __name__ == '__main__':
-#    app = hMain('Test')
-#    app.start()
-    print H_WIN_CENTER
+    app = hMain('Test')
+    app.start()
