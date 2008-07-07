@@ -43,7 +43,7 @@ class ThrowableBall(hObj):
         x,y = self.pos
         m_x, m_y = e.mouse_pos
         
-        self.set_inertia(m_x - x, m_y - y)
+        self.add_force((m_x - x, m_y - y)) # Treated as a vector (+-x, +-y)
         
     def _set_visual_properties(self):
         hObj._set_visual_properties(self)
