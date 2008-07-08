@@ -9,22 +9,25 @@ class ShowWindow(threading.Thread):
         self.frame = None
         self.iWindow = None
         self.pic = None
-        
+        self._lock = threading.Lock()
+        self._lock.acquire()
+        self.start()
+
     def load_image(self, pic):
-        while ( self.iWindow is None ):
-            True
-        self.iWindow.load_image(pic)
-        
+        self._lock.acquire()
         self.frame.SetSize((pic.get_width(), pic.get_height()))
         self.frame.SetTitle('File: ' + pic.get_filename())
+        self.iWindow.load_image(pic)
         self.frame.Refresh()
+        self._lock.release()
         
     def run(self):
         self.app = wx.App()
         
         self.frame = wx.Frame(None)
         self.iWindow = ImageWindow(self.frame)
-        self.frame.Show()
+        self.frame.Show(True)
+        self._lock.release()
         
         self.app.MainLoop()
         
@@ -131,13 +134,13 @@ def _pil_to_image(pil, alpha=True):
 
 if __name__ == '__main__':
     import picture
-    import media as m
+    import media
     
     a = ShowWindow()
     a.start()
     
     b = picture.Picture(400,200,picture.white)
     c = picture.Picture(500,500,picture.red)
-    d = m.load_picture('test.png')
+    # d = m.load_picture('test.png')
     
     a.load_image(b)
