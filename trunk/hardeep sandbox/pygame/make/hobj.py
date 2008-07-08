@@ -60,10 +60,14 @@ class hObj(object):
     def do_phys(self):
         pass
         
-    def add_force(self, x, y):
-        #vect = (x, y)
-        print 'force', Vec2d(x,y), Vec2d(0,0)
-        self.body.apply_force(Vec2d(x,y), Vec2d(0,0))
+    def add_force(self, x, y, offset=Vec2d(0,0)):
+        self.body.apply_force(Vec2d(x,y), offset)
+        
+    def add_impulse(self, x, y, offset=Vec2d(0,0)):
+        self.body.apply_impulse(Vec2d(x,y), offset)
+        
+    def reset_forces(self):
+        self.body.reset_forces()
         
     def draw(self, surf):
         if ( self.look is not None ):
