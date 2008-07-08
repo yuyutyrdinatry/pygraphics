@@ -7,10 +7,11 @@ import math
 
 class hShape(object):
     class base_shape(object):
-        def __init__(self, w, h, c, width=0):
+        def __init__(self, w, h, c, width=0, mass_factor=0.1):
             self.set_size(w, h)
             self.set_color(c)
             self.set_width(width)
+            self.set_mass_factor(mass_factor)
             
         def set_size(self, w, h):
             self.w = w
@@ -58,14 +59,18 @@ class hShape(object):
             return pygame.draw.rect(surf, self.color, (x,y,self.w,self.h), self.width)
         
     class circle(base_shape):
-        def __init__(self, r, c, width=0):
+        def __init__(self, r, c, width=0, mass_factor=0.1):
             self.set_size(r)
             self.set_color(c)
             self.set_width(width)
+            self.set_mass_factor(mass_factor)
             
         def set_size(self, r):
             hShape.base_shape.set_size(self, r, r)
             self.r = r
+            
+        def set_mass_factor(self, mass_factor):
+            self.factor = mass_factor
             
         def draw_at(self, surf, x, y):
             return pygame.draw.circle(surf, self.color, (int(x), int(y)), self.r, self.width)
@@ -74,7 +79,7 @@ class hShape(object):
             return pymunk.moment_for_circle(self.get_mass(), 0, self.r, Vec2d(0,0))
         
         def get_mass(self):
-            return self.r
+            return self.r * self.factor
         
         def get_shape(self, body):
             return pymunk.Circle(body, self.r, Vec2d(0,0))
