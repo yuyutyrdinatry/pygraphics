@@ -5,6 +5,8 @@ import pygame
 #===============================================================================
 H_EVENT_MOUSE_DOWN = pygame.MOUSEBUTTONDOWN
 H_EVENT_MOUSE_MOVE = pygame.MOUSEMOTION
+H_EVENT_FRAME_UPDATE = -1
+H_EVENT_INIT_PHYSICS = -2
 #    QUIT         none
 #    ACTIVEEVENT         gain, state
 #    KEYDOWN         unicode, key, mod

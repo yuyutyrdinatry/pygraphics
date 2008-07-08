@@ -22,6 +22,7 @@ class hObj(object):
         self.pos = H_WIN_CENTER
         self.physics = False
         self.set_physics = False
+        self.init_physics = False
         
     def set_pos(self, p):
         if p == -1:
@@ -58,19 +59,27 @@ class hObj(object):
     def draw(self, surf):
         if ( self.look is not None ):
             if ( self.physics ):
-                #print self.body.position
                 self.pos = (self.body.position.x, self.body.position.y)
             self.look.draw_at(surf, self.pos[0], self.pos[1])
             
     def launch_events(self, e):
         if ( e.type != 0 ):
             for key in self.events:
+                # Helper function needed here
                 if ( e.type == key ):
-                    if ( len(self.events[key]) == 1 ):
-                        self.events[key][0](self, e)
-                    else:
-                        for func in self.events[key]:
-                            func(self, e)
+                    self._launch_events(key, e)
+                elif ( key == H_EVENT_FRAME_UPDATE ):
+                    self._launch_events(key, e)
+                elif ( key == H_EVENT_INIT_PHYSICS and not self.init_physics ):
+                    self.init_physics = True
+                    self._launch_events(key, e)
+    
+    def _launch_events(self, key, e):
+        if ( len(self.events[key]) == 1 ):
+            self.events[key][0](self, e)
+        else:
+            for func in self.events[key]:
+                func(self, e)
         
     def add_event(self, e, f, overwrite=True):
         if ( overwrite is False ):

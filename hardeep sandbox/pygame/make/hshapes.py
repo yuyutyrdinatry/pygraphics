@@ -54,7 +54,6 @@ class hShape(object):
             return pygame.draw.circle(surf, self.color, (int(x), int(y)), self.r, self.width)
         
         def get_inertia(self):
-            print 'moment', self.r, 0, self.r, Vec2d(0,0)
             return pymunk.moment_for_circle(self.r, 0, self.r, Vec2d(0,0))
         
         def get_mass(self):
