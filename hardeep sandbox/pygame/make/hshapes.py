@@ -25,6 +25,10 @@ class hShape(object):
             else:
                 self.color = c
                 
+        def get_poly(self):
+            # Needed for any object which is not a circle
+            pass
+                
         def get_inertia(self):
             pass
         
@@ -35,10 +39,23 @@ class hShape(object):
             pass
             
         def draw_at(self, surf, x, y):
-            return pygame.draw.rect(surf, self.color, (x,y,self.w,self.h), self.width)        
+            pass        
     
     class rectangle(base_shape):
-        pass
+        def get_poly(self):
+            pass
+        
+        def get_inertia(self):
+            return pymunk.moment_for_poly(self.get_mass(), self.get_poly(), Vec2d(0,0))
+        
+        def get_mass(self):
+            pass
+        
+        def get_shape(self):
+            pass
+        
+        def draw_at(self, surf, x, y):
+            return pygame.draw.rect(surf, self.color, (x,y,self.w,self.h), self.width)
         
     class circle(base_shape):
         def __init__(self, r, c, width=0):
@@ -54,7 +71,7 @@ class hShape(object):
             return pygame.draw.circle(surf, self.color, (int(x), int(y)), self.r, self.width)
         
         def get_inertia(self):
-            return pymunk.moment_for_circle(self.r, 0, self.r, Vec2d(0,0))
+            return pymunk.moment_for_circle(self.get_mass(), 0, self.r, Vec2d(0,0))
         
         def get_mass(self):
             return self.r

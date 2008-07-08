@@ -23,6 +23,10 @@ class hObj(object):
         self.physics = False
         self.set_physics = False
         self.init_physics = False
+        self.body = None
+        self.physical_space = None
+        self.inertia = None
+        self.mass = None
         
     def set_pos(self, p):
         if p == -1:
@@ -48,13 +52,18 @@ class hObj(object):
             self.body.position = self.pos[0], self.pos[1]
             
             self.physical_shape = self.look.get_shape(self.body)
-            self.physical_space.add(self.body, self.physical_shape)
+            self._add_to_physical_space()
+            
+    def _add_to_physical_space(self):
+        self.physical_space.add(self.body, self.physical_shape)
         
     def do_phys(self):
         pass
         
     def add_force(self, x, y):
-        vect = (x, y)
+        #vect = (x, y)
+        print 'force', Vec2d(x,y), Vec2d(0,0)
+        self.body.apply_force(Vec2d(x,y), Vec2d(0,0))
         
     def draw(self, surf):
         if ( self.look is not None ):
