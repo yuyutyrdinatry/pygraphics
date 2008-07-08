@@ -33,13 +33,26 @@ class Game(hMain):
     def init_physics(self):
         self.set_gravity(0.0, 100.0)
         self.add_obj(ThrowableBall())
+        self.add_obj(StaticBall())
         
-class Floor(hObj):
+class StaticBall(hObj):
     def __init__(self):
         hObj.__init__(self, 'Floor')
         
         self.set_visual_data()
         self.set_physics = True
+        
+        self.add_event(H_EVENT_INIT_PHYSICS, self.event_init_physics)
+        
+    def event_init_physics(self, obj, e):
+        self.link = pymunk.Body(pymunk.inf, pymunk.inf)
+        self.link.position = Vec2d(H_WIN_CENTER_COORDS[0], H_WIN_CENTER_COORDS[1]+200)
+        self.join = pymunk.PinJoint(self.body, self.link, Vec2d(0,0), Vec2d(0,0))
+        self.physical_space.add(self.join)
+        
+    def set_visual_data(self):
+        self.look = hShape.circle(150, red)
+        self.set_pos((H_WIN_CENTER_COORDS[0], H_WIN_CENTER_COORDS[1]+300))
         
 class ThrowableBall(hObj):
     def __init__(self):

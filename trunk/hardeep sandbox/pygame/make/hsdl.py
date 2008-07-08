@@ -26,11 +26,9 @@ class SDLThread(threading.Thread):
         if ( not self.objects.has_key(z_order) ):
             self.objects[z_order] = []
 
-        print 'obj', o, self.physics, self.physical_space
         o.do_init_phys(self.physical_space)
             
-        self.objects[z_order].append(o)
-        
+        self.objects[z_order].append(o)        
         self.objects_keys = self.objects.keys()
         self.objects_keys.sort()
         
