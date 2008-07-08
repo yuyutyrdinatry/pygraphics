@@ -8,7 +8,7 @@ class SDLThread(threading.Thread):
     def __init__(self, screen):
         threading.Thread.__init__(self)
         
-        self.m_bKeepGoing = False
+        self.run_thread = False
         self.screen = screen
         
         self.objects = []
@@ -17,12 +17,14 @@ class SDLThread(threading.Thread):
         self.objects.append(o)
 
     def run(self):
-        self.m_bKeepGoing = True
-        while self.m_bKeepGoing:
+        self.run_thread = True
+        while self.run_thread:
             self._main_loop()
 
-    def stop(self):
-        self.m_bKeepGoing = False
+    def stop(self, e=None):
+        self.run_thread = False
+        if ( e is not None ):
+            e.Skip()
         
     def _main_loop(self):
         e = pygame.event.poll()
@@ -59,6 +61,8 @@ class SDLPanel(wx.Panel):
         self.parent = parent
         parent.thread = SDLThread(self.window)
         parent.thread.start()
+        
+        parent.Bind(wx.EVT_CLOSE, parent.thread.stop)
 
     def __del__(self):
         self.parent.stop()
