@@ -11,7 +11,6 @@ class ShowWindow(threading.Thread):
         self.pic = None
         self._lock = threading.Lock()
         self._lock.acquire()
-        self.start()
 
     def load_image(self, pic):
         self._lock.acquire()
