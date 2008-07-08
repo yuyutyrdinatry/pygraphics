@@ -37,7 +37,7 @@ class Game(hMain):
         
 class StaticBall(hObj):
     def __init__(self):
-        hObj.__init__(self, 'Floor')
+        hObj.__init__(self, 'PivotBall')
         
         self.set_visual_data()
         self.set_physics = True
