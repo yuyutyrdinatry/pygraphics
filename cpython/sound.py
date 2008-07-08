@@ -14,15 +14,14 @@ import wave
 # if pygame.mixer is not initialized, do so.
 DEFAULTS = pygame.mixer.get_init()
 if not DEFAULTS:
-    DEFAULT_FREQUENCY = 22050
-    DEFAULT_ENCODING = -16
-    DEFAULT_CHANNELS = 2
-    DEFAULT_BUFFERING = 2048
-    pygame.mixer.pre_init(DEFAULT_FREQUENCY, 
-                          DEFAULT_ENCODING, 
-                          DEFAULT_CHANNELS, 
-                          DEFAULT_BUFFERING)
-    pygame.mixer.init()
+     DEFAULT_FREQUENCY = 22050
+     DEFAULT_ENCODING = -16
+     DEFAULT_CHANNELS = 2
+     DEFAULT_BUFFERING = 2048
+     pygame.mixer.pre_init(DEFAULT_FREQUENCY, 
+                           DEFAULT_ENCODING, 
+                           DEFAULT_CHANNELS, 
+                           DEFAULT_BUFFERING)
 else:
     DEFAULT_FREQUENCY = DEFAULTS[0]
     DEFAULT_ENCODING = DEFAULTS[1]
@@ -95,6 +94,8 @@ class Sound(object):
         
         Filename takes precedence over samples, which take precedence 
         over seconds, which in turn takes precedence over sound.'''
+        
+        pygame.mixer.init()
         
         self.channels = DEFAULT_CHANNELS
         self.samp_rate = DEFAULT_FREQUENCY
@@ -375,10 +376,13 @@ def create_sine_wave(hz, amp, samp):
     pygame_snd = sample_array_to_pygame(samples)
     return Sound(sound=pygame_snd)
 
-C = create_sine_wave(264, 6000, 11025)
-D = create_sine_wave(297, 6000, 11025)
-E = create_sine_wave(330, 6000, 11025)
-F = create_sine_wave(352, 6000, 11025)
-G = create_sine_wave(396, 6000, 11025)
-A = create_sine_wave(440, 6000, 11025)
-B = create_sine_wave(494, 6000, 11025)
+class Notes(object):
+    def __init__(self):
+        self.C = create_sine_wave(264, 6000, 11025)
+        self.D = create_sine_wave(297, 6000, 11025)
+        self.E = create_sine_wave(330, 6000, 11025)
+        self.F = create_sine_wave(352, 6000, 11025)
+        self.G = create_sine_wave(396, 6000, 11025)
+        self.A = create_sine_wave(440, 6000, 11025)
+        self.B = create_sine_wave(494, 6000, 11025)
+    
