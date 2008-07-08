@@ -23,40 +23,55 @@ class Game(hMain):
     def __init__(self):
         hMain.__init__(self, 'Example 1 :: Gravity')
         
+        # Note that you must set start_physics to True and also set the data for
+        # gravity BEFORE adding objects that will use physics. If you are adding
+        # initial objects which will be included in the physics simulation,
+        # place them in the init_physics method! You may also define the Gravity
+        # there.
+        self.start_physics = True
+        
+    def init_physics(self):
+        self.set_gravity(0.0, 100.0)
         self.add_obj(ThrowableBall())
-        self.set_gravity(0.0, -900.0)
+        
+class Floor(hObj):
+    def __init__(self):
+        hObj.__init__(self, 'Floor')
+        
+        self.set_visual_data()
+        self.set_physics = True
         
 class ThrowableBall(hObj):
     def __init__(self):
         hObj.__init__(self, 'ThrowableBall')
         
+        self.set_visual_data()
+        
         # Makes it a physical rigid-body object. It will no longer be able to
         # be controlled directly, all movement must be done through inertia
         # modifications or by linking to another object! For example, the mouse
         # will have an invisible object following it at all times. Objects can
-        # then be linked to it in a variety of ways.
-        self.set_physics(True, H_PHYS_RIGID)
+        # then be linked to it in a variety of ways. Note that it MUST be called
+        # after the look of the object has been defined! Also initial position
+        # MUST BE SET!
+        self.set_physics = True
         
         self.add_event(H_EVENT_MOUSE_DOWN, self.event_mouse_down)
         
-    def event_mouse_down(self, e):
-        x,y = self.pos
-        m_x, m_y = e.pos
+    def event_mouse_down(self, obj, e):
+        self.body.position = e.pos[0], e.pos[1]
+#        factor = 0.1
+#        
+#        x,y = self.pos
+#        m_x, m_y = e.pos
+#        
+#        f_x = (H_WIN_WIDTH - m_x - x) * factor
+#        f_y = (H_WIN_HEIGHT - m_y - y) * factor
+#        self.add_force(f_x, f_y) # Treated as a vector (+-x, +-y)
         
-        self.add_force((m_x - x, m_y - y)) # Treated as a vector (+-x, +-y)
-        
-    def _set_visual_properties(self):
-        hObj._set_visual_properties(self)
-        
-        self.color = media.black
-        self.radius = random.randint(50,200)
-        self.look = hShape.circle(self.radius, self.color)
-        self.inital_pos = H_WIN_CENTER
-        
-    def _set_physical_properties(self):
-        hObj._set_physical_properties(self)
-        
-        self.mass = self.radius
+    def set_visual_data(self):
+        self.look = hShape.circle(random.randint(50,100), white)
+        self.set_pos(H_WIN_CENTER)
         
 g = Game()
 g.start()

@@ -26,4 +26,4 @@ obj.set_pos(H_WIN_CENTER)
 obj.add_event(H_EVENT_MOUSE_MOVE, event_mouse_move)
 obj.add_event(H_EVENT_MOUSE_DOWN, event_mouse_down)
 
-app.add_obj(obj)
+app.add_obj(obj, 100)
