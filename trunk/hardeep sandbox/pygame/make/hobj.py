@@ -2,6 +2,10 @@ import pygame
 from hevents import *
 from hconstants import *
 
+import pymunk
+from pymunk.vec2d import *
+import math
+
 class hObj(object):
     
     def __init__(self, name, **kwargs):
@@ -16,6 +20,8 @@ class hObj(object):
     def __init_vars(self):
         self.look = None
         self.pos = H_WIN_CENTER
+        self.physics = False
+        self.set_physics = False
         
     def set_pos(self, p):
         if p == -1:
@@ -28,9 +34,32 @@ class hObj(object):
             self.pos = (x, y)
         else:
             self.pos = p
+            
+    def do_init_phys(self, space):
+        if self.set_physics:
+            self.physics = True
+            self.physical_space = space
+            
+            self.inertia = self.look.get_inertia()
+            self.mass = self.look.get_mass()
+            
+            self.body = pymunk.Body(self.mass, self.inertia)
+            self.body.position = self.pos[0], self.pos[1]
+            
+            self.physical_shape = self.look.get_shape(self.body)
+            self.physical_space.add(self.body, self.physical_shape)
+        
+    def do_phys(self):
+        pass
+        
+    def add_force(self, x, y):
+        vect = (x, y)
         
     def draw(self, surf):
         if ( self.look is not None ):
+            if ( self.physics ):
+                #print self.body.position
+                self.pos = (self.body.position.x, self.body.position.y)
             self.look.draw_at(surf, self.pos[0], self.pos[1])
             
     def launch_events(self, e):

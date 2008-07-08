@@ -26,21 +26,39 @@ from hobj import *
 from hshapes import *
 from hevents import *
 
+import pymunk
+from pymunk.vec2d import *
+import math
+
 import pygame
 
 class hMain(threading.Thread):
-    def __init__(self, window_name="Frame"):
+    def __init__(self, window_name="Frame", rate=50):
         threading.Thread.__init__(self)
         self.window_name = window_name
         self.SDL_thread = None
+        self.rate = rate
+        self.start_physics = False
         
-    def add_obj(self, o):
-        
+    def _wait_for_SDL_thread(self):
         # Wait until the thread is created
         while ( self.SDL_thread is None ):
             True
-            
-        self.SDL_thread.add_obj(o)
+    
+    def init_physics(self):
+        pass
+        
+    def set_physics_on(self):
+        self._wait_for_SDL_thread()
+        self.SDL_thread.set_physics_on()
+        
+    def set_gravity(self, x=0.0, y=-900.0):
+        self._wait_for_SDL_thread()
+        self.SDL_thread.set_gravity(x, y)
+        
+    def add_obj(self, o, z_order=0):
+        self._wait_for_SDL_thread()
+        self.SDL_thread.add_obj(o, z_order)
         
     def run(self):
         self.app = hMainApp()
@@ -51,6 +69,11 @@ class hMain(threading.Thread):
         # Convenience references
         self.SDL_thread = self.frame.thread
         self.pyg_screen = self.frame.panel.window
+        
+        if ( self.start_physics ):
+            self.set_physics_on()
+            self.set_gravity()
+            self.init_physics()
         
         self.app.MainLoop()
 
