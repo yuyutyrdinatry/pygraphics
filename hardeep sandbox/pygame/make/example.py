@@ -37,11 +37,11 @@ class ThrowableBall(hObj):
         # then be linked to it in a variety of ways.
         self.set_physics(True, H_PHYS_RIGID)
         
-        self.add_event(H_EVENT_MOUSE_LEFT, self.event_mouse_left_click)
+        self.add_event(H_EVENT_MOUSE_DOWN, self.event_mouse_down)
         
-    def event_mouse_left_click(self, e):
+    def event_mouse_down(self, e):
         x,y = self.pos
-        m_x, m_y = e.mouse_pos
+        m_x, m_y = e.pos
         
         self.add_force((m_x - x, m_y - y)) # Treated as a vector (+-x, +-y)
         
