@@ -22,8 +22,10 @@ class SDLThread(threading.Thread):
         while self.run_thread:
             self._main_loop()
 
-    def stop(self):
+    def stop(self, e=None):
         self.run_thread = False
+        if ( e is not None ):
+            e.Skip()
         
     def _main_loop(self):
         e = pygame.event.poll()
