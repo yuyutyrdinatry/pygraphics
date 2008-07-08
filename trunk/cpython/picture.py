@@ -358,7 +358,7 @@ def get_short_path(filename):
         
         
 if __name__ == '__main__':
-    a = Picture(filename='S:\\workspace\\PyGraphics\\hardeep sandbox\\wx\\test.png')
+    a = Picture(filename='/Users/pgries/img1.jpg')
     a.show()
     
     b = Picture(200,300,green)

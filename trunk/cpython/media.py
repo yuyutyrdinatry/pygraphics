@@ -15,7 +15,7 @@ pygame.mixer.pre_init(DEFAULT_FREQUENCY,
                       DEFAULT_ENCODING, 
                       DEFAULT_CHANNELS, 
                       DEFAULT_BUFFERING)
-pygame.mixer.init()
+#pygame.mixer.init()
 
 from color import *
 from picture import *
