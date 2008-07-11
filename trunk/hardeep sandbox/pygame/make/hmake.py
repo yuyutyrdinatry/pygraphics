@@ -47,6 +47,9 @@ class hMain(threading.Thread):
     
     def init_physics(self):
         pass
+    
+    def init_game(self):
+        pass
         
     def set_physics_on(self):
         self._wait_for_SDL_thread()
@@ -74,6 +77,7 @@ class hMain(threading.Thread):
             self.set_physics_on()
             self.set_gravity()
             self.init_physics()
+        self.init_game()
         
         self.app.MainLoop()
 
