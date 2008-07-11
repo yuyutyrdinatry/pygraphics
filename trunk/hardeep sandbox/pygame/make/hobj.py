@@ -19,7 +19,7 @@ class hObj(object):
         
     def __init_vars(self):
         self.look = None
-        self.pos = H_WIN_CENTER
+        self.pos = (0,0)
         self.physics = False
         self.set_physics = False
         self.init_physics = False
@@ -30,18 +30,29 @@ class hObj(object):
         
     def set_pos(self, p):
         if p == -1:
-            c = H_WIN_CENTER_COORDS
-            w = self.look.w
-            h = self.look.h
-            x = c[0] - (w / 2)
-            y = c[1] - (h / 2)
+            p = self._get_center_pos()
             
-            self.pos = (x, y)
-        else:
-            self.pos = p
+        elif p[0] == -1:
+            p = (x, self._get_center_pos()[1])
+            
+        elif p[1] == -1:
+            p = (self._get_center_pos()[0], y)
+        
+        elif p == (-1, -1):
+            p = self._get_center_pos()
+            
+        self.pos = p
+        
+    def _get_center_pos(self):
+        c = H_WIN_CENTER_COORDS
+        w = self.look.w
+        h = self.look.h
+        x = c[0] - (w / 2)
+        y = c[1] - (h / 2)
+        return (x, y) 
             
     def do_init_phys(self, space):
-        if self.set_physics:
+        if self.set_physics and space is not None:
             self.physics = True
             self.physical_space = space
             
@@ -52,10 +63,7 @@ class hObj(object):
             self.body.position = self.pos[0], self.pos[1]
             
             self.physical_shape = self.look.get_shape(self.body)
-            self._add_to_physical_space()
-            
-    def _add_to_physical_space(self):
-        self.physical_space.add(self.body, self.physical_shape)
+            self.physical_space.add(self.body, self.physical_shape)
         
     def do_phys(self):
         pass

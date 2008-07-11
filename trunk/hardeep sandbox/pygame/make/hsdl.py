@@ -9,6 +9,9 @@ import math
 
 global pygame
 
+class EventPhysicsThread(threading.Thread):
+    def __init__(self, ):
+
 class SDLThread(threading.Thread):
     def __init__(self, screen, window, rate=50):
         threading.Thread.__init__(self)
@@ -53,6 +56,8 @@ class SDLThread(threading.Thread):
         clock_tick = pygame.time.Clock().tick
         main_loop = self._main_loop
         rate = self.rate
+        
+        # Initiate physics/events thread here
         
         while self.run_thread:
             main_loop(clock_tick, rate)
