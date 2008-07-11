@@ -8,9 +8,30 @@ from pymunk.vec2d import *
 import math
 
 global pygame
-
-class EventPhysicsThread(threading.Thread):
-    def __init__(self, ):
+                
+class SDLEventThread(threading.Thread):
+    def __init__(self, thread):
+        threading.Thread.__init__(self)
+        self.run_thread = False
+        
+        self.parent_thread = thread
+        
+    def stop(self):
+        self.run_thread = False
+        
+    def run(self):
+        self.run_thread = True
+        
+        while self.run_thread:
+            e = pygame.event.poll()
+            
+            if e.type == pygame.QUIT:
+                self.parent_thread.stop()
+                return
+            
+            for key in self.parent_thread.objects_keys:
+                for o in self.parent_thread.objects[key]:
+                    o.launch_events(e)
 
 class SDLThread(threading.Thread):
     def __init__(self, screen, window, rate=50):
@@ -24,6 +45,7 @@ class SDLThread(threading.Thread):
         self.physics = False
         self.physical_space = None
         self.rate = rate
+        self.event_thread = None
         
     def add_obj(self, o, z_order=0):
         if ( not self.objects.has_key(z_order) ):
@@ -54,39 +76,33 @@ class SDLThread(threading.Thread):
         
         # Local Vars for Speed
         clock_tick = pygame.time.Clock().tick
-        main_loop = self._main_loop
         rate = self.rate
         
         # Initiate physics/events thread here
+        self.event_thread = SDLEventThread(self)
+        self.event_thread.start()
         
         while self.run_thread:
-            main_loop(clock_tick, rate)
+            self.screen.fill((0,0,0)) # Black BG
+            
+            for key in self.objects_keys:
+                for o in self.objects[key]:
+                    o.draw(self.screen)
+            
+            if self.physics:        
+                self.physical_space.step(1.0/rate)
+                
+            pygame.display.flip()
+            clock_tick(rate)
 
     def stop(self, e=None):
         self.run_thread = False
-        if ( e is not None ):
-            e.Skip()
         
-    def _main_loop(self, clock_tick, rate):
-        e = pygame.event.poll()
-        
-        if e.type == pygame.QUIT:
-            self.stop()
-            self.window.Destroy()
-            return
-
-        self.screen.fill((0,0,0)) # Black BG
-        
-        for key in self.objects_keys:
-            for o in self.objects[key]:
-                o.launch_events(e)
-                o.draw(self.screen)
-        
-        if ( self.physics ):
-            self.physical_space.step(1.0/rate)
+        if self.event_thread is not None:
+            self.event_thread.stop()
             
-        pygame.display.flip()
-        clock_tick(rate)
+        if e is not None:
+            e.Skip()
 
 class SDLPanel(wx.Panel):
     def __init__(self, parent, ID, window_size, rate=50):

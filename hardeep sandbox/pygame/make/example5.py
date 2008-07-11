@@ -84,14 +84,16 @@ class ThrowableBall(hObj):
         if e.button == 3:
             self.reset_forces()
         else:
-            factor = 900
+            factor = 6300000
+            factor_div = factor / 20
             
             x,y = self.pos
             m_x, m_y = e.pos
-            f_x = (H_WIN_WIDTH - m_x - x) * factor
-            f_y = (H_WIN_HEIGHT - m_y - y) * factor
             
-            self.add_impulse(f_x, f_y, (f_x * -1, f_y * -1)) # Treated as a vector (+-x, +-y)
+            f_x = max(min(factor_div, (1/(x - m_x)) * factor), factor_div * -1)
+            f_y = max(min(factor_div, (1/(y - m_y)) * factor), factor_div * -1)
+            
+            self.add_impulse(f_x, f_y, (0,0)) # Treated as a vector (+-x, +-y)
         
     def set_visual_data(self):
         self.look = hShape.circle(50, white)
