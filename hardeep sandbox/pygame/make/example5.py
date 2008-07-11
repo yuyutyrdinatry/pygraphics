@@ -11,10 +11,14 @@ class Game(hMain):
     def _make_statball(self, x, y):
         return StaticBall(x, y, (randint(0,255), randint(0,255), randint(0,255)))
     
+    def init_game(self):
+        pygame.mouse.set_visible(False)
+    
     # init_physics gets automatically run if start_physics is True!
     def init_physics(self):
         self.set_gravity(0.0, 300.0)
         self.add_obj(ThrowableBall())
+        self.add_obj(MouseCursor())
         
         # Draws StaticBall objects all around in a square
         x = 16
@@ -39,6 +43,18 @@ class Game(hMain):
         for i in xrange(0, 18):
             x += 32
             self.add_obj(self._make_statball(x, y))
+            
+class MouseCursor(hObj):
+    def __init__(self):
+        hObj.__init__(self, 'Mouse')
+        
+        self.set_physics = False
+        self.look = hShape.circle(5, (0, 255, 0), width=3)
+        
+        self.add_event(H_EVENT_MOUSE_MOVE, self.event_mouse_move)
+        
+    def event_mouse_move(self, obj, e):
+        self.set_pos(e.pos)
         
 class StaticBall(hObj):
     
@@ -83,6 +99,7 @@ class ThrowableBall(hObj):
     def event_mouse_down(self, obj, e):
         if e.button == 3:
             self.reset_forces()
+            self.body.position = H_WIN_CENTER_COORDS
         else:
             factor = 6300000
             factor_div = factor / 20
