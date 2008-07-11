@@ -6,6 +6,8 @@ import pymunk
 from pymunk.vec2d import *
 import math
 
+from threading import Lock
+
 class hObj(object):
     
     def __init__(self, name, **kwargs):
@@ -27,6 +29,7 @@ class hObj(object):
         self.physical_space = None
         self.inertia = None
         self.mass = None
+        self._lock = Lock()
         
     def set_pos(self, p):
         if p == -1:
@@ -78,12 +81,15 @@ class hObj(object):
         self.body.reset_forces()
         
     def draw(self, surf):
+        self._lock.acquire()
         if ( self.look is not None ):
             if ( self.physics ):
                 self.pos = (self.body.position.x, self.body.position.y)
             self.look.draw_at(surf, self.pos[0], self.pos[1])
+        self._lock.release()
             
     def launch_events(self, e):
+        self._lock.acquire()
         if ( e.type != 0 ):
             for key in self.events:
                 # Helper function needed here
@@ -94,6 +100,7 @@ class hObj(object):
                 elif ( key == H_EVENT_INIT_PHYSICS and not self.init_physics ):
                     self.init_physics = True
                     self._launch_events(key, e)
+        self._lock.release()
     
     def _launch_events(self, key, e):
         if ( len(self.events[key]) == 1 ):
