@@ -5,40 +5,96 @@ from random import randint
 
 class Game(hMain):
     def __init__(self):
-        hMain.__init__(self, 'Example 5 :: Gravity v2 :: LMB - Force | RMB - Reset')
+        hMain.__init__(self, 'Example 6 :: Gravity v2 :: LMB - Force | RMB - Reset')
         self.start_physics = True
         
     def _make_statball(self, x, y):
         return StaticBall(x, y, (randint(0,255), randint(0,255), randint(0,255)))
     
+    def init_game(self):
+        pygame.mouse.set_visible(False)
+    
     # init_physics gets automatically run if start_physics is True!
     def init_physics(self):
         self.set_gravity(0.0, 400.0)
-        self.add_obj(ThrowableBall())
+        
+        objs_linked = []
+        a = ThrowableBall()
+        self.add_obj(a)
+        
+        col = (randint(0,255), randint(0,255), randint(0,255))
+        b_1 = LinkBall(a, H_WIN_CENTER_COORDS[0], H_WIN_CENTER_COORDS[1]+20, col)
+        objs_linked.append(b_1)
+        
+        col = (randint(0,255), randint(0,255), randint(0,255))
+        b_2 = LinkBall(b_1, H_WIN_CENTER_COORDS[0], H_WIN_CENTER_COORDS[1]+40, col)
+        objs_linked.append(b_2)       
+        
+        for obj in objs_linked:
+            self.add_obj(obj)
+        
+        self.add_obj(MouseCursor())
         
         # Draws StaticBall objects all around in a square
         x = 16
         y = H_WIN_CENTER_COORDS[1] + 150
-        for i in xrange(0, 18):
-            x += 32
+        for i in xrange(0, 36):
+            x += 16
             self.add_obj(self._make_statball(x, y))
             
         y = H_WIN_CENTER_COORDS[1] + 150
-        for i in xrange(0, 10):
-            y -= 32
+        for i in xrange(0, 20):
+            y -= 16
             self.add_obj(self._make_statball(x, y))
             
         x = 16
         y = H_WIN_CENTER_COORDS[1] + 150
-        for i in xrange(0, 10):
-            y -= 32
+        for i in xrange(0, 20):
+            y -= 16
             self.add_obj(self._make_statball(x, y))
         
         x = 16
         y -= 32
-        for i in xrange(0, 18):
-            x += 32
+        for i in xrange(0, 36):
+            x += 16
             self.add_obj(self._make_statball(x, y))      
+            
+class MouseCursor(hObj):
+    def __init__(self):
+        hObj.__init__(self, 'Mouse')
+        
+        self.set_physics = False
+        self.look = hShape.circle(5, (0, 255, 0), width=3)
+        
+        self.add_event(H_EVENT_MOUSE_MOVE, self.event_mouse_move)
+        
+    def event_mouse_move(self, obj, e):
+        self.set_pos(e.pos)
+        
+class LinkBall(hObj):
+    def __init__(self, parent_obj, x, y, col, size=20):
+        hObj.__init__(self, 'LinkBall')
+        
+        self.col = col
+        self.parent_obj = parent_obj
+        
+        self.set_pos((x, y))
+        self.size = size
+        
+        self.set_visual_data(col)
+        self.set_physics = True
+        
+        self.add_event(H_EVENT_INIT_PHYSICS, self.event_init_physics)
+        
+    def event_init_physics(self, obj, e):
+        self.join = pymunk.PinJoint(self.body, self.parent_obj.body, Vec2d(0,0), Vec2d(0,10))
+        
+        self.physical_shape.friction = 0.0
+        self.physical_shape.elasticity = 1.0
+        self.physical_space.add(self.join)
+        
+    def set_visual_data(self, col):
+        self.look = hShape.circle(self.size, col)
         
 class StaticBall(hObj):
     
