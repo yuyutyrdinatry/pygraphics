@@ -10,11 +10,13 @@ class Game(hMain):
         
     def _make_statball(self, x, y):
         return StaticBall(x, y, (randint(0,255), randint(0,255), randint(0,255)))
-        
+    
+    # init_physics gets automatically run if start_physics is True!
     def init_physics(self):
-        self.set_gravity(0.0, 900.0)
+        self.set_gravity(0.0, 300.0)
         self.add_obj(ThrowableBall())
         
+        # Draws StaticBall objects all around in a square
         x = 16
         y = H_WIN_CENTER_COORDS[1] + 150
         for i in xrange(0, 18):
@@ -51,13 +53,14 @@ class StaticBall(hObj):
         self.add_event(H_EVENT_INIT_PHYSICS, self.event_init_physics)
         
     def event_init_physics(self, obj, e):
+        # Creates the pivot point and attaches itself to it
         self.link = pymunk.Body(pymunk.inf, pymunk.inf)
         self.link.position = Vec2d(self.pos[0], self.pos[1])
         
         self.join = pymunk.PinJoint(self.body, self.link, Vec2d(0,0), Vec2d(0,10))
+        
         self.physical_shape.friction = 0.0
         self.physical_shape.elasticity = 1.0
-        
         self.physical_space.add(self.join)
         
     def set_visual_data(self, col):
@@ -81,11 +84,10 @@ class ThrowableBall(hObj):
         if e.button == 3:
             self.reset_forces()
         else:
-            factor = 10
+            factor = 900
             
             x,y = self.pos
             m_x, m_y = e.pos
-            
             f_x = (H_WIN_WIDTH - m_x - x) * factor
             f_y = (H_WIN_HEIGHT - m_y - y) * factor
             

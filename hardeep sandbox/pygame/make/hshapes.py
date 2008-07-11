@@ -50,7 +50,7 @@ class hShape(object):
             return pymunk.moment_for_poly(self.get_mass(), self.get_poly(), Vec2d(0,0))
         
         def get_mass(self):
-            pass
+            return self.w * self.h * self.factor
         
         def get_shape(self):
             pass
@@ -79,7 +79,8 @@ class hShape(object):
             return pymunk.moment_for_circle(self.get_mass(), 0, self.r, Vec2d(0,0))
         
         def get_mass(self):
-            return self.r * self.factor
+            # Note: make the mass a function of the surface area
+            return math.pi * self.r * self.r * self.factor
         
         def get_shape(self, body):
             return pymunk.Circle(body, self.r, Vec2d(0,0))
