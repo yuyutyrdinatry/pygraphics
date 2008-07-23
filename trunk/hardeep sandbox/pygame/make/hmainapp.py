@@ -23,6 +23,27 @@ class hMainApp(wx.PySimpleApp):
     def make_obj(self, name, obj, show=True, *args, **kwargs):
         e = OBJ_CREATE(name=name, obj=obj, show=show, args=args, kwargs=kwargs)
         wx.PostEvent(self.event_frame, e)
+        
+class hMainAppThread(threading.Thread):
+    def __init__(self, window_name="Frame", rate=50):
+        threading.Thread.__init__(self)
+        self.hmain = None       
+        self._lock = threading.Lock()
+        self._lock.acquire()
+        
+    def add_wx_obj(self, name, obj, show, *args, **kwargs):
+        self._lock.acquire()
+        self.hmain.make_obj(name, obj, show, *args, **kwargs)
+        self._lock.release()
+        
+    def run(self):
+        try:
+            self.hmain = hMainApp()            
+            self._lock.release()
+            self.hmain.MainLoop()
+        finally:
+            # If an exception occurs, lets end the thread process....hopefully
+            pass
 
 if __name__ == '__main__':
      app = hMainApp()
