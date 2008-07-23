@@ -13,7 +13,7 @@ class Game(hMain):
     
     # init_physics gets automatically run if start_physics is True!
     def init_physics(self):
-        self.set_gravity(0.0, 400.0)
+        self.set_gravity(0.0, 300.0)
         self.add_obj(ThrowableBall())
         
         # Draws StaticBall objects all around in a square
@@ -57,7 +57,7 @@ class StaticBall(hObj):
         self.link = pymunk.Body(pymunk.inf, pymunk.inf)
         self.link.position = Vec2d(self.pos[0], self.pos[1])
         
-        self.join = pymunk.PinJoint(self.body, self.link, Vec2d(0,0), Vec2d(0,20))
+        self.join = pymunk.PinJoint(self.body, self.link, Vec2d(0,0), Vec2d(0,10))
         
         self.physical_shape.friction = 0.0
         self.physical_shape.elasticity = 1.0
@@ -85,7 +85,7 @@ class ThrowableBall(hObj):
             self.reset_forces()
             self.body.position = H_WIN_CENTER_COORDS
         else:
-            factor = 6300000
+            factor = 6800000
             factor_div = factor / 20
             
             x,y = self.pos
