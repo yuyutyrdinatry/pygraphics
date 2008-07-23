@@ -47,5 +47,7 @@ class hMainAppThread(threading.Thread):
             pass
 
 if __name__ == '__main__':
-     app = hMainApp()
-     app.MainLoop()
+    app = hMainAppThread('Test')
+    app.start()
+    
+    app.add_wx_obj('blah', wx.Frame, True, None, -1, "Event-created Frame", pos=(50,50), size=(600,600))
