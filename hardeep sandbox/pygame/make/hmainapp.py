@@ -1,6 +1,9 @@
 import wx
 import wx.lib.newevent
 
+global OBJ_CREATE
+global EVT_OBJECT_CREATE
+
 OBJ_CREATE, EVT_OBJECT_CREATE = wx.lib.newevent.NewEvent()
 
 class hMainApp(wx.PySimpleApp):
