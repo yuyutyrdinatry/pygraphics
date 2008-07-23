@@ -82,13 +82,13 @@ class hMain(threading.Thread):
             self.SDL_thread = self.frame.thread
             self.pyg_screen = self.frame.panel.window
             
+            self._lock.release()
+            
             if self.start_physics:
                 self.set_physics_on()
                 self.set_gravity()
                 self.init_physics()
             self.init_game()
-            
-            self._lock.release()
             
             self.hmain.MainLoop()
         finally:
