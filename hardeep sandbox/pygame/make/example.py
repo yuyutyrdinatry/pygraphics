@@ -32,7 +32,7 @@ class Game(hMain):
         
     def init_physics(self):
         self.set_gravity(0.0, 100.0)
-        self.add_obj(ThrowableBall())
+        self.add_obj(PositionableBall())
         self.add_obj(StaticBall())
         
 class StaticBall(hObj):
@@ -52,11 +52,11 @@ class StaticBall(hObj):
         
     def set_visual_data(self):
         self.look = hShape.circle(150, red)
-        self.set_pos((H_WIN_CENTER_COORDS[0], H_WIN_CENTER_COORDS[1]+300))
+        self.set_pos((-1, H_WIN_CENTER_COORDS[1]+300))
         
-class ThrowableBall(hObj):
+class PositionableBall(hObj):
     def __init__(self):
-        hObj.__init__(self, 'ThrowableBall')
+        hObj.__init__(self, 'Positionable')
         
         self.set_visual_data()
         
@@ -73,14 +73,6 @@ class ThrowableBall(hObj):
         
     def event_mouse_down(self, obj, e):
         self.body.position = e.pos[0], e.pos[1]
-#        factor = 0.1
-#        
-#        x,y = self.pos
-#        m_x, m_y = e.pos
-#        
-#        f_x = (H_WIN_WIDTH - m_x - x) * factor
-#        f_y = (H_WIN_HEIGHT - m_y - y) * factor
-#        self.add_force(f_x, f_y) # Treated as a vector (+-x, +-y)
         
     def set_visual_data(self):
         self.look = hShape.circle(random.randint(50,100), white)

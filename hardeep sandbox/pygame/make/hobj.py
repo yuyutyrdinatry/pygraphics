@@ -24,6 +24,7 @@ class hObj(object):
         self.pos = (0,0)
         self.physics = False
         self.set_physics = False
+        self.set_static = False
         self.init_physics = False
         self.body = None
         self.physical_space = None
@@ -32,17 +33,20 @@ class hObj(object):
         self._lock = Lock()
         
     def set_pos(self, p):
+        center = x = y = None
         if p == -1:
             p = self._get_center_pos()
             
-        elif p[0] == -1:
-            p = (x, self._get_center_pos()[1])
+        elif isinstance(p, tuple):
+            center = self._get_center_pos()
             
-        elif p[1] == -1:
-            p = (self._get_center_pos()[0], y)
-        
-        elif p == (-1, -1):
-            p = self._get_center_pos()
+            x = center[0] if p[0] == -1 else p[0]
+            y = center[1] if p[1] == -1 else p[1]
+                
+            p = (x, y)
+            
+        if self.body is not None:
+            self.body.position = p[0], p[1]
             
         self.pos = p
         
@@ -66,7 +70,10 @@ class hObj(object):
             self.body.position = self.pos[0], self.pos[1]
             
             self.physical_shape = self.look.get_shape(self.body)
-            self.physical_space.add(self.body, self.physical_shape)
+            if self.set_static:
+                self.physical_space.add_static(self.physical_shape)
+            else:
+                self.physical_space.add(self.body, self.physical_shape)
         
     def do_phys(self):
         pass

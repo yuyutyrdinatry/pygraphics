@@ -8,8 +8,8 @@ class Game(hMain):
         hMain.__init__(self, 'Example 6 :: Gravity v2 :: LMB - Force | RMB - Reset')
         self.start_physics = True
         
-    def _make_statball(self, x, y):
-        return StaticBall(x, y, (randint(0,255), randint(0,255), randint(0,255)))
+    def _get_rand_col(self):
+        return (randint(50,100), randint(50,100), randint(200,255))
     
     def init_game(self):
         pygame.mouse.set_visible(False)
@@ -21,50 +21,57 @@ class Game(hMain):
         objs_linked = []
         a = ThrowableBall()
         self.add_obj(a)
-        
-        col = (randint(0,255), randint(0,255), randint(0,255))
-        b_1 = LinkBall(a, H_WIN_CENTER_COORDS[0], H_WIN_CENTER_COORDS[1]+20, col)
-        objs_linked.append(b_1)
-        
-        col = (randint(0,255), randint(0,255), randint(0,255))
-        b_2 = LinkBall(b_1, H_WIN_CENTER_COORDS[0], H_WIN_CENTER_COORDS[1]+40, col)
-        objs_linked.append(b_2)       
-        
-        for obj in objs_linked:
-            self.add_obj(obj)
+#        
+#        col = (randint(200,255), randint(50,100), randint(50,100))
+#        b_1 = LinkBall(a, H_WIN_CENTER_COORDS[0], H_WIN_CENTER_COORDS[1]+20, col)
+#        objs_linked.append(b_1)
+#        
+#        col = (randint(200,255), randint(50,100), randint(50,100))
+#        b_2 = LinkBall(b_1, H_WIN_CENTER_COORDS[0], H_WIN_CENTER_COORDS[1]+40, col)
+#        objs_linked.append(b_2)       
+#        
+#        for obj in objs_linked:
+#            self.add_obj(obj)
         
         self.add_obj(MouseCursor())
         
-        # Draws StaticBall objects all around in a square
-        x = 16
-        y = H_WIN_CENTER_COORDS[1] + 150
-        for i in xrange(0, 36):
-            x += 16
-            self.add_obj(self._make_statball(x, y))
-            
-        y = H_WIN_CENTER_COORDS[1] + 150
-        for i in xrange(0, 20):
-            y -= 16
-            self.add_obj(self._make_statball(x, y))
-            
-        x = 16
-        y = H_WIN_CENTER_COORDS[1] + 150
-        for i in xrange(0, 20):
-            y -= 16
-            self.add_obj(self._make_statball(x, y))
+        self.add_obj(Ground())
+#        size = 50
+#        points = [(-size, -size), (-size, size), (size,size), (size, -size)]
+#        print 'size', points
+#        mass = 10.0
+#        moment = pymunk.moment_for_poly(mass, points, (0,0))
+#        body = pymunk.Body(mass, moment)
+#        body.position = 240, 300
+#        shape = pymunk.Poly(body, points, (0,0))
+#        shape.friction = 1
+#        self.SDL_thread.physical_space.add_static(body,shape)
         
-        x = 16
-        y -= 32
-        for i in xrange(0, 36):
-            x += 16
-            self.add_obj(self._make_statball(x, y))      
+        print self.SDL_thread.physical_space.static_shapes
+        print self.SDL_thread.physical_space.shapes
+        print self.SDL_thread.physical_space.bodies
+        
+class Ground(hObj):
+    def __init__(self):
+        hObj.__init__(self, 'Ground')
+        
+        self.set_physics = True
+        self.set_static = True
+        
+        self.look = hShape.rectangle(200, 100, (0, 0, 255))
+        self.set_pos((240, 300))
+        
+        self.add_event(H_EVENT_INIT_PHYSICS, self.event_init_physics)
+        
+    def event_init_physics(self, obj, e):
+        self.set_pos((240, 300))
             
 class MouseCursor(hObj):
     def __init__(self):
         hObj.__init__(self, 'Mouse')
         
         self.set_physics = False
-        self.look = hShape.circle(5, (0, 255, 0), width=3)
+        self.look = hShape.rectangle(5, 5, (0, 255, 0), width=3)
         
         self.add_event(H_EVENT_MOUSE_MOVE, self.event_mouse_move)
         
@@ -87,7 +94,11 @@ class LinkBall(hObj):
         self.add_event(H_EVENT_INIT_PHYSICS, self.event_init_physics)
         
     def event_init_physics(self, obj, e):
-        self.join = pymunk.PinJoint(self.body, self.parent_obj.body, Vec2d(0,0), Vec2d(0,10))
+        self.join = pymunk.SlideJoint(self.body, self.parent_obj.body, 
+                                      Vec2d(0,self.size), 
+                                      Vec2d(0,self.size * -1), 
+                                      1, 
+                                      1)
         
         self.physical_shape.friction = 0.0
         self.physical_shape.elasticity = 1.0
@@ -96,38 +107,13 @@ class LinkBall(hObj):
     def set_visual_data(self, col):
         self.look = hShape.circle(self.size, col)
         
-class StaticBall(hObj):
-    
-    def __init__(self, x, y, col):
-        hObj.__init__(self, 'Floor')
-        
-        self.set_visual_data(col)
-        self.set_physics = True
-        
-        self.set_pos((x, y))
-        
-        self.add_event(H_EVENT_INIT_PHYSICS, self.event_init_physics)
-        
-    def event_init_physics(self, obj, e):
-        # Creates the pivot point and attaches itself to it
-        self.link = pymunk.Body(pymunk.inf, pymunk.inf)
-        self.link.position = Vec2d(self.pos[0], self.pos[1])
-        
-        self.join = pymunk.PinJoint(self.body, self.link, Vec2d(0,0), Vec2d(0,20))
-        
-        self.physical_shape.friction = 0.0
-        self.physical_shape.elasticity = 1.0
-        self.physical_space.add(self.join)
-        
-    def set_visual_data(self, col):
-        self.look = hShape.circle(10, col)
-        
 class ThrowableBall(hObj):
     def __init__(self):
         hObj.__init__(self, 'ThrowableBall')
         
         self.set_visual_data()
         self.set_physics = True
+        self.set_pos((-1, 10))
         
         self.add_event(H_EVENT_MOUSE_DOWN, self.event_mouse_down)
         self.add_event(H_EVENT_INIT_PHYSICS, self.event_init_physics)
@@ -139,7 +125,7 @@ class ThrowableBall(hObj):
     def event_mouse_down(self, obj, e):
         if e.button == 3:
             self.reset_forces()
-            self.body.position = H_WIN_CENTER_COORDS
+            self.set_pos((-1, 10))
         else:
             factor = 6300000
             factor_div = factor / 20
@@ -153,7 +139,7 @@ class ThrowableBall(hObj):
             self.add_impulse(f_x, f_y, (0,0)) # Treated as a vector (+-x, +-y)
         
     def set_visual_data(self):
-        self.look = hShape.circle(40, white)
+        self.look = hShape.circle(40, white, mass_factor=0.01)
         self.set_pos(H_WIN_CENTER)
         
 g = Game()
