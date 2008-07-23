@@ -97,7 +97,7 @@ class ThrowableBall(hObj):
             self.add_impulse(f_x, f_y, (0,0)) # Treated as a vector (+-x, +-y)
         
     def set_visual_data(self):
-        self.look = hShape.circle(40, white)
+        self.look = hShape.circle(60, white)
         self.set_pos(H_WIN_CENTER)
         
 g = Game()
