@@ -2,7 +2,7 @@ from hmake import *
 from media import *
 from random import randint
 
-app = hMain('Example 4')
+app = hMain('Example 4 :: LMB to add object')
 app.start()
 
 def event_mouse_move(obj, e):
