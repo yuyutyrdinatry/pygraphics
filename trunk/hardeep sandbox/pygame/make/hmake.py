@@ -33,17 +33,13 @@ import math
 
 import pygame
 
-class hMain(threading.Thread):
+class hMain(hMainAppThread):
     def __init__(self, window_name="Frame", rate=50):
-        threading.Thread.__init__(self)
+        hMainAppThread.__init__(self)
         self.window_name = window_name
         self.SDL_thread = None
         self.rate = rate
         self.start_physics = False
-        self.hmain = None
-        
-        self._lock = threading.Lock()
-        self._lock.acquire()
     
     def init_physics(self):
         pass
@@ -64,11 +60,6 @@ class hMain(threading.Thread):
     def add_obj(self, o, z_order=0):
         self._lock.acquire()
         self.SDL_thread.add_obj(o, z_order)
-        self._lock.release()
-        
-    def add_wx_obj(self, name, obj, show, *args, **kwargs):
-        self._lock.acquire()
-        self.hmain.make_obj(name, obj, show, *args, **kwargs)
         self._lock.release()
         
     def run(self):
