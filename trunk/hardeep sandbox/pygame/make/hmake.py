@@ -25,6 +25,7 @@ from hsdl import *
 from hobj import *
 from hshapes import *
 from hevents import *
+from hmainapp import *
 
 import pymunk
 from pymunk.vec2d import *
@@ -39,11 +40,10 @@ class hMain(threading.Thread):
         self.SDL_thread = None
         self.rate = rate
         self.start_physics = False
+        self.hmain = None
         
-    def _wait_for_SDL_thread(self):
-        # Wait until the thread is created
-        while ( self.SDL_thread is None ):
-            True
+        self._lock = threading.Lock()
+        self._lock.acquire()
     
     def init_physics(self):
         pass
@@ -52,39 +52,51 @@ class hMain(threading.Thread):
         pass
         
     def set_physics_on(self):
-        self._wait_for_SDL_thread()
+        self._lock.acquire()
         self.SDL_thread.set_physics_on()
+        self._lock.release()
         
     def set_gravity(self, x=0.0, y=-900.0):
-        self._wait_for_SDL_thread()
+        self._lock.acquire()
         self.SDL_thread.set_gravity(x, y)
+        self._lock.release()
         
     def add_obj(self, o, z_order=0):
-        self._wait_for_SDL_thread()
+        self._lock.acquire()
         self.SDL_thread.add_obj(o, z_order)
+        self._lock.release()
+        
+    def add_wx_obj(self, name, obj, show, *args, **kwargs):
+        self._lock.acquire()
+        self.hmain.make_obj(name, obj, show, *args, **kwargs)
+        self._lock.release()
         
     def run(self):
-        self.app = hMainApp()
-        self.frame = SDLFrame(None, wx.ID_ANY, self.window_name, (H_WIN_WIDTH, 
-                                                                  H_WIN_HEIGHT))
-        self.frame.Show()
-        
-        # Convenience references
-        self.SDL_thread = self.frame.thread
-        self.pyg_screen = self.frame.panel.window
-        
-        if ( self.start_physics ):
-            self.set_physics_on()
-            self.set_gravity()
-            self.init_physics()
-        self.init_game()
-        
-        self.app.MainLoop()
-
-class hMainApp(wx.PySimpleApp):
-    def __init__(self):
-        wx.PySimpleApp.__init__(self)
+        try:
+            self.hmain = hMainApp()
+            self.frame = SDLFrame(None, wx.ID_ANY, self.window_name, 
+                                  (H_WIN_WIDTH, H_WIN_HEIGHT))
+            self.frame.Show()
+            
+            # Convenience references
+            self.SDL_thread = self.frame.thread
+            self.pyg_screen = self.frame.panel.window
+            
+            if self.start_physics:
+                self.set_physics_on()
+                self.set_gravity()
+                self.init_physics()
+            self.init_game()
+            
+            self._lock.release()
+            
+            self.hmain.MainLoop()
+        finally:
+            # If an exception occurs, lets end the thread process....hopefully
+            pass
 
 if __name__ == '__main__':
     app = hMain('Test')
     app.start()
+    
+    app.add_wx_obj('blah', wx.Frame, True, None, -1, "Frame", pos=(50,50), size=(600,600))
