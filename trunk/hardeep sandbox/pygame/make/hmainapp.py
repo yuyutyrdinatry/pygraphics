@@ -1,5 +1,6 @@
 import wx
 import wx.lib.newevent
+import threading
 
 global OBJ_CREATE
 global EVT_OBJECT_CREATE
