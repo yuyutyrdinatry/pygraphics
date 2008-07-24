@@ -14,16 +14,17 @@ import wave
 # if pygame.mixer is not initialized, do so.
 DEFAULTS = pygame.mixer.get_init()
 if not DEFAULTS:
-     DEFAULT_FREQUENCY = 22050
-     DEFAULT_ENCODING = -16
-     DEFAULT_CHANNELS = 2
-     DEFAULT_BUFFERING = 2048
-     pygame.mixer.pre_init(DEFAULT_FREQUENCY, 
-                           DEFAULT_ENCODING, 
-                           DEFAULT_CHANNELS, 
-                           DEFAULT_BUFFERING)
+    DEFAULT_SAMP_RATE = 22050
+    DEFAULT_ENCODING = -16
+    DEFAULT_CHANNELS = 2
+    DEFAULT_BUFFERING = 2048
+    pygame.mixer.pre_init(DEFAULT_SAMP_RATE, 
+                          DEFAULT_ENCODING, 
+                          DEFAULT_CHANNELS, 
+                          DEFAULT_BUFFERING)
+    pygame.mixer.init()
 else:
-    DEFAULT_FREQUENCY = DEFAULTS[0]
+    DEFAULT_SAMP_RATE = DEFAULTS[0]
     DEFAULT_ENCODING = DEFAULTS[1]
     
     # pygame.mixer.get_init() returns channels 0-based, 1 channel is 0, 2 is 1
@@ -95,10 +96,8 @@ class Sound(object):
         Filename takes precedence over samples, which take precedence 
         over seconds, which in turn takes precedence over sound.'''
         
-        pygame.mixer.init()
-        
         self.channels = DEFAULT_CHANNELS
-        self.samp_rate = DEFAULT_FREQUENCY
+        self.samp_rate = DEFAULT_SAMP_RATE
         self.numpy_encoding = AUDIO_ENCODINGS[DEFAULT_ENCODING]
         self.encoding = DEFAULT_ENCODING
         self.set_filename(filename)
@@ -182,6 +181,7 @@ class Sound(object):
         # number of channels). This object allows access to specific samples
         # in the buffer.
         self.samples = pygame_to_sample_array(pygame_snd)
+        self.player = None
         
         
     def get_pygame_sound(self):
@@ -206,32 +206,34 @@ class Sound(object):
         else:
             silence_array = numpy.zeros((s, 2), self.numpy_encoding)
         pygame_silence =  sample_array_to_pygame(silence_array)
-        silence = Sound(sound=pygame_silence)
-        self.append(silence)
+        self.append(Sound(sound=pygame_silence))
 
 
     def append(self, snd):
         '''Append Sound snd to this Sound. Requires that snd has same number of
         channels as this Sound.'''
         
-        snd_samples = pygame_to_sample_array(snd.get_pygame_sound())
-        my_samples = self.samples
-        new_samples = numpy.concatenate((my_samples, snd_samples))
-        self.set_pygame_sound(sample_array_to_pygame(new_samples))
+        if self.get_channels() == snd.get_channels():
+            snd_samples = pygame_to_sample_array(snd.get_pygame_sound())
+            my_samples = self.samples
+            new_samples = numpy.concatenate((my_samples, snd_samples))
+            self.set_pygame_sound(sample_array_to_pygame(new_samples))
+        else:
+            raise ValueError('Sound snd must have same number of channels.')
     
     
     def insert(self, snd, i):
         '''Insert Sound snd at index i. Requires that snd has same number of
         channels as this Sound. Negative indices are supported.'''
 
-        if self.get_channels() == 1 and snd.get_channels() == 1:
+        if self.get_channels() == snd.get_channels() == 1:
             first_chunk = self.samples[:i]
             second_chunk = self.samples[i:]
             new_samples = numpy.concatenate((first_chunk, 
                                              snd.sound_array, 
                                              second_chunk))
             self.set_pygame_sound(sample_array_to_pygame(new_samples))
-        elif self.get_channels() == 2 and snd.get_channels() == 2:
+        elif self.get_channels() == snd.get_channels() == 2:
             first_chunk = self.samples[:i, :]
             second_chunk = self.samples[i:, :]
             new_samples = numpy.vstack((first_chunk, 
@@ -240,7 +242,7 @@ class Sound(object):
             
             self.set_pygame_sound(sample_array_to_pygame(new_samples))
         else:
-            raise ValueError("Inserted Sound must have same number of channels.")
+            raise ValueError("Sound snd must have same number of channels.")
 
 
     def crop(self, first, last):
@@ -268,7 +270,8 @@ class Sound(object):
     def stop(self):
         '''Stop playing this Sound.'''
         
-        self.player.get_pygame_sound().stop()
+        if self.player:
+            self.player.get_pygame_sound().stop()
         
 
     def get_sampling_rate(self):
@@ -353,7 +356,7 @@ def create_sine_wave(hz, amp, samp):
     with frequency hz and amplitude amp in the range [0, 32767].'''
     
     # Default frequency is in samples per second
-    samples_per_second = DEFAULT_FREQUENCY
+    samples_per_second = DEFAULT_SAMP_RATE
     
     # Hz are periods per second
     seconds_per_period = 1.0 / hz
@@ -376,8 +379,10 @@ def create_sine_wave(hz, amp, samp):
     pygame_snd = sample_array_to_pygame(samples)
     return Sound(sound=pygame_snd)
 
-class Notes(object):
+class Notes():
+    
     def __init__(self):
+                
         self.C = create_sine_wave(264, 6000, 11025)
         self.D = create_sine_wave(297, 6000, 11025)
         self.E = create_sine_wave(330, 6000, 11025)
@@ -385,4 +390,3 @@ class Notes(object):
         self.G = create_sine_wave(396, 6000, 11025)
         self.A = create_sine_wave(440, 6000, 11025)
         self.B = create_sine_wave(494, 6000, 11025)
-    
