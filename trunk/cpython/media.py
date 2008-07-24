@@ -1,7 +1,7 @@
 import os
 import pygame
 import wx
-import  wx.lib.imagebrowser    as  ib
+import wx.lib.imagebrowser as ib
 
 IMAGE_FORMATS = ['*.jpg', '*.bmp', '*.gif']
 AUDIO_FORMATS = ['*.wav']
