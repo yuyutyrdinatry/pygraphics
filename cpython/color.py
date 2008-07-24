@@ -3,7 +3,6 @@ import math
 class Color(object):
     '''An RGB color.'''
 
-
     def __init__(self, r, g, b):
         '''Create a Color object representing an RGB color 
         with values (r, g, b).'''
