@@ -1,4 +1,3 @@
-import numpy
 import os
 import pygame
 import wx
@@ -7,15 +6,15 @@ import  wx.lib.imagebrowser    as  ib
 IMAGE_FORMATS = ['*.jpg', '*.bmp', '*.gif']
 AUDIO_FORMATS = ['*.wav']
 
-DEFAULT_FREQUENCY = 22050
+DEFAULT_SAMP_RATE = 22050
 DEFAULT_ENCODING = -16
 DEFAULT_CHANNELS = 2
 DEFAULT_BUFFERING = 2048
-pygame.mixer.pre_init(DEFAULT_FREQUENCY, 
+pygame.mixer.pre_init(DEFAULT_SAMP_RATE, 
                       DEFAULT_ENCODING, 
                       DEFAULT_CHANNELS, 
                       DEFAULT_BUFFERING)
-#pygame.mixer.init()
+pygame.mixer.init()
 
 from color import *
 from picture import *
@@ -244,47 +243,69 @@ def create_color(r, g, b):
 ##
 
 
-def load_sound(filename):    
+def load_sound(filename):
+    '''Return the Sound at file filename. Requires: file is an uncompressed
+    .wav file.'''
 
     return Sound(filename=filename)
 
 
-def create_empty_sound(sec):
+def create_sound(samp):
+    '''Return a silent Sound samp samples long.'''
 
-    return Sound(seconds=sec)
+    return Sound(samples=samp)
 
 
 def get_samples(snd):
+    '''Return a list of Samples in Sound snd.'''
 
     return [samp for samp in snd]
 
 
+def concatenate(snd1, snd2):
+    '''Return a new Sound object with Sound snd1 followed by Sound snd2.'''
+    
+    return snd1 + snd2
+
+
+def append_silence(snd, samp):
+    '''Append samp samples of silence onto Sound snd.'''
+    
+    snd.append_silence(samp)
+
+
+def insert(snd1, snd2, i):
+    '''Insert Sound snd2 in Sound snd1 at index i.'''
+    
+    snd1.insert(snd2, i)
+
+
 def play(snd):
+    '''Play Sound snd from beginning to end.'''
 
     snd.play()
 
 
 def play_in_range(snd, first, last):
-
+    '''Play Sound snd from index first to last.'''
+    
     snd.play(first, last)
 
 
 def stop(snd):
+    '''Stop playing Sound snd.'''
     
     snd.stop()
     
     
 def get_sampling_rate(snd):
+    '''Return the Sound snd's sampling rate.'''
 
     return snd.get_sampling_rate()
 
 
-def set_sampling_rate(snd, freq):
-
-    return snd.set_sampling_rate(freq)
-
-
 def get_sample(snd, i):
+    '''Return Sound snd's Sample object at index i.'''
 
     return snd.get_sample(i)
 
@@ -294,15 +315,53 @@ def get_sample(snd, i):
 ##
 
 
-def set_value(samp,value):
+def set_value(mono_samp, v):
+    '''Set MonoSample mono_samp's value to v.'''
 
-    return samp.set_value(value)
+    mono_samp.set_value(v)
 
 
-def get_value(samp):
+def get_value(mono_samp):
+    '''Return MonoSample mono_samp's value.'''
 
-    return samp.get_value()
+    return mono_samp.get_value()
 
+
+def set_values(stereo_samp, left, right):
+    '''Set StereoSample stereo_samp's left value to left and 
+    right value to right.'''
+
+    stereo_samp.set_values(left, right)
+
+
+def get_values(stereo_samp):
+    '''Return StereoSample stereo_samp's values in a tuple, (left, right).'''
+
+    return stereo_samp.get_values()
+
+
+def set_left(stereo_samp, v):
+    '''Set StereoSample stereo_samp's left value to v.'''
+
+    stereo_samp.set_left(v)
+
+
+def get_left(stereo_samp):
+    '''Return StereoSample stereo_samp's left value.'''
+    
+    return stereo_samp.get_left()
+
+
+def set_right(stereo_samp, v):
+    '''Set StereoSample stereo_samp's right value to v.'''
+
+    stereo_samp.set_right(v)
+
+
+def get_right(stereo_samp):
+    '''Return StereoSample stereo_samp's right value.'''
+
+    return stereo_samp.get_right()
 
 ##
 ## Global sound graphing functions ---------------------------------------------
@@ -312,31 +371,19 @@ def get_value(samp):
 # By default the size of the graph is 1024x300
 # TODO: Make it zoom capable
 def plot_waveform(snd, width=1024, height=300):
+    '''Unimplemented'''
    
-    win = Toplevel()
-
-    c = tkSnack.SnackCanvas(win, background="#060", width=width, height=height)
-    c.pack()
-    c.create_waveform(0, 0, fill="#0f0" , sound=snd.tk_sound, width=width, height=height, zerolevel=1)
-    
+    pass
 
 def plot_spectrogram(snd, width=1024, height=300):
+    '''Unimplemented'''
 
-    win = Toplevel()
-
-    c = tkSnack.SnackCanvas(win, background="#060", width=width, height=height)
-    c.pack()
-    c.create_spectrogram(0, 0, sound=snd.tk_sound, width=width, height=height)
-
+    pass
 
 def plot_spectrum(snd, width=1024, height=300):
-    
-    win = Toplevel()
-
-    c = tkSnack.SnackCanvas(win, background="#060",width=width, height=height)
-    c.pack()
-    c.create_section(0, 0, fill="#0f0", sound=snd.tk_sound, width=width, height=height)
-
+    '''Unimplemented'''
+  
+    pass
 
 ##
 ## Media functions -------------------------------------------------------
