@@ -2,13 +2,13 @@ import os
 import sys
 from config import *
 
+PATH_CWD = os.getcwd()
+PATH_BUILD = os.path.join(PATH_CWD, 'BUILD')
+PATH_DIST = os.path.join(PATH_CWD, 'DIST')
+
+NSIS_BUILD = os.path.join(PATH_CWD, 'BUILD.nsi')
+
 class InstallerBuilder(object):
-    PATH_CWD = os.getcwd()
-    PATH_BUILD = os.path.join(PATH_CWD, 'BUILD')
-    PATH_DIST = os.path.join(PATH_CWD, 'DIST')
-    
-    NSIS_BUILD = os.path.join(PATH_CWD, 'BUILD.nsi')
-    
     def __init__(self, data_objects):
         self.DO = data_objects
         
@@ -59,12 +59,19 @@ class InstallerBuilder(object):
             
     def _delete(self, delete_dir):
         for path, dirs, files in os.walk(delete_dir):
-            os._remove_files(path, files)
-            os._remove_path(path)
+            print path, dirs, files
+            self._remove_files(path, files)
+            
+            for dir in dirs:
+                self._delete(dir)
+                
+            self._remove_path(path)
         
     def _remove_files(self, path, files):
         for file in files:
+            print 'remove', path, file, os.path.join(path, file)
             os.remove(os.path.join(path, file))
     
     def _remove_path(self, path):
+        print 'rmdir', path
         os.rmdir(path)
