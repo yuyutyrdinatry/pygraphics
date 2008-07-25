@@ -4,6 +4,7 @@
 import os
 import sys
 from content import *
+from installer_builder import *
         
 Builder = InstallerBuilder(DO)
 Builder.generate()
