@@ -42,6 +42,7 @@ class InstallerBuilder(object):
             cmd += '        ReadRegStr $0 HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment" \'%s\'\n' % split[1]
             cmd += '        WriteRegStr HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment" \'%s\' \'$0;%s\'\n' % (split[1], split[2])
             cmd += '        Pop $0\n'
+            cmd += '        SetRebootFlag true\n'
             return cmd 
         
         return ''

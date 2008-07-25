@@ -23,7 +23,7 @@
 ; Installer Sections
 Section "Dummy Section" SecDummy
     ReadRegStr $0 HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment" 'PATH'
-    MessageBox MB_OK|MB_ICONEXCLAMATION $0
+    MessageBox MB_OK|MB_ICONEXCLAMATION $0    
 SectionEnd
 
 ; Descriptions
