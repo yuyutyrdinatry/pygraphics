@@ -9,13 +9,14 @@ class DataObjects(object):
         self.data_objs[os].append(iDataObj(name, path, os, **kwargs))
 
 class iDataObj(object):
-    def __init__(self, name, path, os, recurse=False, cmds={}):
+    def __init__(self, name, path, os, recurse=False, cmds={}, main=False):
         self.name = name
         self.os = os
         self.path = path
         self.recurse = recurse
         self.contents = path
         self.cmds = cmds
+        self.main = main
         
         self._trav_path()
         

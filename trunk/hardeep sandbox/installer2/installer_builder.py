@@ -1,6 +1,8 @@
 import os
 import sys
 from config import *
+from content import OS_CURR, OS_WIN, OS_MAC, OS_ALL
+from subprocess import call
 
 PATH_CWD = os.getcwd()
 PATH_BUILD = os.path.join(PATH_CWD, 'BUILD')
@@ -15,30 +17,58 @@ class InstallerBuilder(object):
     def generate(self):
         self._clear_build_paths()
         self._create_build_paths()
+        
+        # Windows
         self._create_windows_installer()
-        
-    def _create_windows_installer(self):
-        if os.path.exists(NSIS_BUILD):
-            os.rmdir(NSIS_BUILD)
-        
-        f = open(NSIS_BUILD, 'w+')
-        
-        header = self._get_header()
-        footer = self._get_footer()
-        
-        f.write(header)
-        f.write(footer)
-        f.close()
+        self._build_windows_installer()
     
     #-------------------------------------- Windows Installer Generation Helpers
+    def _build_windows_installer(self):
+        make = os.path.join(WIN_PATH_NSIS, 'makensis.exe')
+        call('%s "%s"' % (make, NSIS_BUILD))
+        
+    def _create_windows_installer(self):
+        f = open(NSIS_BUILD, 'w')
+        
+        f.write(self._get_header())
+        f.write('\n')
+        f.write(self._get_sections())
+        f.write('\n')
+        f.write(self._get_footer())
+        f.close()
+        
+    def _get_sections(self):
+        sections = '\n; Sections'
+        main_str = 'SetOutPath "$INSTDIR"'
+        u_str = 'WriteUninstaller "$INSTDIR\Uninstall.exe"'
+        
+        for obj in self.DO.data_objs[OS_WIN]:
+            new_section = '''\n    Section "%(SEC_NAME)s" %(SEC_ID)s
+        %(MAIN)s
+        %(FILES)s
+        %(UNINSTALL)s
+    SectionEnd\n''' % {'SEC_NAME' : obj.name, 
+                       'MAIN' : main_str, 
+                       'UNINSTALL' : u_str, 
+                       'SEC_ID' : obj.name.replace(' ', ''),
+                       'FILES' : self._get_files(obj)}
+            sections = '%s%s' % (sections, new_section)
+            main_str = ''
+            u_str = ''
+        
+        return sections
+    
+    def _get_files(self, obj):
+        return ';Files\n'
+    
     def _get_header(self):
-        f = open(os.path.join(PATH_CWD, '_nsis_header.nsi'))
-        return f.readlines()
+        f = open(os.path.join(PATH_CWD, 'RES', '_nsis_header.nsi'))
+        return f.read()
     
     def _get_footer(self):
         footer = '''; General
     Name "%(NAME)s"
-    OutFile "BUILD/%(FILENAME)s.exe"
+    OutFile "DIST/%(FILENAME)s.exe"
     InstallDir "%(INSTALL_DIR)s"
     RequestExecutionLevel user
         ''' % {'NAME' : INST_NAME, 'FILENAME' : INST_FILE, 
@@ -59,7 +89,6 @@ class InstallerBuilder(object):
             
     def _delete(self, delete_dir):
         for path, dirs, files in os.walk(delete_dir):
-            print path, dirs, files
             self._remove_files(path, files)
             
             for dir in dirs:
@@ -69,9 +98,7 @@ class InstallerBuilder(object):
         
     def _remove_files(self, path, files):
         for file in files:
-            print 'remove', path, file, os.path.join(path, file)
             os.remove(os.path.join(path, file))
     
     def _remove_path(self, path):
-        print 'rmdir', path
         os.rmdir(path)
