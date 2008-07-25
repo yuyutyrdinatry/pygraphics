@@ -22,11 +22,8 @@
 
 ; Installer Sections
 Section "Dummy Section" SecDummy
-    SetOutPath "$INSTDIR" 
-    ; FILES GO HERE
-    
-    ; Create uninstaller
-    WriteUninstaller "$INSTDIR\Uninstall.exe"
+    ReadRegStr $0 HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment" 'PATH'
+    MessageBox MB_OK|MB_ICONEXCLAMATION $0
 SectionEnd
 
 ; Descriptions
