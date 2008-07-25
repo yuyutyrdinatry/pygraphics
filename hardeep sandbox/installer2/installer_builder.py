@@ -28,6 +28,23 @@ class InstallerBuilder(object):
         win_file = '%s.exe' % INST_FILE
         os.rename(os.path.join(PATH_BUILD, win_file), 
                   os.path.join(PATH_DIST, win_file))
+        
+    def _parse_cmd(self, cmd):
+        split = cmd.split('::')
+        
+        # Delete a file
+        if split[0] == 'DEL':
+            return 'Delete "%s"' % split[1]
+        
+        # Add a str to an environment variable
+        if split[0] == 'ADDENV':
+            cmd = '\n'
+            cmd += '        ReadRegStr $0 HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment" \'%s\'\n' % split[1]
+            cmd += '        WriteRegStr HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment" \'%s\' \'$0;%s\'\n' % (split[1], split[2])
+            cmd += '        Pop $0\n'
+            return cmd 
+        
+        return ''
     
     #-------------------------------------- Windows Installer Generation Helpers
     def _build_windows_installer(self):
@@ -97,14 +114,6 @@ class InstallerBuilder(object):
                     cmds = '%s        %s\n' % (cmds, self._parse_cmd(obj.cmds[c]))
                 
         return cmds
-    
-    def _parse_cmd(self, cmd):
-        split = cmd.split('::')
-        
-        if split[0] == 'DEL':
-            return 'Delete "%s"' % split[1]
-        
-        return ''
     
     def _get_header(self):
         f = open(os.path.join(PATH_CWD, 'RES', '_nsis_header.nsi'))
