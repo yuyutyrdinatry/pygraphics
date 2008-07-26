@@ -30,7 +30,7 @@ python_cmds['post_install'] = []
 python_cmds['post_install'].append('ADDENV::PATH::%(PATH)s\python' % {'PATH' : INSTALL_DIR})
 python_cmds['post_install'].append('DEL::%(PATH)s\%(FILE)s' % {'PATH' : INSTALL_DIR, 'FILE' : python_file})
                               
-DO.add_data('Python', python_path, OS_WIN, cmds=python_cmds, main=True)
+DO.add_data('Python', python_path, OS_WIN, cmds=python_cmds, required=True)
 
 #===============================================================================
 # WingIDE (win32)
