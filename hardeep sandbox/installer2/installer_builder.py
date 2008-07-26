@@ -38,15 +38,10 @@ class InstallerBuilder(object):
         
         # Add a str to an environment variable
         if split[0] == 'ENV':
-            
+            # See:
+            # http://nsis.sourceforge.net/Path_Manipulation#Usage
             cmd = '        ${EnvVarUpdate} $0 "%s" "%s" "HKLM" "%s"\n' % (split[2], split[1], split[3])
             cmd += '        SetRebootFlag true\n'
-##            cmd = '\n'
-##            cmd += '        ReadRegStr $0 HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment" \'%s\'\n' % split[1]
-##            #C:\Program Files\ActiveState Komodo Edit 4\;c:\ruby\bin;%SystemRoot%\system32;%SystemRoot%;%SystemRoot%\System32\Wbem;c:\Python25\;c:\ruby;C:\Program Files\3DPaintBrush\;C:\Program Files\QuickTime\QTSystem\
-##            cmd += '        WriteRegStr HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment" \'%s\' \'%s\'\n' % (split[2], '$0' + split[3])
-##            cmd += '        Pop $0\n'
-##            cmd += '        SetRebootFlag true\n'
             return cmd 
         
         return ''
