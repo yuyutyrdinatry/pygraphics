@@ -65,24 +65,23 @@ class InstallerBuilder(object):
     def _get_sections(self):
         sections = '\n; Sections'
         
-        main_str = 'SetOutPath "$INSTDIR"\n'
-        u_str = 'WriteUninstaller "$INSTDIR\Uninstall.exe"'
+        new_section = '''\n    Section "-Settings"
+        SetOutPath "$INSTDIR"
+        WriteUninstaller "$INSTDIR\Uninstall.exe"
+    SectionEnd\n'''
+        sections = '%s%s' % (sections, new_section)
         
         for obj in self.DO.data_objs[OS_WIN]:
             new_section = '''\n    Section "%(SEC_NAME)s" %(SEC_ID)s
-        %(MAIN)s
         %(FILES)s
         %(COMMANDS)s
-        %(UNINSTALL)s
-    SectionEnd\n''' % {'SEC_NAME' : obj.name, 
-                       'MAIN' : main_str, 
-                       'UNINSTALL' : u_str, 
+        %(REQ)s
+    SectionEnd\n''' % {'SEC_NAME' : obj.name,  
                        'SEC_ID' : obj.name.replace(' ', ''),
                        'FILES' : self._get_files(obj),
-                       'COMMANDS' : self._get_commands(obj)}
+                       'COMMANDS' : self._get_commands(obj),
+                       'REQ' : 'SectionIn RO' if obj.is_required else ''}
             sections = '%s%s' % (sections, new_section)
-            main_str = ''
-            u_str = ''
         
         return sections
     
