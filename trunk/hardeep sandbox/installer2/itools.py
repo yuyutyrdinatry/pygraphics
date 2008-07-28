@@ -17,9 +17,3 @@ class iDataObj(object):
         self.contents = path
         self.cmds = cmds
         self.is_required = required
-        
-        self._trav_path()
-        
-    def _trav_path(self):
-        p = self.path
-        self.contents = None
