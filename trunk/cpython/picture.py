@@ -365,7 +365,7 @@ def get_short_path(filename):
 
 if __name__ == '__main__':
     a = Picture(filename='/Users/pgries/img1.jpg')
-    a.show()
     
     b = Picture(200,300,green)
     c = Picture(500,500,red)
+    b.show()
