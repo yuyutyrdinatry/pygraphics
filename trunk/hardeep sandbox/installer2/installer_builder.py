@@ -3,12 +3,17 @@ import sys
 from config import *
 from content import OS_CURR, OS_WIN, OS_MAC, OS_ALL
 from subprocess import call
+import re
 
+#===============================================================================
+# Globals
+#===============================================================================
 PATH_CWD = os.getcwd()
 PATH_BUILD = os.path.join(PATH_CWD, 'BUILD')
 PATH_DIST = os.path.join(PATH_CWD, 'DIST')
 
 NSIS_BUILD = os.path.join(PATH_CWD, 'BUILD', 'BUILD.nsi')
+NSIS_CMD_LINE_TOOL = os.path.join(WIN_PATH_NSIS, 'makensis.exe')
 
 class InstallerBuilder(object):
     def __init__(self, data_objects):
@@ -19,7 +24,7 @@ class InstallerBuilder(object):
         self._create_build_paths()
         
         # Windows
-        self._create_windows_installer()
+        self._create_windows_build_file()
         self._build_windows_installer()
         
         self._move_to_dist()
@@ -48,10 +53,9 @@ class InstallerBuilder(object):
     
     #-------------------------------------- Windows Installer Generation Helpers
     def _build_windows_installer(self):
-        make = os.path.join(WIN_PATH_NSIS, 'makensis.exe')
-        call('%s "%s"' % (make, NSIS_BUILD))
+        call('%s "%s"' % (NSIS_CMD_LINE_TOOL, NSIS_BUILD))
         
-    def _create_windows_installer(self):
+    def _create_windows_build_file(self):
         f = open(NSIS_BUILD, 'w')
         
         f.write(self._get_header())
@@ -67,30 +71,70 @@ class InstallerBuilder(object):
         new_section = '''\n    Section "-Settings"
         SetOutPath "$INSTDIR"
         WriteUninstaller "$INSTDIR\Uninstall.exe"
+        ; Enable Logging
+            LogSet on
     SectionEnd\n'''
         sections = '%s%s' % (sections, new_section)
         
         for obj in self.DO.data_objs[OS_WIN]:
-            new_section = '''\n    Section "%(SEC_NAME)s" %(SEC_ID)s
+            sections = '%s%s' % (sections, self._get_section_code(obj))
+            
+        for obj in self.DO.data_objs[OS_ALL]:
+            sections = '%s%s' % (sections, self._get_section_code(obj))
+            
+        return sections
+    
+    def _get_section_code(self, obj):
+        sec_name = self._get_section_id_from_name(obj.name)
+        new_section = '''\n    Section "%(SEC_NAME)s" %(SEC_ID)s
         %(FILES)s
         %(COMMANDS)s
         %(REQ)s
     SectionEnd\n''' % {'SEC_NAME' : obj.name,  
-                       'SEC_ID' : obj.name.replace(' ', ''),
-                       'FILES' : self._get_files(obj),
+                       'SEC_ID' : sec_name,
+                       'FILES' : self._get_files(obj, sec_name),
                        'COMMANDS' : self._get_commands(obj),
                        'REQ' : 'SectionIn RO' if obj.is_required else ''}
-            sections = '%s%s' % (sections, new_section)
-        
-        return sections
+        return new_section
     
-    def _get_files(self, obj):
-        files = ';Files\n'
+    def _get_section_id_from_name(self, name):
+        p = re.compile('(\s|\W|_)*')
+        return p.sub('', name)
+    
+    def _get_files(self, obj, sec_name):
+        files = '; Files\n'
         if not obj.recurse:
             
             # Single File
             if os.path.isfile(obj.path):
                 files = '%s        File "%s"\n' % (files, obj.path)
+            
+            # Folder (no sub folders included) 
+            elif os.path.isdir(obj.path):
+                for file in listdir(obj.path):
+                    if os.path.isfile(file):
+                        files = '%s        File "%s"\n' % (files, obj.path)
+        
+        elif os.path.isdir(obj.path):
+            # All files and folders in the given path. Given path MUST be a
+            # folder!
+            files = '%s        SetOutPath "$INSTDIR\%s"\n' % (files, sec_name)
+            out_path = ''
+            for p_path, p_dirs, p_files in os.walk(obj.path):
+                
+                cur_path = p_path.replace(obj.path, '')
+                if out_path is not cur_path:
+                    out_path = cur_path
+                    files = '%s        SetOutPath "$INSTDIR\%s%s"\n' % (files, sec_name, out_path)
+                     
+                for file in p_files:
+                    file_path = os.path.join(p_path, file)
+                    files = '%s        File "%s"\n' % (files, file_path)
+
+            files = '%s        SetOutPath "$INSTDIR"\n' % files
+        else:
+            raise ValueError('Invalid Value for [%s].path -> %s' % (obj.name, 
+                                                                    obj.path))
                 
         return files
     
@@ -105,12 +149,23 @@ class InstallerBuilder(object):
                 else:
                     cmds = '%s        %s\n' % (cmds, "ExecWait '%s'" % obj.cmds[c])
                     
-            if c == 'post_install':
+            elif c == 'post_install':
                 if isinstance(obj.cmds[c], list):
                     for cmd in obj.cmds[c]: 
                         cmds = '%s        %s\n' % (cmds, self._parse_cmd(cmd))
                 else:
                     cmds = '%s        %s\n' % (cmds, self._parse_cmd(obj.cmds[c]))
+                    
+            elif c == 'PYTHON_MODULE_SRC':
+                python_cmd = '"%s" "$INSTDIR\\%s\\setup.py" install > c:\t.txt' % (
+                                '$INSTDIR\\python\\python.exe',
+                                self._get_section_id_from_name(obj.name))
+                install_cmd = 'nsExec::Exec \'%s\'' % python_cmd
+                #install_cmd = "ExecWait '%s'" % python_cmd
+                cmds = '%s        %s\n' % (cmds, install_cmd)
+            
+            else:
+                print 'Unknown Command: %s -> %s' % (c, obj.cmds[c])  
                 
         return cmds
     

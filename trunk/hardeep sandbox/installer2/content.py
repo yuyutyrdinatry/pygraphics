@@ -37,9 +37,17 @@ DO.add_data('Python', python_path, OS_WIN, cmds=python_cmds, required=True)
 #===============================================================================
 wing_file = 'wingide-101-3.1.2-1.exe'
 wing_path = os.path.join('D:\\', 'workspace', 'PyGraphics', 'hardeep sandbox', 
-                    'installer2', 'install_data', wing_file)
+                         'installer2', 'install_data', wing_file)
 wing_cmds = {}
 wing_cmds['nsis_install'] = '"%(PATH)s\%(FILE)s" /SILENT /DIR="%(PATH)s\wingide"' % {'PATH' : INSTALL_DIR,'FILE' : wing_file}
 wing_cmds['post_install'] = 'DEL::%(PATH)s\%(FILE)s' % {'PATH' : INSTALL_DIR, 'FILE' : wing_file}
                             
 DO.add_data('WingIDE 101', wing_path, OS_WIN, cmds=wing_cmds)
+
+#===============================================================================
+# Python Modules
+#===============================================================================
+nose_path = os.path.join('D:\\', 'workspace', 'PyGraphics', 'hardeep sandbox',
+                         'installer2', 'install_data', 'nose-0.10.3')
+DO.add_data('Nose 0.10.3', nose_path, OS_ALL, recurse=True, 
+            cmds={'PYTHON_MODULE_SRC' : 0}, required=True)
