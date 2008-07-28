@@ -51,6 +51,36 @@ class InstallerBuilder(object):
         
         return ''
     
+    def _process_python_module(self, obj, sec_name):
+        try:
+            os.mkdir(os.path.join(PATH_BUILD, sec_name))
+        except:
+            pass
+        
+        the_cmd = 'python "%s" build --build-base="%s"' % (os.path.join(obj.path, 'setup.py'), os.path.join(PATH_BUILD, sec_name))
+        
+        # For windows...
+        build_cmd = ''
+        build_cmd += 'cd %s\n' % os.sep
+        build_cmd += 'cd %s\n' % obj.path
+        build_cmd += the_cmd
+        
+        bat_file = open(os.path.join(PATH_BUILD, sec_name + '.bat'), 'w')
+        bat_file.write(build_cmd)
+        bat_file.close()
+        
+        call(os.path.join(PATH_BUILD, sec_name + '.bat'))
+        base_folder = os.path.join(PATH_BUILD, sec_name)
+        contents = os.listdir(base_folder)
+        
+        obj.path = os.path.join(PATH_BUILD, sec_name, contents[0])
+        lib_contents = os.listdir(obj.path)
+        for item in lib_contents:
+            if os.path.isdir(os.path.join(base_folder, item)):
+                path_file = open(os.path.join(base_folder, item + '.pth'), 'w')
+                path_file.write(item)
+                path_file.close()
+    
     #-------------------------------------- Windows Installer Generation Helpers
     def _build_windows_installer(self):
         call('%s "%s"' % (NSIS_CMD_LINE_TOOL, NSIS_BUILD))
@@ -101,35 +131,6 @@ class InstallerBuilder(object):
                        'REQ' : 'SectionIn RO' if obj.is_required else ''}
         return new_section
     
-    def _process_python_module(self, obj, sec_name):
-        try:
-            os.mkdir(os.path.join(PATH_BUILD, sec_name))
-        except:
-            pass
-        
-        the_cmd = 'python "%s" build --build-base="%s"' % (os.path.join(obj.path, 'setup.py'), os.path.join(PATH_BUILD, sec_name))
-        
-        # For windows...
-        build_cmd = ''
-        build_cmd += 'cd %s\n' % os.sep
-        build_cmd += 'cd %s\n' % obj.path
-        build_cmd += the_cmd
-        
-        bat_file = open(os.path.join(PATH_BUILD, sec_name + '.bat'), 'w')
-        bat_file.write(build_cmd)
-        bat_file.close()
-        
-        call(os.path.join(PATH_BUILD, sec_name + '.bat'))
-        obj.path = os.path.join(PATH_BUILD, sec_name, 'lib')
-        
-        base_folder = os.path.join(PATH_BUILD, sec_name, 'lib')
-        contents = os.listdir(base_folder)
-        for item in contents:
-            if os.path.isdir(os.path.join(base_folder, item)):
-                path_file = open(os.path.join(base_folder, item + '.pth'), 'w')
-                path_file.write(item)
-                path_file.close()
-    
     def _get_section_id_from_name(self, name):
         p = re.compile('(\s|\W|_)*')
         return p.sub('', name)
@@ -151,37 +152,25 @@ class InstallerBuilder(object):
         elif os.path.isdir(obj.path):
             # All files and folders in the given path. Given path MUST be a
             # folder!
-            files = '%s        SetOutPath "$INSTDIR\%s"\n' % (files, sec_name)
+            if obj.cmds.has_key('PYTHON_MODULE_SRC'):
+                files = '%s        SetOutPath "$INSTDIR\python\Lib\site-packages"\n' % files
+            else:
+                files = '%s        SetOutPath "$INSTDIR\%s"\n' % (files, sec_name)
+                
             out_path = ''
             for p_path, p_dirs, p_files in os.walk(obj.path):
                 
                 cur_path = p_path.replace(obj.path, '')
                 if out_path is not cur_path:
                     out_path = cur_path
-                    files = '%s        SetOutPath "$INSTDIR\%s%s"\n' % (files, sec_name, out_path)
+                    
+                    if obj.cmds.has_key('PYTHON_MODULE_SRC'):
+                        files = '%s        SetOutPath "$INSTDIR\python\Lib\site-packages%s"\n' % (files, out_path)
+                    else:
+                        files = '%s        SetOutPath "$INSTDIR\%s%s"\n' % (files, sec_name, out_path)
                      
                 for file in p_files:
                     file_path = os.path.join(p_path, file)
-                    
-#                    if file == 'setup.py':
-#                        new_folder = os.path.join(PATH_BUILD, sec_name)
-#                        new_path = os.path.join(new_folder, file)
-#                        
-#                        try:
-#                            os.mkdir(new_folder)
-#                        except:
-#                            continue
-#                        
-#                        f = open(file_path)
-#                        n = open(new_path, 'w')
-#                        
-#                        top_str = 'import sys\nsys.path.append(\'$INSTDIR\%s\')\n\n' % sec_name
-#                        n.write(top_str + f.read())
-#                        
-#                        n.close()
-#                        f.close()
-#                        file_path = new_path
-                    
                     files = '%s        File "%s"\n' % (files, file_path)
 
             files = '%s        SetOutPath "$INSTDIR"\n' % files
@@ -210,14 +199,7 @@ class InstallerBuilder(object):
                     cmds = '%s        %s\n' % (cmds, self._parse_cmd(obj.cmds[c]))
                     
             elif c == 'PYTHON_MODULE_SRC':
-                python_cmd = '"%s" "$INSTDIR\\%s\\setup.py" install' % (
-                                '$INSTDIR\\python\\python.exe',
-                                self._get_section_id_from_name(obj.name))
-                install_cmd = 'nsExec::Exec \'%s\'' % python_cmd
-                #install_cmd = "ExecWait '%s'" % python_cmd
-                cmds = '%s        %s\n' % (cmds, install_cmd)
-                log_cmd = 'LogText \'%s\'' % python_cmd
-                cmds = '%s        %s\n' % (cmds, log_cmd)
+                print "Set Module To Copy On Install"
             
             else:
                 print 'Unknown Command: %s -> %s' % (c, obj.cmds[c])  
