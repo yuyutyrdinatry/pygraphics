@@ -1,5 +1,4 @@
 from color import *
-from mediawindows import *
 from pixel import *
 import Image
 import ImageDraw
