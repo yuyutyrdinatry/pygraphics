@@ -380,7 +380,7 @@ def create_sine_wave(hz, amp, samp):
     return Sound(sound=pygame_snd)
 
 
-class Notes():
+class Notes(object):
     
     def __init__(self):
                 
