@@ -5,6 +5,7 @@ import ImageDraw
 import ImageFont
 import os
 import show_window
+import mediawindow
 
 DEFAULT_FONT = ImageFont.load_default()
 
@@ -129,7 +130,7 @@ class Picture(object):
     def inspect(self):
         '''Inspect this Picture in an OpenPictureTool.'''
         
-        tool = PictureInspector(self)
+        tool = mediawindow.PictureInspector(self)
         tool.run_window()
 
     
