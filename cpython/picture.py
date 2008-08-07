@@ -130,7 +130,7 @@ class Picture(object):
     def inspect(self):
         '''Inspect this Picture in an OpenPictureTool.'''
         
-        tool = mediawindow.PictureInspector(self)
+        tool = mediawindows.PictureInspector(self)
         tool.run_window()
 
     
