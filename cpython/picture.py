@@ -5,7 +5,7 @@ import ImageDraw
 import ImageFont
 import os
 import show_window
-import mediawindow
+import mediawindows
 
 DEFAULT_FONT = ImageFont.load_default()
 
