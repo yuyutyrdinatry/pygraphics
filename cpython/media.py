@@ -462,8 +462,7 @@ def choose_folder():
    
     app = wx.App()
 
-    dlg = wx.DirDialog(None, title="Choose a directory:", 
-                       defaultPath=os.getcwd())
+    dlg = wx.DirDialog(None, defaultPath=os.getcwd())
     if dlg.ShowModal() == wx.ID_OK:
         path = dlg.GetPath()
         os.chdir(os.path.dirname(path))
