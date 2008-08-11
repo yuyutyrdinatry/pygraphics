@@ -1,7 +1,7 @@
 '''The Sound class and helper functions. This currently supports only 
 uncompressed .wav files.'''
 
-from sample import *
+from pygraphics.sample import *
 import math
 import numpy
 import pygame
