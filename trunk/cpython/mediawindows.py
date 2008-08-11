@@ -2,7 +2,6 @@ from Tkinter import *
 import Image
 import ImageDraw
 import ImageTk
-import picture
 import tkFont
 
 # Add help button
@@ -263,6 +262,7 @@ class PictureInspector(PictureWindow):
     
 
 if __name__ == '__main__':
+    import picture
     p = picture.Picture(filename='/Users/chris/Pictures/Pictures I Took/Annie(Smaller).jpg')
     tool = PictureInspector(p)
     tool.run_window()
