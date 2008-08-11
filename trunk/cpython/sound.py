@@ -11,24 +11,21 @@ import wave
 ## Defaults
 ####################------------------------------------------------------------
 
-# if pygame.mixer is not initialized, do so.
-DEFAULTS = pygame.mixer.get_init()
-if not DEFAULTS:
-    DEFAULT_SAMP_RATE = 22050
-    DEFAULT_ENCODING = -16
-    DEFAULT_CHANNELS = 2
-    DEFAULT_BUFFERING = 2048
-    pygame.mixer.pre_init(DEFAULT_SAMP_RATE, 
-                          DEFAULT_ENCODING, 
-                          DEFAULT_CHANNELS, 
-                          DEFAULT_BUFFERING)
-    pygame.mixer.init()
-else:
-    DEFAULT_SAMP_RATE = DEFAULTS[0]
-    DEFAULT_ENCODING = DEFAULTS[1]
-    
-    # pygame.mixer.get_init() returns channels 0-based, 1 channel is 0, 2 is 1
-    DEFAULT_CHANNELS = DEFAULTS[2] + 1
+DEFAULT_SAMP_RATE = 22050
+DEFAULT_ENCODING = -16
+DEFAULT_CHANNELS = 2
+DEFAULT_BUFFERING = 2048
+pygame.mixer.pre_init(DEFAULT_SAMP_RATE, 
+                      DEFAULT_ENCODING, 
+                      DEFAULT_CHANNELS, 
+                      DEFAULT_BUFFERING)
+pygame.mixer.init()
+#else:
+#    DEFAULT_SAMP_RATE = DEFAULTS[0]
+#    DEFAULT_ENCODING = DEFAULTS[1]
+#    
+#    # pygame.mixer.get_init() returns channels 0-based, 1 channel is 0, 2 is 1
+#    DEFAULT_CHANNELS = DEFAULTS[2] + 1
 
 AUDIO_ENCODINGS = { 8 : numpy.uint8,   # unsigned 8-bit
      16 : numpy.uint16, # unsigned 16-bit
@@ -381,6 +378,8 @@ def create_sine_wave(hz, amp, samp):
 
 
 class Notes(object):
+    '''A Notes class to store and initialize sounds at different pitches
+    across an octave starting at middle C.'''
     
     def __init__(self):
                 
