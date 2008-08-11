@@ -1,11 +1,11 @@
-from color import *
-from pixel import *
+from pygraphics.color import *
+from pygraphics.pixel import *
 import Image
 import ImageDraw
 import ImageFont
 import os
-import show_window
-import mediawindows
+import pygraphics.show_window as show_window
+import pygraphics.mediawindows as mediawindows
 
 DEFAULT_FONT = ImageFont.load_default()
 
