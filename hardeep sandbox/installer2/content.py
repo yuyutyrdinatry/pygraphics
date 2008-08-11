@@ -46,13 +46,19 @@ DO.add_data('WingIDE 101', wing_path, OS_WIN, cmds=wing_cmds)
 
 #===============================================================================
 # Python Modules
+# Note that the path must be the path in which the setup.py file resides.
 #===============================================================================
+
+#-------------------------------------------------------------------------- Nose
 nose_path = os.path.join('D:\\', 'workspace', 'PyGraphics', 'hardeep sandbox',
                          'installer2', 'install_data', 'nose-0.10.3')
 DO.add_data('Nose 0.10.3', nose_path, OS_ALL, recurse=True, 
             cmds={'PYTHON_MODULE_SRC' : 0}, required=True)
 
+#-------------------------------------------------------- Python Imaging Library
 PIL_path = os.path.join('D:\\', 'workspace', 'PyGraphics', 'hardeep sandbox',
-                         'installer2', 'install_data', 'Imaging-1.1.6', 'Imaging-1.1.6')
+                        'installer2', 'install_data', 'Imaging-1.1.6', 
+                        'Imaging-1.1.6')
 DO.add_data('Python Imaging Library 1.1.6', PIL_path, OS_ALL, recurse=True, 
             cmds={'PYTHON_MODULE_SRC' : 0}, required=True)
+

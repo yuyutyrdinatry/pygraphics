@@ -42,9 +42,9 @@ class hMainAppThread(threading.Thread):
             self.hmain = hMainApp()            
             self._lock.release()
             self.hmain.MainLoop()
-        finally:
+        except Exception:
             # If an exception occurs, lets end the thread process....hopefully
-            pass
+            return None
 
 if __name__ == '__main__':
     app = hMainAppThread('Test')
