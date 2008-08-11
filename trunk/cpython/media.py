@@ -2,24 +2,9 @@ import os
 import pygame
 import wx
 import wx.lib.imagebrowser as ib
-
 IMAGE_FORMATS = ['*.jpg', '*.bmp', '*.gif']
 AUDIO_FORMATS = ['*.wav']
-
-DEFAULT_SAMP_RATE = 22050
-DEFAULT_ENCODING = -16
-DEFAULT_CHANNELS = 2
-DEFAULT_BUFFERING = 2048
-pygame.mixer.pre_init(DEFAULT_SAMP_RATE, 
-                      DEFAULT_ENCODING, 
-                      DEFAULT_CHANNELS, 
-                      DEFAULT_BUFFERING)
-pygame.mixer.init()
-
-from color import *
 from picture import *
-from pixel import *
-from sample import *
 from sound import *
 
 ##
