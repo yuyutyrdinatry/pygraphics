@@ -41,7 +41,7 @@ class InstallerBuilder(object):
         if split[0] == 'DEL':
             return 'Delete "%s"' % split[1]
         
-        # Add a str to an environment variable
+        # Add a str to an environment variable (WINDOWS ONLY)
         if split[0] == 'ENV':
             # See:
             # http://nsis.sourceforge.net/Path_Manipulation#Usage
