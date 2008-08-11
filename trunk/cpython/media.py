@@ -4,8 +4,8 @@ import wx
 import wx.lib.imagebrowser as ib
 IMAGE_FORMATS = ['*.jpg', '*.bmp', '*.gif']
 AUDIO_FORMATS = ['*.wav']
-from picture import *
-from sound import *
+from pygraphics.picture import *
+from pygraphics.sound import *
 
 ##
 ## Global picture functions ---------------------------------------------------
