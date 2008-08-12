@@ -6,6 +6,8 @@ import math
 import numpy
 import pygame
 import wave
+import sndhdr
+import os
 
 ####################------------------------------------------------------------
 ## Defaults
@@ -37,6 +39,37 @@ AUDIO_ENCODINGS = { 8 : numpy.uint8,   # unsigned 8-bit
 ## Helper functions
 ####################------------------------------------------------------------
 
+def load_pygame_sound(filepath):
+    '''Return a pygame Sound object from the file at str filepath. If 
+    that file is not a .wav or is corrupt in some way raise a TypeError.'''
+    
+    if not os.access(filepath, os.F_OK):
+        raise Exception("This file does not exist.")
+    try:
+        assert sndhdr.what(filepath)[0] == 'wav'
+    except:
+        raise TypeError("The file is not an uncompressed .wav file or" + \
+                        " is corrupt in some way. Try another file.")
+    
+    return fix_pygame_shape(pygame.mixer.Sound(filepath))
+
+
+def fix_pygame_shape(snd):
+    '''Return a copy of pygame Sound snd object after fixing it to the appropriate shape 
+    depending on whether it is stereo or mono.'''
+
+    data = snd.get_buffer().raw
+    arr = numpy.fromstring(data, AUDIO_ENCODINGS[DEFAULT_ENCODING])
+    if DEFAULT_CHANNELS == 2:
+        
+        # If there are two channels there must be an even number of 
+        # values in a 1D array
+        if arr.size % 2 == 1:
+            arr = arr[:len(arr) - 1]
+        arr.shape = (len(arr) / 2, 2)
+    
+    return sample_array_to_pygame(arr)
+
 
 def pygame_to_sample_array(pygame_snd):
     '''Return a numpy array object, which allows direct access to specific
@@ -62,12 +95,12 @@ def sample_array_to_pygame(samp_array):
     # Check if array has the right shape
     if DEFAULT_CHANNELS == 1:
         if len (shape) != 1:
-            raise ValueError, "Array must be 1-dimensional for mono sound"
+            raise ValueError("Array must be 1-dimensional for mono sound")
     else:
         if len (shape) != 2:
-            raise ValueError, "Array must be 2-dimensional for stereo sound"
+            raise ValueError("Array must be 2-dimensional for stereo sound")
         elif shape[1] != DEFAULT_CHANNELS:
-            raise ValueError, "Array depth must match number of sound channels"
+            raise ValueError("Array depth must match number of sound channels")
     
     return pygame.mixer.Sound(samp_array)
 
@@ -100,7 +133,7 @@ class Sound(object):
         self.set_filename(filename)
         
         if filename != None:
-            snd = pygame.mixer.Sound(filename)
+            snd = load_pygame_sound(filename)
             
         elif samples != None:
             if self.channels == 1:
@@ -121,7 +154,7 @@ class Sound(object):
             snd = sample_array_to_pygame(sample_array)
             
         elif sound != None:
-            snd = sound
+            snd = fix_pygame_shape(sound)
             
         else:
             raise TypeError("No arguments were given to the Sound constructor.")
