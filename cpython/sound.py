@@ -43,13 +43,22 @@ def load_pygame_sound(filepath):
     '''Return a pygame Sound object from the file at str filepath. If 
     that file is not a .wav or is corrupt in some way raise a TypeError.'''
     
+    # Check if the file exists
     if not os.access(filepath, os.F_OK):
         raise Exception("This file does not exist.")
+    
+    # Check if it is a .wav file
+    if sndhdr.what(filepath)[0]:
+        assert sndhdr.what(filepath)[0] == 'wav', "The file is not a .wav file"
+    
+    # Check the compression. Wave_read.getcomptype() will raise an Error if it is
+    # compressed.
+    wav = wave.open(filepath, 'r')
     try:
-        assert sndhdr.what(filepath)[0] == 'wav'
+        wav.getcomptype()
     except:
-        raise TypeError("The file is not an uncompressed .wav file or" + \
-                        " is corrupt in some way. Try another file.")
+        raise TypeError("This .wav file is compressed.")
+    wav.close()
     
     return fix_pygame_shape(pygame.mixer.Sound(filepath))
 
