@@ -1,9 +1,19 @@
+'''The media module. This contains global convenience functions
+for manipulating PyGraphics objects, and imports all the supporting
+modules fully. 
+
+Pictures currently support the following formats: JPEG, BMP, GIF, TIFF, 
+IM, MSP, PNG, PCX, and PPM.
+
+Sounds support only uncompressed WAV files. For best quality use WAV files 
+with sampling rates of either 22050 or 44100. The default number of channels,
+sampling rate, encoding, and buffering can be changed in the sound.py file.'''
+
+
 import os
 import pygame
 import wx
 import wx.lib.imagebrowser as ib
-IMAGE_FORMATS = ['*.jpg', '*.bmp', '*.gif']
-AUDIO_FORMATS = ['*.wav']
 from pygraphics.picture import *
 from pygraphics.sound import *
 
@@ -415,9 +425,8 @@ def choose_save_filename():
     
     app = wx.App()
        
-    formats = get_formats()
     dlg = wx.FileDialog(None, message="Choose a filename:", 
-                        defaultDir=os.getcwd(), wildcard=formats, style=wx.SAVE)
+                        defaultDir=os.getcwd(), style=wx.SAVE)
     if dlg.ShowModal() == wx.ID_OK:
         path = dlg.GetPath()
         os.chdir(os.path.dirname(path))
