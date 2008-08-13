@@ -1,3 +1,6 @@
+'''The Picture class and helper functions. This currently supports the
+following formats: JPEG, BMP, GIF, TIFF, IM, MSP, PNG, PCX, and PPM.'''
+
 from pygraphics.color import *
 from pygraphics.pixel import *
 import Image
@@ -8,6 +11,8 @@ import pygraphics.show_window as show_window
 import pygraphics.mediawindows as mediawindows
 
 DEFAULT_FONT = ImageFont.load_default()
+IMAGE_FORMATS = ['.jpg', '.jpeg', '.bmp', '.gif', '.tif', '.tiff', '.im', \
+                  '.msp', '.png', '.pcx', '.ppm']
 
 class Picture(object):
     '''A Picture class as a wrapper for PIL's Image class.'''
@@ -319,17 +324,27 @@ class Picture(object):
         
     
     def save(self):
-        '''Write this Picture back to its file.'''
+        '''Write this Picture back to its file. If an extension is not
+        specified the default is .bmp.'''
         
-        self.image.save(self.filename)
-    
+        filename = os.path.splitext(self.filename)[0]
+        ext = os.path.splitext(self.filename)[-1]
+        if ext == '':
+            self.image.save(filename + '.bmp')
+        else:
+            self.save_as(self.filename)
     
     def save_as(self, filename):
         '''Write this Picture to filename filename and re-set filename and
-        title.'''
+        title. Make sure to specify the file format by the extension.'''
         
-        self.image.save(filename)
-        self.set_filename_and_title(filename)
+        ext = os.path.splitext(filename)[-1]
+        if ext in IMAGE_FORMATS or ext in [e.upper() for e in IMAGE_FORMATS]:
+            self.image.save(filename)
+            self.set_filename_and_title(filename)
+        else:
+            raise ValueError("%s is not one of the supported file formats." \
+                             % ext)
 
 
 ##
