@@ -4,14 +4,24 @@ import wx.lib.dragscroller
 import time
 from hmainapp import *
 
-class ShowWindow(threading.Thread):
+class ShowWindow(object):
     def __init__(self):
-        threading.Thread.__init__(self)
         self.frame = None
         self.iWindow = None
         self.pic = None
         self._lock = threading.Lock()
+        
         self._lock.acquire()
+        self.app = hMainAppThread('Show Window')
+        self.app.start()
+        
+        print '-------- Frame'
+        self.app.add_wx_obj('Frame', wx.Frame, True, None)
+        print '-------- iWindow'
+        self.frame = self.app.get_obj('Frame')
+        self.app.add_wx_obj('iWindow', ImageWindow, False, self.frame)
+        self.iWindow = self.app.get_obj('iWindow')
+        self._lock.release()
 
     def load_image(self, pic):
         self._lock.acquire()
@@ -20,24 +30,6 @@ class ShowWindow(threading.Thread):
         self.iWindow.load_image(pic)
         self.frame.Refresh()
         self._lock.release()
-        
-    def run(self):
-        #self.app = wx.App()
-        self.app = hMainAppThread('Show Window')
-        self.app.start()
-        
-        #self.frame = wx.Frame(None)
-        #self.iWindow = ImageWindow(self.frame)
-        #self.frame.Show(True)
-        print '-------- Frame'
-        self.app.add_wx_obj('Frame', wx.Frame, True, None)
-        print '-------- iWindow'
-        self.frame = self.app.get_obj('Frame')
-        self.app.add_wx_obj('iWindow', ImageWindow, False, self.frame)
-        self.iWindow = self.app.get_obj('iWindow')
-        self._lock.release()
-        
-        #self.app.MainLoop()
         
 class ImagePoller(threading.Thread):
     def __init__(self, frame, poll):
@@ -147,7 +139,7 @@ if __name__ == '__main__':
     import media
     
     a = ShowWindow()
-    a.start()
+    #a.start()
 #    
     b = picture.Picture(400,200,picture.white)
     c = picture.Picture(500,500,picture.red)
