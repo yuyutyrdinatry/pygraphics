@@ -1,5 +1,8 @@
 '''The Sound class and helper functions. This currently supports only 
-uncompressed .wav files.'''
+uncompressed .wav files. For best quality use .wav files with sampling
+rates of either 22050 or 44100. The default number of channels,
+sampling rate, encoding, and buffering can be changed in the sound.py
+file.'''
 
 from pygraphics.sample import *
 import math
@@ -13,10 +16,11 @@ import os
 ## Defaults
 ####################------------------------------------------------------------
 
-DEFAULT_SAMP_RATE = 22050
+SOUND_FORMATS = ['.wav']
+DEFAULT_SAMP_RATE = 44100
 DEFAULT_ENCODING = -16
 DEFAULT_CHANNELS = 2
-DEFAULT_BUFFERING = 2048
+DEFAULT_BUFFERING = 3072
 pygame.mixer.pre_init(DEFAULT_SAMP_RATE, 
                       DEFAULT_ENCODING, 
                       DEFAULT_CHANNELS, 
@@ -36,94 +40,16 @@ AUDIO_ENCODINGS = { 8 : numpy.uint8,   # unsigned 8-bit
      }
 
 ####################------------------------------------------------------------
-## Helper functions
-####################------------------------------------------------------------
-
-def load_pygame_sound(filepath):
-    '''Return a pygame Sound object from the file at str filepath. If 
-    that file is not a .wav or is corrupt in some way raise a TypeError.'''
-    
-    # Check if the file exists
-    if not os.access(filepath, os.F_OK):
-        raise Exception("This file does not exist.")
-    
-    # Check if it is a .wav file
-    if sndhdr.what(filepath)[0]:
-        assert sndhdr.what(filepath)[0] == 'wav', "The file is not a .wav file"
-    
-    # Check the compression. Wave_read.getcomptype() will raise an Error if it is
-    # compressed.
-    wav = wave.open(filepath, 'r')
-    try:
-        wav.getcomptype()
-    except:
-        raise TypeError("This .wav file is compressed.")
-    wav.close()
-    
-    return fix_pygame_shape(pygame.mixer.Sound(filepath))
-
-
-def fix_pygame_shape(snd):
-    '''Return a copy of pygame Sound snd object after fixing it to the appropriate shape 
-    depending on whether it is stereo or mono.'''
-
-    data = snd.get_buffer().raw
-    arr = numpy.fromstring(data, AUDIO_ENCODINGS[DEFAULT_ENCODING])
-    if DEFAULT_CHANNELS == 2:
-        
-        # If there are two channels there must be an even number of 
-        # values in a 1D array
-        if arr.size % 2 == 1:
-            arr = arr[:len(arr) - 1]
-        arr.shape = (len(arr) / 2, 2)
-    
-    return sample_array_to_pygame(arr)
-
-
-def pygame_to_sample_array(pygame_snd):
-    '''Return a numpy array object, which allows direct access to specific
-    sample values in the buffer of the pygame.mixer.Sound object pygame_snd.'''
-        
-    data = pygame_snd.get_buffer()
-    
-    # Create a numpy array from the buffer with the default encoding
-    array = numpy.frombuffer(data, AUDIO_ENCODINGS[DEFAULT_ENCODING])
-    
-    # If there are two channels make the array object 2D
-    if DEFAULT_CHANNELS == 2:
-        array.shape = (len(array) / 2, 2)
-    return array
-
-
-def sample_array_to_pygame(samp_array):
-    '''Return a new pygame.mixer.Sound object from a numpy array object 
-    samp_array. Requires that samp_array is an appropriate 1D or 2D shape.'''
-
-    shape = samp_array.shape
-    
-    # Check if array has the right shape
-    if DEFAULT_CHANNELS == 1:
-        if len (shape) != 1:
-            raise ValueError("Array must be 1-dimensional for mono sound")
-    else:
-        if len (shape) != 2:
-            raise ValueError("Array must be 2-dimensional for stereo sound")
-        elif shape[1] != DEFAULT_CHANNELS:
-            raise ValueError("Array depth must match number of sound channels")
-    
-    return pygame.mixer.Sound(samp_array)
-
-####################------------------------------------------------------------
 ## Sound object
 ####################------------------------------------------------------------
+
 
 class Sound(object):
     '''A Sound class as a wrapper for the pygame.mixer.Sound object.'''
         
     def __init__(self, filename=None, samples=None, seconds=None, sound=None):
-        '''Create a Sound. Specify stereo as a boolean value, 
-        otherwise mono as default.
-        
+        '''Create a Sound.
+                
         Requires one of:
         - named str argument filename (with .wav extension), 
                 e.g. Sound(filename='sound.wav')
@@ -145,25 +71,14 @@ class Sound(object):
             snd = load_pygame_sound(filename)
             
         elif samples != None:
-            if self.channels == 1:
-                
-                # numpy.zeros returns an array object with all 0s in the
-                # specified encoding. In sound terms, this is silence.
-                sample_array = numpy.zeros(samples, self.numpy_encoding)
-            else:
-                sample_array = numpy.zeros((samples, 2), self.numpy_encoding)
-            snd = sample_array_to_pygame(sample_array)
+            snd = create_pygame_sound(samples)
             
         elif seconds != None:
             samples = int(seconds * self.samp_rate)
-            if self.channels == 1:
-                sample_array = numpy.zeros(samples, self.numpy_encoding)
-            else:
-                sample_array = numpy.zeros((samples, 2), self.numpy_encoding)            
-            snd = sample_array_to_pygame(sample_array)
+            snd = create_pygame_sound(samples)
             
         elif sound != None:
-            snd = fix_pygame_shape(sound)
+            snd = sound
             
         else:
             raise TypeError("No arguments were given to the Sound constructor.")
@@ -368,30 +283,128 @@ class Sound(object):
     def save_as(self, filename):
         '''Save this Sound to filename filename and set its filename.'''
         
-        self.set_filename(filename=filename)
-        wav = wave.open(filename, 'w')
-        wav.setnchannels(self.get_channels())
+        ext = os.path.splitext(filename)[-1]
+        if ext in SOUND_FORMATS or ext in [e.upper() for e in SOUND_FORMATS]:
+            self.set_filename(filename=filename)
+            wav = wave.open(filename, 'w')
+            wav.setnchannels(self.get_channels())
+            
+            # calculate the number of bytes for this sound
+            fmtbytes = (abs(self.encoding) & 0xff) >> 3
+            wav.setsampwidth(fmtbytes)
+            
+            wav.setframerate(self.get_sampling_rate())
+            wav.setnframes(len(self))
+            wav.writeframes(self.pygame_sound.get_buffer().raw)
+            wav.close()
+        else:
+            raise ValueError("%s is not one of the supported file formats." \
+                             % ext)        
         
-        # calculate the number of bytes for this sound
-        fmtbytes = (abs(self.encoding) & 0xff) >> 3
-        wav.setsampwidth(fmtbytes)
-        
-        wav.setframerate(self.get_sampling_rate())
-        wav.setnframes(len(self))
-        wav.writeframes(self.pygame_sound.get_buffer().raw)
-        wav.close()
         
     def save(self):
-        '''Save this Sound to its filename.'''
+        '''Save this Sound to its filename. If an extension is not specified
+        the default is .wav.'''
+ 
+        filename = os.path.splitext(self.get_filename())[0]
+        ext = os.path.splitext(self.get_filename())[-1]
+        if ext == '':
+            self.save_as(filename + '.wav')
+        else:
+            self.save_as(self.get_filename())
         
-        self.save_as(self.get_filename())
         
 ####################------------------------------------------------------------
 ## Wave creation function
 ####################------------------------------------------------------------
 
+
+
+class Note(Sound):
+    '''A Note class to create different notes. Inherits from Sound class,
+    and therefore does everything Sounds do, and can be combined with Sounds.'''
+    
+    frequencies = {'C' : 264,
+                   'D' : 297,
+                   'E' : 330,
+                   'F' : 352,
+                   'G' : 396,
+                   'A' : 440,
+                   'B' : 494}
+    
+    default_amp = 6000
+    
+    def __init__(self, note, s, octave=0):
+        '''Create a Note s samples long with the frequency according to 
+        str note. The following notes are available, starting at middle C:
+        
+        'C', 'D', 'E', 'F', 'G', 'A', and 'B'
+        
+        To raise or lower an octave specify the argument octave as a
+        positive or negative int. Positive to raise by that many octaves
+        and negative to lower by that many.'''
+        
+        self.channels = DEFAULT_CHANNELS
+        self.samp_rate = DEFAULT_SAMP_RATE
+        self.numpy_encoding = AUDIO_ENCODINGS[DEFAULT_ENCODING]
+        self.encoding = DEFAULT_ENCODING
+        self.set_filename(None)
+
+        if octave < 0:
+            freq = self.frequencies[note] / abs(octave)
+        elif octave > 0:
+            freq = self.frequencies[note] * abs(octave)
+        else:
+            freq = self.frequencies[note]
+            
+        snd = create_sine_wave(int(freq), self.default_amp, s)
+        self.set_pygame_sound(snd)
+                
+        
+####################------------------------------------------------------------
+## Helper functions
+####################------------------------------------------------------------
+
+
+def load_pygame_sound(filepath):
+    '''Return a pygame Sound object from the file at str filepath. If 
+    that file is not a .wav or is corrupt in some way raise a TypeError.'''
+    
+    # Check if the file exists
+    if not os.access(filepath, os.F_OK):
+        raise Exception("This file does not exist.")
+    
+    # Check if it is a .wav file
+    if sndhdr.what(filepath)[0]:
+        assert sndhdr.what(filepath)[0] == 'wav', "The file is not a .wav file"
+    
+    # Check the compression. Wave_read.getcomptype() will raise an Error if it is
+    # compressed.
+    wav = wave.open(filepath, 'r')
+    try:
+        wav.getcomptype()
+    except:
+        raise TypeError("This .wav file is compressed.")
+    wav.close()
+    
+    return pygame.mixer.Sound(filepath)
+
+
+def create_pygame_sound(s):
+    '''Return a pygame sound object with s number of silent samples.'''
+
+    if DEFAULT_CHANNELS == 1:
+        
+        # numpy.zeros returns an array object with all 0s in the
+        # specified encoding. In sound terms, this is silence.
+        sample_array = numpy.zeros(s, self.numpy_encoding)
+    else:
+        sample_array = numpy.zeros((s, 2), self.numpy_encoding)
+    return sample_array_to_pygame(sample_array)
+
+
 def create_sine_wave(hz, amp, samp):
-    '''Return a Sound samp samples long in the form of a sine wave 
+    '''Return a pygame sound samp samples long in the form of a sine wave 
     with frequency hz and amplitude amp in the range [0, 32767].'''
     
     # Default frequency is in samples per second
@@ -399,7 +412,7 @@ def create_sine_wave(hz, amp, samp):
     
     # Hz are periods per second
     seconds_per_period = 1.0 / hz
-    samples_per_period = samples_per_second * seconds_per_period
+    samples_per_period = int(samples_per_second * seconds_per_period)
     if DEFAULT_CHANNELS == 1:
         samples = numpy.array(range(samp), 
                               AUDIO_ENCODINGS[DEFAULT_ENCODING])
@@ -411,24 +424,43 @@ def create_sine_wave(hz, amp, samp):
     # For each value in the array multiply it by 2 pi, divide by the 
     # samples per period, take the sin, and multiply the resulting
     # value by the amplitude.
-    samples = numpy.sin((samples * 2 * math.pi) / samples_per_period) * amp
+    samples = numpy.sin((samples * 2.0 * math.pi) / samples_per_period) * amp
     
     # Convert the array back into one with the appropriate encoding
     samples = numpy.array(samples, AUDIO_ENCODINGS[DEFAULT_ENCODING])
-    pygame_snd = sample_array_to_pygame(samples)
-    return Sound(sound=pygame_snd)
+    return sample_array_to_pygame(samples)
 
 
-class Notes(object):
-    '''A Notes class to store and initialize sounds at different pitches
-    across an octave starting at middle C.'''
+def pygame_to_sample_array(pygame_snd):
+    '''Return a numpy array object, which allows direct access to specific
+    sample values in the buffer of the pygame.mixer.Sound object pygame_snd.'''
+        
+    data = pygame_snd.get_buffer()
     
-    def __init__(self):
-                
-        self.C = create_sine_wave(264, 6000, 11025)
-        self.D = create_sine_wave(297, 6000, 11025)
-        self.E = create_sine_wave(330, 6000, 11025)
-        self.F = create_sine_wave(352, 6000, 11025)
-        self.G = create_sine_wave(396, 6000, 11025)
-        self.A = create_sine_wave(440, 6000, 11025)
-        self.B = create_sine_wave(494, 6000, 11025)
+    # Create a numpy array from the buffer with the default encoding
+    array = numpy.frombuffer(data, AUDIO_ENCODINGS[DEFAULT_ENCODING])
+    
+    # If there are two channels make the array object 2D
+    if DEFAULT_CHANNELS == 2:
+        array.shape = (len(array) / 2, 2)
+    return array
+
+
+def sample_array_to_pygame(samp_array):
+    '''Return a new pygame.mixer.Sound object from a numpy array object 
+    samp_array. Requires that samp_array is an appropriate 1D or 2D shape.'''
+
+    shape = samp_array.shape
+    
+    # Check if array has the right shape
+    if DEFAULT_CHANNELS == 1:
+        if len (shape) != 1:
+            raise ValueError("Array must be 1-dimensional for mono sound")
+    else:
+        if len (shape) != 2:
+            raise ValueError("Array must be 2-dimensional for stereo sound")
+        elif shape[1] != DEFAULT_CHANNELS:
+            raise ValueError("Array depth must match number of sound channels")
+    
+    return pygame.mixer.Sound(samp_array)
+
