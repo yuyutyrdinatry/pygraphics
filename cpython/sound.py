@@ -315,14 +315,13 @@ class Sound(object):
         
         
 ####################------------------------------------------------------------
-## Wave creation function
+## Note class
 ####################------------------------------------------------------------
 
 
-
 class Note(Sound):
-    '''A Note class to create different notes. Inherits from Sound class,
-    and therefore does everything Sounds do, and can be combined with Sounds.'''
+    '''A Note class to create different notes of the C scale. Inherits from Sound,
+    does everything Sounds do, and can be combined with Sounds.'''
     
     frequencies = {'C' : 264,
                    'D' : 297,
