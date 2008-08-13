@@ -397,9 +397,9 @@ def create_pygame_sound(s):
         
         # numpy.zeros returns an array object with all 0s in the
         # specified encoding. In sound terms, this is silence.
-        sample_array = numpy.zeros(s, self.numpy_encoding)
+        sample_array = numpy.zeros(s, AUDIO_ENCODINGS[DEFAULT_ENCODING])
     else:
-        sample_array = numpy.zeros((s, 2), self.numpy_encoding)
+        sample_array = numpy.zeros((s, 2), AUDIO_ENCODINGS[DEFAULT_ENCODING])
     return sample_array_to_pygame(sample_array)
 
 
@@ -408,17 +408,17 @@ def create_sine_wave(hz, amp, samp):
     with frequency hz and amplitude amp in the range [0, 32767].'''
     
     # Default frequency is in samples per second
-    samples_per_second = DEFAULT_SAMP_RATE
+    samples_per_second = float(DEFAULT_SAMP_RATE)
     
     # Hz are periods per second
     seconds_per_period = 1.0 / hz
-    samples_per_period = int(samples_per_second * seconds_per_period)
+    samples_per_period = samples_per_second * seconds_per_period
     if DEFAULT_CHANNELS == 1:
         samples = numpy.array(range(samp), 
-                              AUDIO_ENCODINGS[DEFAULT_ENCODING])
+                              numpy.float)
     else:
         samples = numpy.array([range(samp), range(samp)], 
-                              AUDIO_ENCODINGS[DEFAULT_ENCODING])
+                              numpy.float)
         samples = samples.transpose()
     
     # For each value in the array multiply it by 2 pi, divide by the 
@@ -434,7 +434,7 @@ def create_sine_wave(hz, amp, samp):
 def pygame_to_sample_array(pygame_snd):
     '''Return a numpy array object, which allows direct access to specific
     sample values in the buffer of the pygame.mixer.Sound object pygame_snd.'''
-        
+     
     data = pygame_snd.get_buffer()
     
     # Create a numpy array from the buffer with the default encoding
