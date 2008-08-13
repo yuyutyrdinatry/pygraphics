@@ -4,6 +4,8 @@ import threading
 
 global OBJ_CREATE
 global EVT_OBJECT_CREATE
+global LOCK
+LOCK = threading.Lock()
 
 OBJ_CREATE, EVT_OBJECT_CREATE = wx.lib.newevent.NewEvent()
 
@@ -20,6 +22,7 @@ class hMainApp(wx.PySimpleApp):
         self.objs[e.name] = e.obj(*e.args, **e.kwargs)
         if e.show:
             self.objs[e.name].Show(True)
+        LOCK.release()
 
     def make_obj(self, name, obj, show=True, *args, **kwargs):
         e = OBJ_CREATE(name=name, obj=obj, show=show, args=args, kwargs=kwargs)
@@ -28,19 +31,25 @@ class hMainApp(wx.PySimpleApp):
 class hMainAppThread(threading.Thread):
     def __init__(self, window_name="Frame", rate=50):
         threading.Thread.__init__(self)
-        self.hmain = None       
-        self._lock = threading.Lock()
-        self._lock.acquire()
+        self.hmain = None
+        LOCK.acquire()
         
     def add_wx_obj(self, name, obj, show, *args, **kwargs):
-        self._lock.acquire()
+        LOCK.acquire()
         self.hmain.make_obj(name, obj, show, *args, **kwargs)
-        self._lock.release()
+        
+    def get_obj(self, name):
+        if self.hmain.objs.has_key(name):
+            return self.hmain.objs[name]
+        else:
+            while not self.hmain.objs.has_key(name):
+                True
+            return self.get_obj(name)
         
     def run(self):
         try:
             self.hmain = hMainApp()            
-            self._lock.release()
+            LOCK.release()
             self.hmain.MainLoop()
         except Exception:
             # If an exception occurs, lets end the thread process....hopefully
