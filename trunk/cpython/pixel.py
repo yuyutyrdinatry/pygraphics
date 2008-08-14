@@ -1,4 +1,4 @@
-from pygraphics.color import *
+from color import *
 
 class Pixel(object):
     '''A pixel in an image with a color and an x and y location.'''
