@@ -14,8 +14,8 @@ import os
 import pygame
 import wx
 import wx.lib.imagebrowser as ib
-from pygraphics.picture import *
-from pygraphics.sound import *
+from picture import *
+from sound import *
 
 ##
 ## Global picture functions ---------------------------------------------------
