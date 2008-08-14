@@ -1,14 +1,14 @@
 '''The Picture class and helper functions. This currently supports the
 following formats: JPEG, BMP, GIF, TIFF, IM, MSP, PNG, PCX, and PPM.'''
 
-from pygraphics.color import *
-from pygraphics.pixel import *
+from color import *
+from pixel import *
 import Image
 import ImageDraw
 import ImageFont
 import os
-import pygraphics.show_window as show_window
-import pygraphics.mediawindows as mediawindows
+import show_window as show_window
+import mediawindows as mediawindows
 
 DEFAULT_FONT = ImageFont.load_default()
 IMAGE_FORMATS = ['.jpg', '.jpeg', '.bmp', '.gif', '.tif', '.tiff', '.im', \
