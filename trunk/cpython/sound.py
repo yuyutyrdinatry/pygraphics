@@ -323,6 +323,7 @@ class Note(Sound):
     '''A Note class to create different notes of the C scale. Inherits from Sound,
     does everything Sounds do, and can be combined with Sounds.'''
     
+    # These are in Hz
     frequencies = {'C' : 264,
                    'D' : 297,
                    'E' : 330,
@@ -374,7 +375,7 @@ def load_pygame_sound(filepath):
         raise Exception("This file does not exist.")
     
     # Check if it is a .wav file
-    if sndhdr.what(filepath)[0]:
+    if sndhdr.what(filepath):
         assert sndhdr.what(filepath)[0] == 'wav', "The file is not a .wav file"
     
     # Check the compression. Wave_read.getcomptype() will raise an Error if it is
