@@ -68,8 +68,10 @@ if __name__ == '__main__':
     app.start()
     
     app.add_wx_obj('blah', wx.Frame, True, None, -1, "Event-created Frame", pos=(50,50), size=(600,600))
-
+    
     if 1:
+        DO_BIND = True
+        
         # Trying this procedurally...
         import picture as p
         from event_show_window import convert_picture_to_bitmap
@@ -114,6 +116,8 @@ if __name__ == '__main__':
             if ( X_Y != xy ):
                 X_Y = xy
                 scroller.SetScrollbars(1, 1, xy[0], xy[1], 0, 0)
-            
-        scroller.Bind(wx.EVT_PAINT, draw)
-        draw()
+        
+        if DO_BIND:
+            scroller.Bind(wx.EVT_PAINT, draw)
+        else:
+            draw()
