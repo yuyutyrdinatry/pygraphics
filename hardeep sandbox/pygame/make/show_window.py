@@ -78,7 +78,7 @@ class ImageWindow(wx.ScrolledWindow):
         dc.SetBackgroundMode(wx.TRANSPARENT)
         if ( self.pic is not None ):
             bmp = _convert_picture_to_bitmap(self.pic)
-            xy = [bmp.GetWidth(), bmp.GetHeight()]
+            xy = (bmp.GetWidth(), bmp.GetHeight())
             
             pos_x = max((w - xy[0]) / 2, 0)
             pos_y = max((h - xy[1]) / 2, 0)
@@ -140,9 +140,9 @@ if __name__ == '__main__':
     
     a = ShowWindow()
     #a.start()
-#    
+    
     b = picture.Picture(400,200,picture.white)
     c = picture.Picture(500,500,picture.red)
-#    # d = m.load_picture('test.png')
-#    
+    d = media.load_picture('test.jpg')
+
     a.load_image(c)
