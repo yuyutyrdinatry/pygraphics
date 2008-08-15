@@ -162,6 +162,6 @@ if __name__ == '__main__':
 #    
     b = picture.Picture(400,200,picture.white)
     c = picture.Picture(500,500,picture.red)
-#    # d = m.load_picture('test.png')
+    d = media.load_picture('test.jpg')
 #    
     a.load_image(c)
