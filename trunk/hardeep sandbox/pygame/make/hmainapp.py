@@ -71,6 +71,7 @@ if __name__ == '__main__':
     
     if 1:
         DO_BIND = True
+        INIT_DRAW = True
         
         # Trying this procedurally...
         import picture as p
@@ -119,5 +120,6 @@ if __name__ == '__main__':
         
         if DO_BIND:
             scroller.Bind(wx.EVT_PAINT, draw)
-        else:
+            
+        if INIT_DRAW:
             draw()
