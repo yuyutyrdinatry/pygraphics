@@ -89,7 +89,7 @@ class ImageWindow(wx.ScrolledWindow):
         w, h = self.GetSize()
         dc.SetBackgroundMode(wx.TRANSPARENT)
         if ( self.pic is not None ):
-            bmp = _convert_picture_to_bitmap(self.pic)
+            bmp = convert_picture_to_bitmap(self.pic)
             xy = [bmp.GetWidth(), bmp.GetHeight()]
             
             pos_x = max((w - xy[0]) / 2, 0)
@@ -131,13 +131,13 @@ class ImageWindow(wx.ScrolledWindow):
         event.event_lock.release()
         print 'lock released'
         
-def _convert_picture_to_bitmap(pic):
+def convert_picture_to_bitmap(pic):
     if ( pic is not None ):
         pilImage = pic.get_image()
-        image = _pil_to_image(pilImage)
+        image = pil_to_image(pilImage)
         return wx.BitmapFromImage(image)
         
-def _pil_to_image(pil, alpha=True):
+def pil_to_image(pil, alpha=True):
     '''Convert PIL Image to wx.Image and return the result.'''
     
     if alpha:

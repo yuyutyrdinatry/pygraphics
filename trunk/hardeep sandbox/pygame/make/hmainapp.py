@@ -20,6 +20,10 @@ class hMainApp(wx.PySimpleApp):
         
     def event_create_obj(self, e):
         self.objs[e.name] = e.obj(*e.args, **e.kwargs)
+        
+        if len(self.objs) == 1:
+            self.objs[e.name].Bind(wx.EVT_CLOSE, self.event_close)
+        
         if e.show:
             self.objs[e.name].Show(True)
         LOCK.release()
@@ -27,6 +31,10 @@ class hMainApp(wx.PySimpleApp):
     def make_obj(self, name, obj, show=True, *args, **kwargs):
         e = OBJ_CREATE(name=name, obj=obj, show=show, args=args, kwargs=kwargs)
         wx.PostEvent(self.event_frame, e)
+        
+    def event_close(self, e):
+        self.event_frame.Destroy()
+        e.Skip()
         
 class hMainAppThread(threading.Thread):
     def __init__(self, window_name="Frame", rate=50):
@@ -60,3 +68,52 @@ if __name__ == '__main__':
     app.start()
     
     app.add_wx_obj('blah', wx.Frame, True, None, -1, "Event-created Frame", pos=(50,50), size=(600,600))
+
+    if 1:
+        # Trying this procedurally...
+        import picture as p
+        from event_show_window import convert_picture_to_bitmap
+        import wx.lib.dragscroller
+        
+        frame = app.get_obj('blah')
+        app.add_wx_obj('scroller', wx.ScrolledWindow, True, frame)
+        scroller = app.get_obj('scroller')
+        
+        w = 200
+        h = 200
+        frame.SetSize((w, h))
+        scroller.SetScrollbars(1, 1, w, h, 0, 0)
+
+        pic = p.Picture(filename='test.jpg')
+        
+        def make_dc():
+            dc = wx.PaintDC(scroller)
+            scroller.DoPrepareDC(dc)
+            return dc
+        
+        X_Y = [0, 0]
+        
+        def draw(event=None):
+            global scroller
+            global frame
+            global pic
+            global X_Y
+            
+            dc = make_dc()
+            
+            w, h = frame.GetSize()
+            dc.SetBackgroundMode(wx.TRANSPARENT)
+            
+            bmp = convert_picture_to_bitmap(pic)
+            xy = [bmp.GetWidth(), bmp.GetHeight()]
+            
+            pos_x = max((w - xy[0]) / 2, 0)
+            pos_y = max((h - xy[1]) / 2, 0)
+            
+            dc.DrawBitmap(bmp, pos_x, pos_y, False)
+            if ( X_Y != xy ):
+                X_Y = xy
+                scroller.SetScrollbars(1, 1, xy[0], xy[1], 0, 0)
+            
+        scroller.Bind(wx.EVT_PAINT, draw)
+        draw()
