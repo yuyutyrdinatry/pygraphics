@@ -5,6 +5,7 @@ sampling rate, encoding, and buffering can be changed in the sound.py
 file.'''
 
 from sample import *
+import picture
 import math
 import numpy
 import pygame
@@ -210,6 +211,57 @@ class Sound(object):
         
         new_samples = self.samples[first:last + 1]
         self.set_pygame_sound(sample_array_to_pygame(new_samples))
+
+    def normalize(self):
+        '''Normalize this Sound.'''
+        
+        max = self.samples.max()
+        min = self.samples.min()
+        self.samples = self.samples * min(int(32767/max), int(32767/abs(min)))
+        
+    def inspect(self):
+        '''Make and display this Sound's waveform graph.'''
+        
+        graph = self.get_waveform_graph(len(self)/5000)
+        graph.image.show()
+
+
+    def get_waveform_graph(self, s_per_p, vd=100):
+        '''Return a Picture object with this sound's waveform point graph
+        with s_per_p samples per pixel and vd for a vertical divisor. This
+        works best with sounds that are encoded with signed 16 bits.
+        
+        Note: Do not make s_per_p too small or the function will take far
+        too long to return.'''
+    
+        graph = picture.Picture((len(self) / s_per_p) + 2, \
+                                int(65535 / vd))
+    
+        i = 1
+        sample_i = 0
+    
+        while i < graph.get_width() - 1:
+    
+            graph.pixels[i, int(32768 / vd)] = (0, 0, 0)
+    
+            val = self.samples[sample_i, 0] + 32768
+            
+            y = int(val / vd)
+        
+            graph.pixels[i, y] = (0, 0, 0)
+            graph.pixels[i + 1, y] = (0, 0, 0)
+            graph.pixels[i - 1, y] = (0, 0, 0)
+            graph.pixels[i, y + 1] = (0, 0, 0)
+            graph.pixels[i, y - 1] = (0, 0, 0)
+            graph.pixels[i + 1, y - 1] = (0, 0, 0)
+            graph.pixels[i - 1, y - 1] = (0, 0, 0)
+            graph.pixels[i + 1, y + 1] = (0, 0, 0)
+            graph.pixels[i - 1, y + 1] = (0, 0, 0)
+    
+            i += 1
+            sample_i += s_per_p
+            
+        return graph
 
 
     def play(self, first=0, last=-1):
