@@ -361,21 +361,19 @@ def get_right(stereo_samp):
 ##
 ## Global sound graphing functions ---------------------------------------------
 ##
+def get_waveform(snd, width=1250, height=128):
+    '''Return a Picture width pixels wide and height pixels high 
+    of the waveform graph of Sound snd.'''
 
-# This function plots the sound graph.
-# By default the size of the graph is 1024x300
-# TODO: Make it zoom capable
-def plot_waveform(snd, width=1024, height=300):
-    '''Unimplemented'''
-   
-    pass
-
-def plot_spectrogram(snd, width=1024, height=300):
+    return snd.get_waveform_graph(len(snd)/10000, width, height)
+    
+    
+def get_spectrogram(snd, width=1024, height=300):
     '''Unimplemented'''
 
     pass
 
-def plot_spectrum(snd, width=1024, height=300):
+def get_spectrum(snd, width=1024, height=300):
     '''Unimplemented'''
   
     pass
@@ -407,13 +405,14 @@ def save(obj):
 
 
 def inspect(obj):
-    '''Inspect object obj. Works on most media.py objects.'''
+    '''Inspect object obj. Works on Sound and Picture objects.'''
     
     obj.inspect()
 
 
 def copy(obj):
-    '''Return a deep copy of object obj. Works on most media.py objects.'''
+    '''Return a deep copy of object obj. Works on Color, Sound, and Picture 
+    objects.'''
     
     return obj.copy()
 
