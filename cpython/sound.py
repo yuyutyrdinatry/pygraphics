@@ -6,6 +6,7 @@ file.'''
 
 import sample
 import picture
+import Image
 import math
 import numpy
 import pygame
@@ -212,6 +213,7 @@ class Sound(object):
         new_samples = self.samples[first:last + 1]
         self.set_pygame_sound(sample_array_to_pygame(new_samples))
 
+
     def normalize(self):
         '''Normalize this Sound.'''
         
@@ -219,50 +221,53 @@ class Sound(object):
         minimum = self.samples.min()
         self.samples = self.samples * min(int(32767/maximum), int(32767/abs(minimum)))
         
+        
     def inspect(self):
         '''Make and display this Sound's waveform graph.'''
         
-        graph = self.get_waveform_graph(len(self)/5000)
+        graph = self.get_waveform_graph(len(self)/10000, x=1250, y=128)
         graph.image.show()
 
 
-    def get_waveform_graph(self, s_per_p, v=512):
+    def get_waveform_graph(self, s_per_p, x=None, y=None):
         '''Return a Picture object with this sound's waveform point graph
-        with s_per_p samples per pixel and v pixels high. This
-        works best with sounds that are encoded with signed 16 bits.
+        with s_per_p samples per pixel. If specified the picture will
+        be resized to x pixels wide and y pixels high.
+        This works best with sounds that are encoded with signed 16 bits.
         
         Note: Do not make s_per_p too small or the function will take far
         too long to return.'''
-    
-        vd = 65536 / v
-        graph = picture.Picture((len(self) / s_per_p) + 2, \
-                                int(65536 / vd))
-    
+        
+        v_per_p = 128
+        
+        # This width is the length of the sound divided by the number
+        # of samples per pixel. 2 pixels are added for padding.
+        width = (len(self) / s_per_p) + 2
+        
+        # This height is absolute size of the possible range of sound
+        # samples divided by the number of values per pixel
+        height = int(65536 / v_per_p)
+        graph = Image.new("RGB", (width, height), (255, 255, 255))
+        
+        pixels = graph.load()
         i = 1
         sample_i = 0
-    
-        while i < graph.get_width() - 1:
-    
-            graph.pixels[i, int(32768 / vd)] = (0, 0, 0)
-    
-            val = self.samples[sample_i, 0] + 32768
+        while i < width - 1:
             
-            y = int(val / vd)
-        
-            graph.pixels[i, y] = (0, 0, 0)
-            graph.pixels[i + 1, y] = (0, 0, 0)
-            graph.pixels[i - 1, y] = (0, 0, 0)
-            graph.pixels[i, y + 1] = (0, 0, 0)
-            graph.pixels[i, y - 1] = (0, 0, 0)
-            graph.pixels[i + 1, y - 1] = (0, 0, 0)
-            graph.pixels[i - 1, y - 1] = (0, 0, 0)
-            graph.pixels[i + 1, y + 1] = (0, 0, 0)
-            graph.pixels[i - 1, y + 1] = (0, 0, 0)
-    
+            # This is the zero line
+            pixels[i, int(32768 / v_per_p)] = (0, 0, 0)
+            
+            # Get the value and calculate it's appropriate y coordinate
+            val = self.samples[sample_i, 0]
+            y_coord = int((val + 32768) / v_per_p)
+            _draw_dot(pixels, i, y_coord)    
             i += 1
             sample_i += s_per_p
+        
+        if x and y:
+            graph = graph.resize((x, y), Image.ANTIALIAS)
             
-        return graph
+        return picture.Picture(image=graph)
 
 
     def play(self, first=0, last=-1):
@@ -517,3 +522,15 @@ def sample_array_to_pygame(samp_array):
     
     return pygame.mixer.Sound(samp_array)
 
+def _draw_dot(pix, x, y):
+    '''Draw a 3 X 3 pixel dot on PixelAccess object pix with center (x, y).'''
+    
+    pix[x, y] = (0, 0, 0)
+    pix[x + 1, y] = (0, 0, 0)
+    pix[x - 1, y] = (0, 0, 0)
+    pix[x, y + 1] = (0, 0, 0)
+    pix[x, y - 1] = (0, 0, 0)
+    pix[x + 1, y - 1] = (0, 0, 0)
+    pix[x - 1, y - 1] = (0, 0, 0)
+    pix[x + 1, y + 1] = (0, 0, 0)
+    pix[x - 1, y + 1] = (0, 0, 0)
