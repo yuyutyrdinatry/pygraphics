@@ -4,7 +4,7 @@ rates of either 22050 or 44100. The default number of channels,
 sampling rate, encoding, and buffering can be changed in the sound.py
 file.'''
 
-from sample import *
+import sample
 import picture
 import math
 import numpy
@@ -98,10 +98,10 @@ class Sound(object):
         
         if self.channels == 1:
             for i in range(len(self)):
-                yield MonoSample(self.samples, i)
+                yield sample.MonoSample(self.samples, i)
         elif self.channels == 2:
             for i in range(len(self)):
-                yield StereoSample(self.samples, i)
+                yield sample.StereoSample(self.samples, i)
                 
 
     def __len__(self):
@@ -215,9 +215,9 @@ class Sound(object):
     def normalize(self):
         '''Normalize this Sound.'''
         
-        max = self.samples.max()
-        min = self.samples.min()
-        self.samples = self.samples * min(int(32767/max), int(32767/abs(min)))
+        maximum = self.samples.max()
+        minimum = self.samples.min()
+        self.samples = self.samples * min(int(32767/maximum), int(32767/abs(minimum)))
         
     def inspect(self):
         '''Make and display this Sound's waveform graph.'''
@@ -226,16 +226,17 @@ class Sound(object):
         graph.image.show()
 
 
-    def get_waveform_graph(self, s_per_p, vd=100):
+    def get_waveform_graph(self, s_per_p, v=512):
         '''Return a Picture object with this sound's waveform point graph
-        with s_per_p samples per pixel and vd for a vertical divisor. This
+        with s_per_p samples per pixel and v pixels high. This
         works best with sounds that are encoded with signed 16 bits.
         
         Note: Do not make s_per_p too small or the function will take far
         too long to return.'''
     
+        vd = 65536 / v
         graph = picture.Picture((len(self) / s_per_p) + 2, \
-                                int(65535 / vd))
+                                int(65536 / vd))
     
         i = 1
         sample_i = 0
@@ -291,9 +292,9 @@ class Sound(object):
         supported. Negative indices are supported.'''
 
         if self.channels == 1:
-            return MonoSample(self.samples, i)
+            return sample.MonoSample(self.samples, i)
         elif self.channels == 2:
-            return StereoSample(self.samples, i)
+            return sample.StereoSample(self.samples, i)
 
     
     def get_max(self):
