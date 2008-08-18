@@ -235,8 +235,8 @@ class Sound(object):
         be resized to x pixels wide and y pixels high.
         This works best with sounds that are encoded with signed 16 bits.
         
-        Note: Do not make s_per_p too small or the function will take far
-        too long to return.'''
+        WARNING: This can take very long if the song is big, or if too many
+        samples per pixel are asked for.'''
         
         v_per_p = 128
         
