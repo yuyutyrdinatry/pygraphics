@@ -222,31 +222,52 @@ class Sound(object):
         self.samples = self.samples * min(int(32767/maximum), int(32767/abs(minimum)))
         
         
-    def inspect(self):
-        '''Make and display this Sound's waveform graph.'''
+    def inspect(self, first=0, last=-1):
+        '''Make and display this Sound's waveform graph from index first 
+        to last.'''
         
-        graph = self.get_waveform_graph(len(self)/10000, x=1250, y=128)
+        chunk = self.copy()
+        chunk.crop(first, last)
+        graph = chunk.get_waveform_graph(len(chunk) / 12500, x=1250, y=128)
         graph.image.show()
 
 
-    def get_waveform_graph(self, s_per_p, x=None, y=None):
-        '''Return a Picture object with this sound's waveform point graph
-        with s_per_p samples per pixel. If specified the picture will
-        be resized to x pixels wide and y pixels high.
-        This works best with sounds that are encoded with signed 16 bits.
+    def get_waveform_graph(self, s_per_pixel, x=None, y=None):
+        '''Return a Picture object with this Sound's waveform point graph
+        with s_per_pixel samples per pixel. If specified the picture will
+        be resized to x pixels wide and y pixels high. This works best 
+        with sounds in a 16 signed bits encoding.
         
-        WARNING: This can take very long if the song is big, or if too many
-        samples per pixel are asked for.'''
+        WARNING: This can take very long if too many samples per pixel 
+        are asked for. 600 s_per_pixel for songs of around 3 minutes is 
+        recommended, 100 for 30 seconds, etc.'''
+    
+        graph = self.get_waveform_image(s_per_pixel)
+        if x and y:
+            graph = graph.resize((x, y), Image.ANTIALIAS)
+        return picture.Picture(image=graph)
+    
+    
+    def get_waveform_image(self, s_per_pixel):
+        '''Return a PIL Image object with this Sound's waveform point graph
+        with s_per_pixel samples per pixel. This works best with sounds 
+        in a 16 signed bits encoding.
         
-        v_per_p = 128
-        
+        WARNING: This can take very long if too many samples per pixel 
+        are asked for. 600 s_per_pixel for songs of around 3 minutes is 
+        recommended, 100 for 30 seconds, etc.'''
+            
+        v_per_pixel = 128
+        if s_per_pixel < 1:
+            s_per_pixel = 1
+
         # This width is the length of the sound divided by the number
-        # of samples per pixel. 2 pixels are added for padding.
-        width = (len(self) / s_per_p) + 2
-        
+        # of samples per pixel. 2 pixels are added for padding.    
+        width = int(len(self) / s_per_pixel) + 2
+
         # This height is absolute size of the possible range of sound
         # samples divided by the number of values per pixel
-        height = int(65536 / v_per_p)
+        height = int(65536 / v_per_pixel)
         graph = Image.new("RGB", (width, height), (255, 255, 255))
         
         pixels = graph.load()
@@ -255,19 +276,16 @@ class Sound(object):
         while i < width - 1:
             
             # This is the zero line
-            pixels[i, int(32768 / v_per_p)] = (0, 0, 0)
+            pixels[i, int(32768 / v_per_pixel)] = (0, 0, 0)
             
             # Get the value and calculate it's appropriate y coordinate
             val = self.samples[sample_i, 0]
-            y_coord = int((val + 32768) / v_per_p)
-            _draw_dot(pixels, i, y_coord)    
+            y_coord = int((val + 32768) / v_per_pixel)
+            _draw_dot(pixels, i, y_coord, (0, 0, 0))    
             i += 1
-            sample_i += s_per_p
-        
-        if x and y:
-            graph = graph.resize((x, y), Image.ANTIALIAS)
-            
-        return picture.Picture(image=graph)
+            sample_i += s_per_pixel
+                    
+        return graph
 
 
     def play(self, first=0, last=-1):
@@ -522,15 +540,15 @@ def sample_array_to_pygame(samp_array):
     
     return pygame.mixer.Sound(samp_array)
 
-def _draw_dot(pix, x, y):
+def _draw_dot(pix, x, y, color_tuple):
     '''Draw a 3 X 3 pixel dot on PixelAccess object pix with center (x, y).'''
     
-    pix[x, y] = (0, 0, 0)
-    pix[x + 1, y] = (0, 0, 0)
-    pix[x - 1, y] = (0, 0, 0)
-    pix[x, y + 1] = (0, 0, 0)
-    pix[x, y - 1] = (0, 0, 0)
-    pix[x + 1, y - 1] = (0, 0, 0)
-    pix[x - 1, y - 1] = (0, 0, 0)
-    pix[x + 1, y + 1] = (0, 0, 0)
-    pix[x - 1, y + 1] = (0, 0, 0)
+    pix[x, y] = color_tuple
+    pix[x + 1, y] = color_tuple
+    pix[x - 1, y] = color_tuple
+    pix[x, y + 1] = color_tuple
+    pix[x, y - 1] = color_tuple
+    pix[x + 1, y - 1] = color_tuple
+    pix[x - 1, y - 1] = color_tuple
+    pix[x + 1, y + 1] = color_tuple
+    pix[x - 1, y + 1] = color_tuple
