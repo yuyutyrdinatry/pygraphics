@@ -18,6 +18,11 @@ import os
 ## Defaults
 ####################------------------------------------------------------------
 
+GRAPH_COLOR_THEMES = {'NOTEBOOK' : ((229, 225, 193), (34, 13, 13)),
+                      'OCEAN' : ((27, 68, 243), (255, 255, 255)),
+                      'HEART' : ((22, 27, 23), (0, 255, 0)),
+                      'BLACKONWHITE' : ((255, 255, 255), (0, 0, 0)),
+                      'WHITEONBLACK' : ((0, 0, 0), (255, 255, 255))}
 SOUND_FORMATS = ['.wav']
 DEFAULT_SAMP_RATE = 44100
 DEFAULT_ENCODING = -16
@@ -215,24 +220,25 @@ class Sound(object):
 
 
     def normalize(self):
-        '''Normalize this Sound.'''
+        '''Maximize the amplitude of this Sound's wave. This will increase
+        the volume of the Sound.'''
         
         maximum = self.samples.max()
         minimum = self.samples.min()
         self.samples = self.samples * min(int(32767/maximum), int(32767/abs(minimum)))
         
         
-    def inspect(self, first=0, last=-1):
+    def inspect(self, first=0, last=-1, theme='BLACKONWHITE'):
         '''Make and display this Sound's waveform graph from index first 
         to last.'''
         
         chunk = self.copy()
         chunk.crop(first, last)
-        graph = chunk.get_waveform_graph(len(chunk) / 12500, x=1250, y=128)
+        graph = chunk.get_waveform_graph(len(chunk) / 12500, x=1250, y=128, theme=theme)
         graph.image.show()
 
 
-    def get_waveform_graph(self, s_per_pixel, x=None, y=None):
+    def get_waveform_graph(self, s_per_pixel, x=None, y=None, theme='BLACKONWHITE'):
         '''Return a Picture object with this Sound's waveform point graph
         with s_per_pixel samples per pixel. If specified the picture will
         be resized to x pixels wide and y pixels high. This works best 
@@ -242,22 +248,26 @@ class Sound(object):
         are asked for. 600 s_per_pixel for songs of around 3 minutes is 
         recommended, 100 for 30 seconds, etc.'''
     
-        graph = self.get_waveform_image(s_per_pixel)
+        graph = self.get_waveform_image(s_per_pixel, theme=theme)
         if x and y:
             graph = graph.resize((x, y), Image.ANTIALIAS)
         return picture.Picture(image=graph)
     
     
-    def get_waveform_image(self, s_per_pixel):
+    def get_waveform_image(self, s_per_pixel, v_per_pixel=128, theme="BLACKONWHITE"):
         '''Return a PIL Image object with this Sound's waveform point graph
-        with s_per_pixel samples per pixel. This works best with sounds 
-        in a 16 signed bits encoding.
+        with s_per_pixel samples per pixel and v_per_pixel values per pixel. 
         
-        WARNING: This can take very long if too many samples per pixel 
-        are asked for. 600 s_per_pixel for songs of around 3 minutes is 
+        NOTE: Sounds encoded in 16 bits have a possible range of values from
+        -32768 to 32767. This is a range of about 65536. Therefore to have a graph
+        of 512 pixels high a v_per_pixel of 128 is default.
+        
+        WARNING: This method can take very long if too many samples per pixel 
+        are asked for. 600 s_per_pixel for sounds of around 3 minutes is 
         recommended, 100 for 30 seconds, etc.'''
-            
-        v_per_pixel = 128
+        
+        if v_per_pixel < 1:
+            v_per_pixel = 1
         if s_per_pixel < 1:
             s_per_pixel = 1
 
@@ -266,9 +276,10 @@ class Sound(object):
         width = int(len(self) / s_per_pixel) + 2
 
         # This height is absolute size of the possible range of sound
-        # samples divided by the number of values per pixel
-        height = int(65536 / v_per_pixel)
-        graph = Image.new("RGB", (width, height), (255, 255, 255))
+        # samples divided by the number of values per pixel. 2 pixels
+        # are added for padding and accounted for in the calculations
+        height = int(65536 / v_per_pixel) + 2
+        graph = Image.new("RGB", (width, height), GRAPH_COLOR_THEMES[theme][0])
         
         pixels = graph.load()
         i = 1
@@ -276,12 +287,12 @@ class Sound(object):
         while i < width - 1:
             
             # This is the zero line
-            pixels[i, int(32768 / v_per_pixel)] = (0, 0, 0)
+            pixels[i, int(32768 / v_per_pixel) + 1] = GRAPH_COLOR_THEMES[theme][1]
             
             # Get the value and calculate it's appropriate y coordinate
             val = self.samples[sample_i, 0]
-            y_coord = int((val + 32768) / v_per_pixel)
-            _draw_dot(pixels, i, y_coord, (0, 0, 0))    
+            y_coord = int((val + 32768) / v_per_pixel) + 1
+            _draw_dot(pixels, i, y_coord, GRAPH_COLOR_THEMES[theme][1])    
             i += 1
             sample_i += s_per_pixel
                     
