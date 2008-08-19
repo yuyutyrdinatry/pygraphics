@@ -365,7 +365,7 @@ def get_waveform(snd, width=1250, height=128):
     '''Return a Picture width pixels wide and height pixels high 
     of the waveform graph of Sound snd.'''
 
-    return snd.get_waveform_graph(len(snd)/10000, width, height)
+    return snd.get_waveform_graph(len(snd)/12500, width, height)
     
     
 def get_spectrogram(snd, width=1024, height=300):
