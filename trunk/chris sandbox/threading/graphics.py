@@ -24,7 +24,6 @@ from Queue import Queue
 import thread
 import atexit
 
-
 _tk_request = Queue(0)
 _tk_result = Queue(1)
 _POLL_INTERVAL = 10
@@ -101,6 +100,7 @@ thread.start_new_thread(_tk_thread,())
 # Kill the tk thread at exit
 atexit.register(_tkShutdown)
 
+
 ############################################################################
 # Graphics classes start here
         
@@ -120,7 +120,7 @@ class PictureWindow(tk.Canvas):
         tk.Canvas.__init__(self, master, width=width, height=height)
         self.master.title(title)
         self.pack()
-        #master.resizable(0,0)
+        master.resizable(0,0)
         self.foreground = "black"
         self.items = []
         self.mouseX = None
