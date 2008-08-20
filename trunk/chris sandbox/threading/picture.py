@@ -15,6 +15,7 @@ import show_window as show_window
 DEFAULT_FONT = ImageFont.load_default()
 IMAGE_FORMATS = ['.jpg', '.jpeg', '.bmp', '.gif', '.tif', '.tiff', '.im', \
                   '.msp', '.png', '.pcx', '.ppm']
+PIC_INITIALIZED = False
 
 def init_picture():
     '''Initialize this Picture module. Must be done before using Pictures.
@@ -22,6 +23,7 @@ def init_picture():
     NOTE: If used with sound.py module this must be run BEFORE the sound
     initializer.'''
     
+    PIC_INITIALIZED = True
     graphics.init_graphics()
     
 ####################------------------------------------------------------------
@@ -132,8 +134,8 @@ class Picture(object):
 
     def show(self):
         
-        if not graphics._THREAD_RUNNING:
-            graphics.init_thread()
+        if not PIC_INITIALIZED:
+            raise Exception('Picture is not initialized')
         if self.win:
             self.win.close()
         width = self.get_width()
