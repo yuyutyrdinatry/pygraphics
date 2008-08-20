@@ -2,19 +2,32 @@
 following formats: JPEG, BMP, GIF, TIFF, IM, MSP, PNG, PCX, and PPM.'''
 
 from color import *
-import pixel
 import Image
 import ImageDraw
 import ImageFont
 import ImageTk
-import os
-import show_window as show_window
-import mediawindows as mediawindows
 import graphics as graphics
+import mediawindows as mediawindows
+import os
+import pixel
+import show_window as show_window
 
 DEFAULT_FONT = ImageFont.load_default()
 IMAGE_FORMATS = ['.jpg', '.jpeg', '.bmp', '.gif', '.tif', '.tiff', '.im', \
                   '.msp', '.png', '.pcx', '.ppm']
+
+def init_picture():
+    '''Initialize this Picture module. Must be done before using Pictures.
+    
+    NOTE: If used with sound.py module this must be run BEFORE the sound
+    initializer.'''
+    
+    graphics.init_graphics()
+    
+####################------------------------------------------------------------
+## Sound object
+####################------------------------------------------------------------
+
 
 class Picture(object):
     '''A Picture class as a wrapper for PIL's Image class.'''

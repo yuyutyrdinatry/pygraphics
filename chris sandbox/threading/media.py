@@ -9,9 +9,12 @@ Sounds support only uncompressed WAV files. For best quality use WAV files
 with sampling rates of either 22050 or 44100. The default number of channels,
 sampling rate, encoding, and buffering can be changed in the sound.py file.'''
 
-import picture
-import sound
+from picture import *
+from sound import *
 import os
+
+#init_picture()
+#init_sound()
 
 ##
 ## Global picture functions ---------------------------------------------------
@@ -21,14 +24,14 @@ import os
 def load_picture(filename):
     '''Return a Picture object from filename filename.'''
 
-    return picture.Picture(filename=filename)
+    return Picture(filename=filename)
 
 
-def create_picture(w, h, col=picture.white):
+def create_picture(w, h, col=white):
     '''Return a Picture w pixels wide and h pixels high. 
     Default Color col is white.'''
     
-    return picture.Picture(w, h, col)
+    return Picture(w, h, col)
 
 
 def crop(pic, x1, y1, x2, y2):
@@ -226,7 +229,7 @@ def lighten(col):
 def create_color(r, g, b):
     '''Return a Color object with RGB values r, g, and b.'''
     
-    return picture.Color(r, g, b)
+    return Color(r, g, b)
 
 
 ##
@@ -238,13 +241,13 @@ def load_sound(filename):
     '''Return the Sound at file filename. Requires: file is an uncompressed
     .wav file.'''
 
-    return sound.Sound(filename=filename)
+    return Sound(filename=filename)
 
 
 def create_sound(samp):
     '''Return a silent Sound samp samples long.'''
 
-    return sound.Sound(samples=samp)
+    return Sound(samples=samp)
 
 
 def get_samples(snd):

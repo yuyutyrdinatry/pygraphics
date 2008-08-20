@@ -96,8 +96,7 @@ def _tkShutdown():
     _THREAD_RUNNING = False
     time.sleep(.5) # give tk thread time to quit
 
-def init_thread():
-    
+def init_graphics():
     global _THREAD_RUNNING 
     _THREAD_RUNNING = True
     
@@ -106,6 +105,7 @@ def init_thread():
     
     # Kill the tk thread at exit
     atexit.register(_tkShutdown)
+    
 
 
 ############################################################################

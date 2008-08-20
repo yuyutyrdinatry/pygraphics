@@ -28,23 +28,25 @@ DEFAULT_SAMP_RATE = 44100
 DEFAULT_ENCODING = -16
 DEFAULT_CHANNELS = 2
 DEFAULT_BUFFERING = 3072
-pygame.mixer.pre_init(DEFAULT_SAMP_RATE, 
-                      DEFAULT_ENCODING, 
-                      DEFAULT_CHANNELS, 
-                      DEFAULT_BUFFERING)
-pygame.mixer.init()
-#else:
-#    DEFAULT_SAMP_RATE = DEFAULTS[0]
-#    DEFAULT_ENCODING = DEFAULTS[1]
-#    
-#    # pygame.mixer.get_init() returns channels 0-based, 1 channel is 0, 2 is 1
-#    DEFAULT_CHANNELS = DEFAULTS[2] + 1
 
 AUDIO_ENCODINGS = { 8 : numpy.uint8,   # unsigned 8-bit
      16 : numpy.uint16, # unsigned 16-bit
      -8 : numpy.int8,   # signed 8-bit
      -16 : numpy.int16  # signed 16-bit
      }
+
+def init_sound():
+    '''Initialize this module. Must be done before any sounds are created.
+    
+    WARNING: If used with picture.py, it must be initialized after initializing
+    picture.py.'''
+    
+    pygame.mixer.pre_init(DEFAULT_SAMP_RATE, 
+                          DEFAULT_ENCODING, 
+                          DEFAULT_CHANNELS, 
+                          DEFAULT_BUFFERING)
+    pygame.mixer.init()
+
 
 ####################------------------------------------------------------------
 ## Sound object
