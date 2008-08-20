@@ -9,13 +9,10 @@ Sounds support only uncompressed WAV files. For best quality use WAV files
 with sampling rates of either 22050 or 44100. The default number of channels,
 sampling rate, encoding, and buffering can be changed in the sound.py file.'''
 
-
+import picture
+import graphics
+import sound
 import os
-import pygame
-import Tkinter as tk
-import tkFileDialog
-#from sound import *
-from picture import *
 
 ##
 ## Global picture functions ---------------------------------------------------
@@ -25,14 +22,14 @@ from picture import *
 def load_picture(filename):
     '''Return a Picture object from filename filename.'''
 
-    return Picture(filename=filename)
+    return picture.Picture(filename=filename)
 
 
-def create_picture(w, h, col=white):
+def create_picture(w, h, col=picture.white):
     '''Return a Picture w pixels wide and h pixels high. 
     Default Color col is white.'''
     
-    return Picture(w, h, col)
+    return picture.Picture(w, h, col)
 
 
 def crop(pic, x1, y1, x2, y2):
@@ -230,7 +227,7 @@ def lighten(col):
 def create_color(r, g, b):
     '''Return a Color object with RGB values r, g, and b.'''
     
-    return Color(r, g, b)
+    return picture.Color(r, g, b)
 
 
 ##
@@ -242,13 +239,13 @@ def load_sound(filename):
     '''Return the Sound at file filename. Requires: file is an uncompressed
     .wav file.'''
 
-    return Sound(filename=filename)
+    return sound.Sound(filename=filename)
 
 
 def create_sound(samp):
     '''Return a silent Sound samp samples long.'''
 
-    return Sound(samples=samp)
+    return sound.Sound(samples=samp)
 
 
 def get_samples(snd):
@@ -382,8 +379,6 @@ def get_spectrum(snd, width=1024, height=300):
 ## Media functions -------------------------------------------------------
 ##
 
-root = graphics._root
-
 
 def save_as(obj, filename=None):
     '''Prompt user to pick a directory and filename then write media.py object
@@ -417,54 +412,3 @@ def copy(obj):
     objects.'''
     
     return obj.copy()
-
-
-def choose_save_filename():
-    '''Prompt user to pick a directory and filename. Return the path
-    to the new file. Change the current working directory to the directory 
-    where the file chosen by the user is.'''
-
-    root = tk.Tk()
-    root.withdraw()
-    path = tkFileDialog.asksaveasfilename(parent=root, initialdir=os.getcwd())
-    root.destroy()
-    if path:
-        os.chdir(os.path.dirname(path))
-        return path
-    
-
-def choose_file():
-    '''Prompt user to pick a file. Return the path to that file. 
-    Change the current working directory to the directory 
-    where the file chosen by the user is'''
-    
-    path = graphics.tkCall(tkFileDialog.askopenfilename, parent=root, initialdir=os.getcwd())
-    if path:
-        os.chdir(os.path.dirname(path))
-        return path
-
-
-def choose_folder():
-    '''Prompt user to pick a folder. Return the path to that folder. 
-    Change the current working directory to the directory chosen by the user.'''
-
-    root = tk.Tk()
-    root.withdraw()
-    folder = tkFileDialog.askdirectory(parent=root, initialdir=os.getcwd())
-    root.destroy()
-    if folder:
-        os.chdir(os.path.dirname(folder))
-        return folder
-
-def choose_color():
-    '''Prompt user to pick a color. Return a RGB Color object.'''
-    
-    root = tk.Tk()
-    root.withdraw()
-    color = tkColorChooser.askcolor(parent=root)
-    root.destroy() 
-    if color[0]:
-        return Color(color[0][0], color[0][1], color[0][2])
- 
-if __name__ == '__main__':
-    pass
