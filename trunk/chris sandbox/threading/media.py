@@ -10,7 +10,6 @@ with sampling rates of either 22050 or 44100. The default number of channels,
 sampling rate, encoding, and buffering can be changed in the sound.py file.'''
 
 import picture
-import graphics
 import sound
 import os
 
