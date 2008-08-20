@@ -22,7 +22,7 @@ def init_picture():
     
     NOTE: If used with sound.py module this must be run BEFORE the sound
     initializer.'''
-    
+    global PIC_INITIALIZED
     PIC_INITIALIZED = True
     graphics.init_graphics()
     
