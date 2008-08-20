@@ -1,5 +1,6 @@
 import time, os, sys
 import Tkinter as tk
+import tkFileDialog
 
 ##########################################################################
 # Module Exceptions
@@ -24,48 +25,49 @@ from Queue import Queue
 import thread
 import atexit
 
-_tk_request = Queue(0)
-_tk_result = Queue(1)
+_TK_REQUEST = Queue(0)
+_TK_RESULT = Queue(1)
 _POLL_INTERVAL = 10
 
-_root = None
-_thread_running = True
-_exception_info = None
+_ROOT = None
+_THREAD_RUNNING = False
+_EXCEPTION_INFO = None
 
 def _tk_thread():
-    global _root
-    _root = tk.Tk()
-    _root.withdraw()
-    _root.after(_POLL_INTERVAL, _tk_pump)
-    _root.mainloop()
+    global _ROOT
+    _ROOT = tk.Tk()
+    _ROOT.withdraw()
+    _ROOT.after(_POLL_INTERVAL, _tk_pump)
+    _ROOT.mainloop()
 
 def _tk_pump():
-    global _thread_running
-    while not _tk_request.empty():
-        command,returns_value = _tk_request.get()
+    global _THREAD_RUNNING
+    
+    while not _TK_REQUEST.empty():
+        command, returns_value = _TK_REQUEST.get()
         try:
             result = command()
             if returns_value:
-                _tk_result.put(result)
+                _TK_RESULT.put(result)
         except:
-            _thread_running = False
+            _THREAD_RUNNING = False
             if returns_value:
-                _tk_result.put(None) # release client
+                _TK_RESULT.put(None) # release client
             raise # re-raise the exception -- kills the thread
-    if _thread_running:
-        _root.after(_POLL_INTERVAL, _tk_pump)
+    if _THREAD_RUNNING:
+        _ROOT.after(_POLL_INTERVAL, _tk_pump)
 
 def _tkCall(f, *args, **kw):
     # execute synchronous call to f in the Tk thread
     # this function should be used when a return value from
     #   f is required or when synchronizing the threads.
     # call to _tkCall in Tk thread == DEADLOCK !
-    if not _thread_running:
+    if not _THREAD_RUNNING:
         raise GraphicsError, DEAD_THREAD
     def func():
         return f(*args, **kw)
-    _tk_request.put((func,True),True)
-    result = _tk_result.get(True)
+    _TK_REQUEST.put((func,True),True)
+    result = _TK_RESULT.get(True)
     return result
 
 # .nah. Added these so that these functions can be exported
@@ -74,31 +76,36 @@ tkCall = _tkCall
 def _tkExec(f, *args, **kw):
     # schedule f to execute in the Tk thread. This function does
     #   not wait for f to actually be executed.
-    #global _exception_info
-    #_exception_info = None
-    if not _thread_running:
+    #global _EXCEPTION_INFO
+    #_EXCEPTION_INFO = None
+    if not _THREAD_RUNNING:
         raise GraphicsError, DEAD_THREAD
     def func():
         return f(*args, **kw)
-    _tk_request.put((func,False),True)
-    #if _exception_info is not None:
-    #    raise GraphicsError, "Invalid Operation: %s" % str(_exception_info)
+    _TK_REQUEST.put((func,False),True)
+    #if _EXCEPTION_INFO is not None:
+    #    raise GraphicsError, "Invalid Operation: %s" % str(_EXCEPTION_INFO)
 
 # .nah. Added these so that these functions can be exported
 tkExec = _tkExec
 
 def _tkShutdown():
     # shutdown the tk thread
-    global _thread_running
+    global _THREAD_RUNNING
     #_tkExec(sys.exit)
-    _thread_running = False
+    _THREAD_RUNNING = False
     time.sleep(.5) # give tk thread time to quit
 
-# Fire up the separate Tk thread
-thread.start_new_thread(_tk_thread,())
-
-# Kill the tk thread at exit
-atexit.register(_tkShutdown)
+def init_thread():
+    
+    global _THREAD_RUNNING 
+    _THREAD_RUNNING = True
+    
+    # Fire up the separate Tk thread
+    thread.start_new_thread(_tk_thread,())
+    
+    # Kill the tk thread at exit
+    atexit.register(_tkShutdown)
 
 
 ############################################################################
@@ -115,7 +122,7 @@ class PictureWindow(tk.Canvas):
     
     def __init_help(self, title, width, height, autoflush):
         
-        master = tk.Toplevel(_root)
+        master = tk.Toplevel(_ROOT)
         master.protocol("WM_DELETE_WINDOW", self.__close_help)
         tk.Canvas.__init__(self, master, width=width, height=height)
         self.master.title(title)
@@ -132,7 +139,7 @@ class PictureWindow(tk.Canvas):
         self._mouseCallback = None
         self.trans = None
         self.closed = False
-        if autoflush: _root.update()
+        if autoflush: _ROOT.update()
 
 
     def __checkOpen(self):
@@ -160,14 +167,14 @@ class PictureWindow(tk.Canvas):
         """Close the window"""
         self.closed = True
         self.master.destroy()
-        _root.update()
+        _ROOT.update()
 
     def isClosed(self):
         return self.closed
 
     def __autoflush(self):
         if self.autoflush:
-            _tkCall(_root.update)
+            _tkCall(_ROOT.update)
     
     def plot(self, x, y, color="black"):
         """Set pixel (x,y) to the given color"""
@@ -336,8 +343,8 @@ class GraphicsObject(object):
         #self.id = self._draw(graphwin, self.config)
         self.id = _tkCall(self._draw, graphwin, self.config)
         if graphwin.autoflush:
-            #_root.update()
-            _tkCall(_root.update)
+            #_ROOT.update()
+            _tkCall(_ROOT.update)
 
     def undraw(self):
 
@@ -349,8 +356,8 @@ class GraphicsObject(object):
             #self.canvas.delete(self.id)
             _tkExec(self.canvas.delete, self.id)
             if self.canvas.autoflush:
-                #_root.update()
-                _tkCall(_root.update)
+                #_ROOT.update()
+                _tkCall(_ROOT.update)
         self.canvas = None
         self.id = None
 
@@ -372,8 +379,8 @@ class GraphicsObject(object):
             #self.canvas.move(self.id, x, y)
             _tkExec(self.canvas.move, self.id, x, y)
             if canvas.autoflush:
-                #_root.update()
-                _tkCall(_root.update)
+                #_ROOT.update()
+                _tkCall(_ROOT.update)
            
     def _reconfig(self, option, setting):
         # Internal method for changing configuration of the object
@@ -387,8 +394,8 @@ class GraphicsObject(object):
             #self.canvas.itemconfig(self.id, options)
             _tkExec(self.canvas.itemconfig, self.id, options)
             if self.canvas.autoflush:
-                #_root.update()
-                _tkCall(_root.update)
+                #_ROOT.update()
+                _tkCall(_ROOT.update)
 
     def _draw(self, canvas, options):
         """draws appropriate figure on canvas with options provided
@@ -485,45 +492,42 @@ class WindowImage(GraphicsObject):
         other.config = self.config.copy()
         return other
         
-        
-if __name__ == "__main__":
-    import picture
-    import ImageTk
-    
-    class ShowPicture(picture.Picture):
-        
-        def _make_window(self, x, y):
-            
-            title = 'File: %s' % self.get_filename()
-            self.win = PictureWindow(title=title, width=x, height=y)
-            self.win.setCoords(0, y - 1, x - 1, 0)
-        
-        
-        def _draw_image_to_win(self, win):
-            
-            width = win.getWidth()
-            height = win.getHeight()
-            self.showim = WindowImage(WindowPoint(width/2, height/2), ImageTk.PhotoImage(self.get_image()))
-            self.showim.draw(win)
-            
 
-        def show(self):
-            
-            if self.win:
-                self.win.close()
-            width = self.get_width()
-            height = self.get_height()
-            self._make_window(width, height + 20)
-            self._draw_image_to_win(self.win)
-            
-        def update(self):
-            
-            if self.win and self.showim:
-                width = self.get_width()
-                height = self.get_height()
-                self.showim.undraw()
-                self._draw_image_to_win(self.win)
+def choose_save_filename():
+    '''Prompt user to pick a directory and filename. Return the path
+    to the new file. Change the current working directory to the directory 
+    where the file chosen by the user is.'''
+
+    path = _tkCall(tkFileDialog.asksaveasfilename, parent=_ROOT, initialdir=os.getcwd())
+    if path:
+        os.chdir(os.path.dirname(path))
+        return path
     
-    pic = ShowPicture(filename='/Users/chris/Pictures/chickadee.jpg')
-    pic.win = None
-    pic.show()
+
+def choose_file():
+    '''Prompt user to pick a file. Return the path to that file. 
+    Change the current working directory to the directory 
+    where the file chosen by the user is'''
+    
+    path = _tkCall(tkFileDialog.askopenfilename, parent=_ROOT, initialdir=os.getcwd())
+    if path:
+        os.chdir(os.path.dirname(path))
+        return path
+
+
+def choose_folder():
+    '''Prompt user to pick a folder. Return the path to that folder. 
+    Change the current working directory to the directory chosen by the user.'''
+
+    path = _tkCall(tkFileDialog.askdirectory, parent=_ROOT, initialdir=os.getcwd())
+    if path:
+        os.chdir(os.path.dirname(path))
+        return path
+
+
+def choose_color():
+    '''Prompt user to pick a color. Return a RGB Color object.'''
+
+    color = _tkCall(tkFileDialog.askcolor, parent=_ROOT)
+    if color[0]:
+        return Color(color[0][0], color[0][1], color[0][2])

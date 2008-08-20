@@ -2,7 +2,7 @@
 following formats: JPEG, BMP, GIF, TIFF, IM, MSP, PNG, PCX, and PPM.'''
 
 from color import *
-from pixel import *
+import pixel
 import Image
 import ImageDraw
 import ImageFont
@@ -10,7 +10,7 @@ import ImageTk
 import os
 import show_window as show_window
 import mediawindows as mediawindows
-import graphics
+import graphics as graphics
 
 DEFAULT_FONT = ImageFont.load_default()
 IMAGE_FORMATS = ['.jpg', '.jpeg', '.bmp', '.gif', '.tif', '.tiff', '.im', \
@@ -66,7 +66,7 @@ class Picture(object):
         
         for x in xrange(0, self.get_width()):
             for y in xrange(0, self.get_height()):
-                yield Pixel(self.pixels, x, y)
+                yield pixel.Pixel(self.pixels, x, y)
 
     
     def has_coordinates(self, x, y):
@@ -104,7 +104,7 @@ class Picture(object):
     
     def _make_window(self, x, y):
         
-        title = 'File: %s' % self.get_filename()
+        title = 'File: %s' % self.get_filename() or 'None'
         self.win = graphics.PictureWindow(title=title, width=x, height=y)
         self.win.setCoords(0, y - 1, x - 1, 0)
     
@@ -119,6 +119,8 @@ class Picture(object):
 
     def show(self):
         
+        if not graphics._THREAD_RUNNING:
+            graphics.init_thread()
         if self.win:
             self.win.close()
         width = self.get_width()
@@ -144,7 +146,7 @@ class Picture(object):
     def get_pixel(self, x, y):
         '''Return the Pixel at coordinates (x, y).'''
         
-        return Pixel(self.pixels, x, y)
+        return pixel.Pixel(self.pixels, x, y)
 
     
     def set_title(self, title):
