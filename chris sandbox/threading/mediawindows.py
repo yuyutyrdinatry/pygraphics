@@ -2,8 +2,9 @@ import time, os, sys
 import Tkinter as tk
 import tkFileDialog
 
-##########################################################################
-# Module Exceptions
+####################------------------------------------------------------------
+## Exceptions
+####################------------------------------------------------------------
 
 import exceptions
 
@@ -17,8 +18,9 @@ UNSUPPORTED_METHOD = "Object doesn't support operation"
 BAD_OPTION = "Illegal option value"
 DEAD_THREAD = "Graphics thread quit unexpectedly"
 
-###########################################################################
-# Support to run Tk in a separate thread
+####################------------------------------------------------------------
+## Thread support
+####################------------------------------------------------------------
 
 from copy import copy
 from Queue import Queue
@@ -96,6 +98,11 @@ def _tkShutdown():
     _THREAD_RUNNING = False
     time.sleep(.5) # give tk thread time to quit
 
+####################------------------------------------------------------------
+## Initializer
+####################------------------------------------------------------------
+
+
 def init_mediawindows():
     global _THREAD_RUNNING 
     _THREAD_RUNNING = True
@@ -108,8 +115,9 @@ def init_mediawindows():
     
 
 
-############################################################################
-# Graphics classes start here
+####################------------------------------------------------------------
+## Picture Window
+####################------------------------------------------------------------
         
 class PictureWindow(tk.Canvas):
     """A PictureWindow is a toplevel window for displaying graphics."""
@@ -257,7 +265,11 @@ class PictureWindow(tk.Canvas):
         self.mouseY = e.y
         if self._mouseCallback:
             self._mouseCallback(WindowPoint(e.x, e.y)) 
-                      
+      
+####################------------------------------------------------------------
+## Support Classes
+####################------------------------------------------------------------
+                
 class Transform(object):
 
     """Internal class for 2-D coordinate transformations"""
@@ -491,7 +503,11 @@ class WindowImage(GraphicsObject):
         other = WindowImage(self.anchor, img_copy)
         other.config = self.config.copy()
         return other
-        
+
+####################------------------------------------------------------------
+## Dialogs
+####################------------------------------------------------------------
+
 
 def choose_save_filename():
     '''Prompt user to pick a directory and filename. Return the path

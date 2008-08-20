@@ -16,7 +16,7 @@ import sndhdr
 import os
 
 ####################------------------------------------------------------------
-## Defaults
+## Defaults and Globals
 ####################------------------------------------------------------------
 
 GRAPH_COLOR_THEMES = {'NOTEBOOK' : ((229, 225, 193), (34, 13, 13)),
@@ -25,37 +25,40 @@ GRAPH_COLOR_THEMES = {'NOTEBOOK' : ((229, 225, 193), (34, 13, 13)),
                       'BLACKONWHITE' : ((255, 255, 255), (0, 0, 0)),
                       'WHITEONBLACK' : ((0, 0, 0), (255, 255, 255))}
 SOUND_FORMATS = ['.wav']
-DEFAULT_SAMP_RATE = 44100
-DEFAULT_ENCODING = -16
-DEFAULT_CHANNELS = 2
-DEFAULT_BUFFERING = 3072
-
+DEFAULT_SAMP_RATE = None
+DEFAULT_ENCODING = None
+DEFAULT_CHANNELS = None
+DEFAULT_BUFFERING = None
+SND_INITIALIZED = False
 AUDIO_ENCODINGS = { 8 : numpy.uint8,   # unsigned 8-bit
      16 : numpy.uint16, # unsigned 16-bit
      -8 : numpy.int8,   # signed 8-bit
      -16 : numpy.int16  # signed 16-bit
      }
-SND_INITIALIZED = False
 
 ####################------------------------------------------------------------
 ## Initializer
 ####################------------------------------------------------------------
 
-
-def init_sound():
+def init_sound(samp_rate=44100, encoding=-16, channels=2):
     '''Initialize this module. Must be done before any sounds are created.
     
     WARNING: If used with picture.py, it must be initialized after initializing
     picture.py.'''
     
-    global SND_INITIALIZED
+    global SND_INITIALIZED, DEFAULT_SAMP_RATE, DEFAULT_ENCODING, \
+    DEFAULT_CHANNELS, DEFAULT_BUFFERING
+    
+    DEFAULT_SAMP_RATE = samp_rate
+    DEFAULT_ENCODING = encoding
+    DEFAULT_CHANNELS = channels
+    DEFAULT_BUFFERING = 3072
     SND_INITIALIZED = True
     pygame.mixer.pre_init(DEFAULT_SAMP_RATE, 
                           DEFAULT_ENCODING, 
                           DEFAULT_CHANNELS, 
                           DEFAULT_BUFFERING)
     _tkExec(pygame.mixer.init)
-
 
 ####################------------------------------------------------------------
 ## Sound object
