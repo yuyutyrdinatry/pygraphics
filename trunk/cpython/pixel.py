@@ -1,4 +1,4 @@
-from color import *
+import color
 
 class Pixel(object):
     '''A pixel in an image with a color and an x and y location.'''
@@ -85,7 +85,7 @@ class Pixel(object):
     def get_color(self):
         '''Return a Color object representing the color of this Pixel.'''
         
-        return Color(self.get_red(), self.get_green(), self.get_blue())
+        return color.Color(self.get_red(), self.get_green(), self.get_blue())
 
 
     def set_color(self, color):
