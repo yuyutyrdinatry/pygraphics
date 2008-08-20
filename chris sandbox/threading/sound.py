@@ -6,6 +6,7 @@ file.'''
 
 import sample
 from picture import Picture
+from mediawindows import _tkExec
 import Image
 import math
 import numpy
@@ -34,6 +35,12 @@ AUDIO_ENCODINGS = { 8 : numpy.uint8,   # unsigned 8-bit
      -8 : numpy.int8,   # signed 8-bit
      -16 : numpy.int16  # signed 16-bit
      }
+SND_INITIALIZED = False
+
+####################------------------------------------------------------------
+## Initializer
+####################------------------------------------------------------------
+
 
 def init_sound():
     '''Initialize this module. Must be done before any sounds are created.
@@ -41,11 +48,13 @@ def init_sound():
     WARNING: If used with picture.py, it must be initialized after initializing
     picture.py.'''
     
+    global SND_INITIALIZED
+    SND_INITIALIZED = True
     pygame.mixer.pre_init(DEFAULT_SAMP_RATE, 
                           DEFAULT_ENCODING, 
                           DEFAULT_CHANNELS, 
                           DEFAULT_BUFFERING)
-    pygame.mixer.init()
+    _tkExec(pygame.mixer.init)
 
 
 ####################------------------------------------------------------------
@@ -69,6 +78,9 @@ class Sound(object):
         
         Filename takes precedence over samples, which take precedence 
         over seconds, which in turn takes precedence over sound.'''
+        
+        if not SND_INITIALIZED:
+            raise Exception('Sound is not initialized. Run init_sound() first.')
         
         self.channels = DEFAULT_CHANNELS
         self.samp_rate = DEFAULT_SAMP_RATE

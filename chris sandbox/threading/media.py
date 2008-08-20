@@ -13,8 +13,8 @@ from picture import *
 from sound import *
 import os
 
-#init_picture()
-#init_sound()
+init_picture()
+init_sound()
 
 ##
 ## Global picture functions ---------------------------------------------------

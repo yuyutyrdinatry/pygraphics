@@ -6,25 +6,33 @@ import Image
 import ImageDraw
 import ImageFont
 import ImageTk
-import graphics as graphics
 import mediawindows as mediawindows
 import os
 import pixel
-import show_window as show_window
+
+####################------------------------------------------------------------
+## Defaults
+####################------------------------------------------------------------
 
 DEFAULT_FONT = ImageFont.load_default()
 IMAGE_FORMATS = ['.jpg', '.jpeg', '.bmp', '.gif', '.tif', '.tiff', '.im', \
                   '.msp', '.png', '.pcx', '.ppm']
 PIC_INITIALIZED = False
 
+####################------------------------------------------------------------
+## Initializer
+####################------------------------------------------------------------
+
 def init_picture():
     '''Initialize this Picture module. Must be done before using Pictures.
     
     NOTE: If used with sound.py module this must be run BEFORE the sound
     initializer.'''
+    
     global PIC_INITIALIZED
     PIC_INITIALIZED = True
-    graphics.init_graphics()
+    mediawindows.init_mediawindows()
+    
     
 ####################------------------------------------------------------------
 ## Sound object
@@ -42,6 +50,9 @@ class Picture(object):
         - ints w, h, and Color col, e.g. Picture(100, 100, Color(0, 0, 0))
         - named PIL RGB Image argument image, e.g. Picture(image=Image)
         - named str argument filename, e.g. Picture(filename='image.jpg').'''
+        
+        if not PIC_INITIALIZED:
+            raise Exception('Picture is not initialized. Run init_picture() first.')
         
         self.set_filename_and_title(filename)
         self.win = None
@@ -120,7 +131,7 @@ class Picture(object):
     def _make_window(self, x, y):
         
         title = 'File: %s' % self.get_filename() or 'None'
-        self.win = graphics.PictureWindow(title=title, width=x, height=y)
+        self.win = mediawindows.PictureWindow(title=title, width=x, height=y)
         self.win.setCoords(0, y - 1, x - 1, 0)
     
     
@@ -128,7 +139,7 @@ class Picture(object):
         
         width = win.getWidth()
         height = win.getHeight()
-        self.showim = graphics.WindowImage(graphics.WindowPoint(width/2, height/2), ImageTk.PhotoImage(self.get_image()))
+        self.showim = mediawindows.WindowImage(mediawindows.WindowPoint(width/2, height/2), ImageTk.PhotoImage(self.get_image()))
         self.showim.draw(win)
         
 
@@ -143,6 +154,7 @@ class Picture(object):
         self._make_window(width, height + 20)
         self._draw_image_to_win(self.win)
         
+        
     def update(self):
         
         if self.win and self.showim:
@@ -152,11 +164,9 @@ class Picture(object):
             self._draw_image_to_win(self.win)
     
     def inspect(self):
-        '''Inspect this Picture in an OpenPictureTool.'''
+        '''Unimplemented.'''
         
-        tool = mediawindows.PictureInspector(self)
-        tool.run_window()
-
+        pass
     
     def get_pixel(self, x, y):
         '''Return the Pixel at coordinates (x, y).'''
@@ -366,9 +376,9 @@ class Picture(object):
                              % ext)
 
 
-##
-## Helper functions ---------------------------------------------------
-##
+####################------------------------------------------------------------
+## Helper functions
+####################------------------------------------------------------------
 
 
 def load_image(f):
