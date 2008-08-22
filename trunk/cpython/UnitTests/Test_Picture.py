@@ -239,15 +239,16 @@ def test_set_get_image():
 @nose.with_setup(setup_function, teardown_function)
 def test_copy():
 	'''Test copy on a valid Picture.'''
-	
-	copy = pict.copy()
+
+	pict2 = pict.copy()
 	p1 = pict.get_pixel(0, 0)
-	p2 = copy.get_pixel(0, 0)
+	p2 = pict2.get_pixel(0, 0)
 	p2.set_red(0)
 	assert p1.get_color() != p2.get_color(), "Not a true deep copy"
 
+@nose.with_setup(setup_function, teardown_function)
 def test_crop():
-	'''Test copy on a valid Picture.'''
+	'''Test crop on a valid Picture.'''
 	
 	sizes = []
 	copy = pict.copy()
@@ -295,7 +296,7 @@ def test_write_to_large_image():
 	'''Test writing a large valid Picture to a file'''
 	# invalid file types
 	tester_pict = Picture(filename=BLESSED_SAVE_LOC_PREFIX + 'bmp')
-	nose.tools.assert_raises(KeyError, tester_pict.save_as, SAVE_LOC_PREFIX + 'tmp')
+	nose.tools.assert_raises(ValueError, tester_pict.save_as, SAVE_LOC_PREFIX + 'tmp')
 	# ensure all of our types hold
 	for suffix in IMAGE_TYPES:
 		try:				

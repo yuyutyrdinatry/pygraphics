@@ -67,7 +67,7 @@ def test_constructor():
 		#positive pixel coordinates
 		for x in range(pict.image.size[0]):
 			for y in range(pict.image.size[1]):
-				tester_pixel = Pixel(pict.pixels, x, y) # x=0, y=0
+				tester_pixel = pixel.Pixel(pict.pixels, x, y) # x=0, y=0
 				assert tester_pixel.x == x, 'Invalid x coordinate initialized'
 				assert tester_pixel.y == y, 'Invalid y coordinate initialized'
 				if x == y:
@@ -81,7 +81,7 @@ def test_constructor():
 def test_set_RGB_inbounds():
 	'''Test setting RGB values for Pixel.'''
 	# TODO: also test for Alpha if we add support for that
-	tester_pixel = Pixel(pict.pixels, 0, 0)
+	tester_pixel = pixel.Pixel(pict.pixels, 0, 0)
 	assert pixel_has_color_values(tester_pixel, black_array), 'Improper color component, should be [0, 0, 0]'
 	tester_pixel.set_red(0) # empty set
 	tester_pixel.set_green(0)
@@ -101,7 +101,7 @@ def test_set_RGB_inbounds():
 def test_set_RGB_outbounds():
 	'''Test setting RGB values that are out of bounds for Pixel.'''
 	outbounds = [-1, -10, 256, 300]
-	tester_pixel = Pixel(pict.pixels, 0, 0)
+	tester_pixel = pixel.Pixel(pict.pixels, 0, 0)
 	for value in outbounds:
 		nose.tools.assert_raises(ValueError, tester_pixel.set_red, value)
 		nose.tools.assert_raises(ValueError, tester_pixel.set_green, value)
@@ -111,7 +111,7 @@ def test_set_RGB_outbounds():
 @nose.with_setup(setup_function, teardown_function)
 def test_get_RGB():
 	'''Test getting Pixel RGB values methods.'''
-	tester_pixel = Pixel(pict.pixels, 0, 0)
+	tester_pixel = pixel.Pixel(pict.pixels, 0, 0)
 	assert pixel_has_color_values(tester_pixel, black_array), 'Improper color gotten'
 	assert tester_pixel.get_red() == 0, 'Improper color gotten'
 	assert tester_pixel.get_green() == 0, 'Improper color gotten'
@@ -128,13 +128,13 @@ def test_get_RGB():
 @nose.with_setup(setup_function, teardown_function)
 def test_set_get_color():
 	'''Test the setting and getting Color for Pixel.'''
-	colors = [Color(0, 0, 0), Color(-1, -1, -1), Color(0, 64, 32), Color(255, 255, 255)]
-	tester_pixel = Pixel(pict.pixels, 0, 0)
-	for color in colors:
+	colors = [color.Color(0, 0, 0), color.Color(0, 64, 32), color.Color(255, 255, 255)]
+	tester_pixel = pixel.Pixel(pict.pixels, 0, 0)
+	for col in colors:
 		# ensure that the colors are the same after setting and getting
-		tester_pixel.set_color(color)
-		assert pixel_has_color(tester_pixel, color), 'Colors do not match (' + str(tester_pixel) + ', ' + str(color) + ')'
-		assert tester_pixel.get_color() == color, 'Colors do not match (' + str(tester_pixel.get_color()) + ', ' + str(color) + ')'
+		tester_pixel.set_color(col)
+		assert pixel_has_color(tester_pixel, col), 'Colors do not match (' + str(tester_pixel) + ', ' + str(col) + ')'
+		assert tester_pixel.get_color() == col, 'Colors do not match (' + str(tester_pixel.get_color()) + ', ' + str(col) + ')'
 			
 @nose.with_setup(setup_function, teardown_function)
 def test_get_XY():
@@ -147,23 +147,8 @@ def test_get_XY():
 	assert len(input_coordinates) == len(expected_coordinates), 'Test arrays are not mapped 1:1'
 	# test each of the input coordinates, making sure they map to the correct expected coords
 	for idx in range(len(input_coordinates)):
-		tester_pixel = Pixel(large_pict.pixels, input_coordinates[idx][0], input_coordinates[idx][1])
+		tester_pixel = pixel.Pixel(large_pict.pixels, input_coordinates[idx][0], input_coordinates[idx][1])
 		assert pixel_has_XY(tester_pixel, expected_coordinates[idx][0], expected_coordinates[idx][1]), 'Improper XY coordinates (' + str(tester_pixel.get_x()) + ', ' + str(tester_pixel.get_y()) + ')'	
-
-@nose.with_setup(setup_function, teardown_function)
-def test_non_pixel_object_call():
-	'''Test that picture global convenience functions called on non-Pixel class raise appropriate ValueError.'''
-	nose.tools.assert_raises(ValueError, set_red, DummyClass(), 0)
-	nose.tools.assert_raises(ValueError, set_green, DummyClass(), 0)
-	nose.tools.assert_raises(ValueError, set_blue, DummyClass(), 0)
-	nose.tools.assert_raises(ValueError, get_red, DummyClass())
-	nose.tools.assert_raises(ValueError, get_green, DummyClass())
-	nose.tools.assert_raises(ValueError, get_blue, DummyClass())
-	nose.tools.assert_raises(ValueError, get_color, DummyClass())
-	nose.tools.assert_raises(ValueError, set_color, DummyClass(), None)
-	nose.tools.assert_raises(ValueError, set_color, Pixel(pict.pixels, 1, 1), None)
-	nose.tools.assert_raises(ValueError, get_x, DummyClass())
-	nose.tools.assert_raises(ValueError, get_y, DummyClass())
 	
 if __name__ == '__main__':
 	nose.runmodule()
