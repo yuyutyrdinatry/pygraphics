@@ -15,8 +15,9 @@ from color import *
 import mediawindows as mw
 import os
 
-init_picture()
+mw.init_mediawindows()
 init_sound()
+init_picture()
 
 ####################------------------------------------------------------------
 ## Global Picture Functions
