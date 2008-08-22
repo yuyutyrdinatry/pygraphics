@@ -533,8 +533,8 @@ class _InspectorBase(tk.Toplevel):
         
         tk.Toplevel.__init__(self)
         self.filename = pic.get_filename()
-        self.picture = pic
-        self.image = pic.get_image()
+        self.picture = pic.copy()
+        self.image = self.picture.get_image()
         self.orig_image = self.image
         self.display()
         
