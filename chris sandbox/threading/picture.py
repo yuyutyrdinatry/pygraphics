@@ -1,12 +1,12 @@
 '''The Picture class and helper functions. This currently supports the
 following formats: JPEG, BMP, GIF, TIFF, IM, MSP, PNG, PCX, and PPM.'''
 
-from color import *
 import Image
 import ImageDraw
 import ImageFont
 import ImageTk
-import mediawindows as mediawindows
+import color
+import mediawindows as mw
 import os
 import pixel
 
@@ -30,12 +30,14 @@ def init_picture():
     initializer.'''
     
     global PIC_INITIALIZED
-    PIC_INITIALIZED = True
-    mediawindows.init_mediawindows()
-    
+    if not PIC_INITIALIZED:
+        PIC_INITIALIZED = True
+        mw.init_mediawindows()
+    else:
+        raise Exception('Picture has already been initialized!')
     
 ####################------------------------------------------------------------
-## Sound object
+## Picture class
 ####################------------------------------------------------------------
 
 
@@ -43,7 +45,7 @@ class Picture(object):
     '''A Picture class as a wrapper for PIL's Image class.'''
     
     
-    def __init__(self, w=None, h=None, col=white, image=None, filename=None):
+    def __init__(self, w=None, h=None, col=color.white, image=None, filename=None):
         '''Create a Picture object.
         
         Requires one of:
@@ -52,11 +54,11 @@ class Picture(object):
         - named str argument filename, e.g. Picture(filename='image.jpg').'''
         
         if not PIC_INITIALIZED:
-            raise Exception('Picture is not initialized. Run init_picture() first.')
+            init_picture()
         
         self.set_filename_and_title(filename)
         self.win = None
-        self.showim = None
+        self.showimage = None
         
         if image != None:
             image = image
@@ -129,26 +131,35 @@ class Picture(object):
     
     
     def _make_window(self, x, y):
+        '''Create a PictureWindow x pixels wide and y pixels high and
+        store this window in self.win. Also, set the appropriate title.'''
         
-        title = 'File: %s' % self.get_filename() or 'None'
-        self.win = mediawindows.PictureWindow(title=title, width=x, height=y)
+        filename = self.get_filename()
+        if filename:
+            title = 'Filename: %s' %  filename
+        else:
+            title = 'Filename: None'
+        self.win = mw.PictureWindow(title=title, width=x, height=y)
         self.win.setCoords(0, y - 1, x - 1, 0)
     
     
     def _draw_image_to_win(self, win):
+        '''Draw self.showimage on PictureWindow win.'''
         
         width = win.getWidth()
         height = win.getHeight()
-        self.showim = mediawindows.WindowImage(mediawindows.WindowPoint(width/2, height/2), ImageTk.PhotoImage(self.get_image()))
-        self.showim.draw(win)
+        self.showimage = mw.WindowImage(mw.WindowPoint(width/2, height/2), \
+                                        ImageTk.PhotoImage(self.get_image()))
+        self.showimage.draw(win)
         
 
     def show(self):
+        '''Display this Picture. If it is already being displayed,
+        close the old display and re-display it.'''
         
-        if not PIC_INITIALIZED:
-            raise Exception('Picture is not initialized')
         if self.win:
-            self.win.close()
+            self.close()
+            
         width = self.get_width()
         height = self.get_height()
         self._make_window(width, height + 20)
@@ -156,12 +167,37 @@ class Picture(object):
         
         
     def update(self):
+        '''Update an already opened display for this Picture.
         
-        if self.win and self.showim:
+        NOTE: This does not updated the window size. To do so re-show the
+        window.'''
+        
+        if self.win and not self.win.is_closed() and self.showimage:
             width = self.get_width()
             height = self.get_height()
-            self.showim.undraw()
+            self.showimage.undraw()
             self._draw_image_to_win(self.win)
+        elif self.win and self.win.is_closed():
+            self.show()
+            
+            
+    def close(self):
+        '''Close this Picture's display.'''
+        
+        if self.win:
+            self.win.close()
+            self.win = None
+            self.showimage = None
+            
+            
+    def is_closed(self):
+        '''Return True if this Picture is not being displayed.'''
+        
+        if self.win:
+            return self.win.is_closed()
+        else:
+            return True
+    
     
     def inspect(self):
         '''Unimplemented.'''
@@ -387,7 +423,7 @@ def load_image(f):
     return Image.open(f).convert("RGB")
 
 
-def create_image(w, h, col=white):
+def create_image(w, h, col=color.white):
     '''Return a new PIL RGB Image object of Color col,
     w pixels wide, and h pixels high.'''
     

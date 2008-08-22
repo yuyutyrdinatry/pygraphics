@@ -11,6 +11,8 @@ sampling rate, encoding, and buffering can be changed in the sound.py file.'''
 
 from picture import *
 from sound import *
+from color import *
+import mediawindows as mw
 import os
 
 init_picture()
@@ -414,3 +416,33 @@ def copy(obj):
     objects.'''
     
     return obj.copy()
+
+
+####################------------------------------------------------------------
+## Dialogs
+####################------------------------------------------------------------
+
+def choose_save_filename():
+    '''Prompt user to pick a directory and filename. Return the path
+    to the new file. Change the current working directory to the directory 
+    where the file chosen by the user is.'''
+
+    return mw.choose_save_filename()
+
+def choose_file():
+    '''Prompt user to pick a file. Return the path to that file. 
+    Change the current working directory to the directory 
+    where the file chosen by the user is'''
+    
+    return mw.choose_file()
+
+def choose_folder():
+    '''Prompt user to pick a folder. Return the path to that folder. 
+    Change the current working directory to the directory chosen by the user.'''
+
+    return mw.choose_folder()
+
+def choose_color():
+    '''Prompt user to pick a color. Return a RGB Color object.'''
+
+    return mw.choose_color()

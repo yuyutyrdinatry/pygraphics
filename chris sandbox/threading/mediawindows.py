@@ -10,9 +10,13 @@ import exceptions
 
 class GraphicsError(exceptions.Exception):
     """Generic error class for graphics module exceptions."""
+    
     def __init__(self, args=None):
-        self.args=args
+        '''Create an Error.'''
+        
+        self.args = args
 
+# Error message strings
 OBJ_ALREADY_DRAWN = "Object currently drawn"
 UNSUPPORTED_METHOD = "Object doesn't support operation"
 BAD_OPTION = "Illegal option value"
@@ -36,6 +40,7 @@ _THREAD_RUNNING = False
 _EXCEPTION_INFO = None
 
 def _tk_thread():
+    
     global _ROOT
     _ROOT = tk.Tk()
     _ROOT.withdraw()
@@ -43,6 +48,7 @@ def _tk_thread():
     _ROOT.mainloop()
 
 def _tk_pump():
+    
     global _THREAD_RUNNING
     
     while not _TK_REQUEST.empty():
@@ -92,11 +98,11 @@ def _tkExec(f, *args, **kw):
 tkExec = _tkExec
 
 def _tkShutdown():
-    # shutdown the tk thread
+    '''Shut down the tk thread.'''
+
     global _THREAD_RUNNING
-    #_tkExec(sys.exit)
     _THREAD_RUNNING = False
-    time.sleep(.5) # give tk thread time to quit
+    time.sleep(.5)
 
 ####################------------------------------------------------------------
 ## Initializer
@@ -177,7 +183,7 @@ class PictureWindow(tk.Canvas):
         self.master.destroy()
         _ROOT.update()
 
-    def isClosed(self):
+    def is_closed(self):
         return self.closed
 
     def __autoflush(self):
@@ -214,7 +220,7 @@ class PictureWindow(tk.Canvas):
         while self.mouseX == None or self.mouseY == None:
             #self.update()
             _tkCall(self.update)
-            if self.isClosed(): raise GraphicsError, "getMouse in closed window"
+            if self.is_closed(): raise GraphicsError, "getMouse in closed window"
             time.sleep(.1) # give up thread
         x,y = self.toWorld(self.mouseX, self.mouseY)
         self.mouseX = None
@@ -224,7 +230,7 @@ class PictureWindow(tk.Canvas):
     def checkMouse(self):
         """Return mouse click last mouse click or None if mouse has
         not been clicked since last call"""
-        if self.isClosed():
+        if self.is_closed():
             raise GraphicsError, "checkMouse in closed window"
         _tkCall(self.update)
         if self.mouseX != None and self.mouseY != None:
@@ -349,8 +355,8 @@ class GraphicsObject(object):
         window. Raises an error if attempt made to draw an object that
         is already visible."""
 
-        if self.canvas and not self.canvas.isClosed(): raise GraphicsError, OBJ_ALREADY_DRAWN
-        if graphwin.isClosed(): raise GraphicsError, "Can't draw to closed window"
+        if self.canvas and not self.canvas.is_closed(): raise GraphicsError, OBJ_ALREADY_DRAWN
+        if graphwin.is_closed(): raise GraphicsError, "Can't draw to closed window"
         self.canvas = graphwin
         #self.id = self._draw(graphwin, self.config)
         self.id = _tkCall(self._draw, graphwin, self.config)
@@ -364,7 +370,7 @@ class GraphicsObject(object):
         object is not currently drawn."""
         
         if not self.canvas: return
-        if not self.canvas.isClosed():
+        if not self.canvas.is_closed():
             #self.canvas.delete(self.id)
             _tkExec(self.canvas.delete, self.id)
             if self.canvas.autoflush:
@@ -380,7 +386,7 @@ class GraphicsObject(object):
         
         self._move(dx,dy)
         canvas = self.canvas
-        if canvas and not canvas.isClosed():
+        if canvas and not canvas.is_closed():
             trans = canvas.trans
             if trans:
                 x = dx/ trans.xscale 
@@ -402,7 +408,7 @@ class GraphicsObject(object):
             raise GraphicsError, UNSUPPORTED_METHOD
         options = self.config
         options[option] = setting
-        if self.canvas and not self.canvas.isClosed():
+        if self.canvas and not self.canvas.is_closed():
             #self.canvas.itemconfig(self.id, options)
             _tkExec(self.canvas.itemconfig, self.id, options)
             if self.canvas.autoflush:
@@ -514,7 +520,11 @@ def choose_save_filename():
     to the new file. Change the current working directory to the directory 
     where the file chosen by the user is.'''
 
-    path = _tkCall(tkFileDialog.asksaveasfilename, parent=_ROOT, initialdir=os.getcwd())
+    path = None
+    try:
+        path = _tkCall(tkFileDialog.asksaveasfilename, parent=_ROOT, initialdir=os.getcwd())
+    except:
+        pass
     if path:
         os.chdir(os.path.dirname(path))
         return path
@@ -525,7 +535,11 @@ def choose_file():
     Change the current working directory to the directory 
     where the file chosen by the user is'''
     
-    path = _tkCall(tkFileDialog.askopenfilename, parent=_ROOT, initialdir=os.getcwd())
+    path = None
+    try: 
+        path = _tkCall(tkFileDialog.askopenfilename, parent=_ROOT, initialdir=os.getcwd())
+    except:
+        pass
     if path:
         os.chdir(os.path.dirname(path))
         return path
@@ -535,7 +549,11 @@ def choose_folder():
     '''Prompt user to pick a folder. Return the path to that folder. 
     Change the current working directory to the directory chosen by the user.'''
 
-    path = _tkCall(tkFileDialog.askdirectory, parent=_ROOT, initialdir=os.getcwd())
+    path = None
+    try:
+        path = _tkCall(tkFileDialog.askdirectory, parent=_ROOT, initialdir=os.getcwd())
+    except:
+        pass
     if path:
         os.chdir(os.path.dirname(path))
         return path
@@ -544,6 +562,10 @@ def choose_folder():
 def choose_color():
     '''Prompt user to pick a color. Return a RGB Color object.'''
 
-    color = _tkCall(tkFileDialog.askcolor, parent=_ROOT)
+    color = None
+    try: 
+        color = _tkCall(tkFileDialog.askcolor, parent=_ROOT)
+    except:
+        pass
     if color[0]:
         return Color(color[0][0], color[0][1], color[0][2])
