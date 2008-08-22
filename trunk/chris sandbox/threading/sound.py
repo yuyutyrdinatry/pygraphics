@@ -50,18 +50,18 @@ def init_sound(samp_rate=44100, encoding=-16, channels=2):
     DEFAULT_CHANNELS, DEFAULT_BUFFERING
             
     if not SND_INITIALIZED:
-        if not picture.PIC_INITIALIZED:
-            picture.init_picture()
+        if not mw._THREAD_RUNNING:
+            mw.init_mediawindows()
         DEFAULT_SAMP_RATE = samp_rate
         DEFAULT_ENCODING = encoding
         DEFAULT_CHANNELS = channels
         DEFAULT_BUFFERING = 3072
-        SND_INITIALIZED = True
         pygame.mixer.pre_init(DEFAULT_SAMP_RATE, 
                               DEFAULT_ENCODING, 
                               DEFAULT_CHANNELS, 
                               DEFAULT_BUFFERING)
-        mw._tkExec(pygame.mixer.init)
+        mw.thread_exec(pygame.mixer.init)
+        SND_INITIALIZED = True
     else:
         raise Exception('Sound has already been initialized!')
 
@@ -88,7 +88,7 @@ class Sound(object):
         over seconds, which in turn takes precedence over sound.'''
         
         if not SND_INITIALIZED:
-            init_sound()
+            raise Exception('Sound is not initialized. Run init_sound() first.')
         
         self.channels = DEFAULT_CHANNELS
         self.samp_rate = DEFAULT_SAMP_RATE
@@ -466,7 +466,7 @@ class Note(Sound):
         and negative to lower by that many.'''
         
         if not SND_INITIALIZED:
-            init_sound()
+            raise Exception('Sound is not initialized. Run init_sound() first.')
         
         self.channels = DEFAULT_CHANNELS
         self.samp_rate = DEFAULT_SAMP_RATE

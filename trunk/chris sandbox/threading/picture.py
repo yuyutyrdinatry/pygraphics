@@ -24,15 +24,16 @@ PIC_INITIALIZED = False
 ####################------------------------------------------------------------
 
 def init_picture():
-    '''Initialize this Picture module. Must be done before using Pictures.
-    
-    NOTE: If used with sound.py module this must be run BEFORE the sound
-    initializer.'''
+    '''Initialize this Picture module. Must be done before using Pictures.'''
     
     global PIC_INITIALIZED
     if not PIC_INITIALIZED:
+        
+        # All we need to know is if the thread is running. If it is it
+        # it's ok to say that Picture is initialized.
+        if not mw._THREAD_RUNNING:
+            mw.init_mediawindows()
         PIC_INITIALIZED = True
-        mw.init_mediawindows()
     else:
         raise Exception('Picture has already been initialized!')
     
@@ -54,11 +55,12 @@ class Picture(object):
         - named str argument filename, e.g. Picture(filename='image.jpg').'''
         
         if not PIC_INITIALIZED:
-            init_picture()
+            raise Exception('Picture is not initialized. Run init_picture() first.')
         
         self.set_filename_and_title(filename)
         self.win = None
         self.showimage = None
+        self.inspector = None
         
         if image != None:
             image = image
@@ -202,7 +204,9 @@ class Picture(object):
     def inspect(self):
         '''Unimplemented.'''
         
-        pass
+        if self.inspector:
+            mw.thread_exec(self.inspector.destroy)
+        self.inspector = mw.thread_exec_return(mw.PictureInspector, self)
     
     def get_pixel(self, x, y):
         '''Return the Pixel at coordinates (x, y).'''
