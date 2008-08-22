@@ -6,6 +6,7 @@ file.'''
 
 import sample
 import picture
+import mediawindows as mw
 import Image
 import math
 import numpy
@@ -15,31 +16,20 @@ import sndhdr
 import os
 
 ####################------------------------------------------------------------
-## Defaults
+## Defaults and Globals
 ####################------------------------------------------------------------
 
 GRAPH_COLOR_THEMES = {'NOTEBOOK' : ((229, 225, 193), (34, 13, 13)),
-                      'OCEAN' : ((27, 68, 243), (255, 255, 255)),
-                      'HEART' : ((22, 27, 23), (0, 255, 0)),
-                      'BLACKONWHITE' : ((255, 255, 255), (0, 0, 0)),
-                      'WHITEONBLACK' : ((0, 0, 0), (255, 255, 255))}
+                      'OCEAN' : ((0, 64, 128), (255, 255, 255)),
+                      'HEART' : ((0, 0, 0), (0, 255, 0)),
+                      'DEFAULT' : ((255, 255, 255), (0, 0, 0)),
+                      'PRO' : ((0, 0, 0), (255, 255, 255))}
 SOUND_FORMATS = ['.wav']
-DEFAULT_SAMP_RATE = 44100
-DEFAULT_ENCODING = -16
-DEFAULT_CHANNELS = 2
-DEFAULT_BUFFERING = 3072
-pygame.mixer.pre_init(DEFAULT_SAMP_RATE, 
-                      DEFAULT_ENCODING, 
-                      DEFAULT_CHANNELS, 
-                      DEFAULT_BUFFERING)
-pygame.mixer.init()
-#else:
-#    DEFAULT_SAMP_RATE = DEFAULTS[0]
-#    DEFAULT_ENCODING = DEFAULTS[1]
-#    
-#    # pygame.mixer.get_init() returns channels 0-based, 1 channel is 0, 2 is 1
-#    DEFAULT_CHANNELS = DEFAULTS[2] + 1
-
+DEFAULT_SAMP_RATE = None
+DEFAULT_ENCODING = None
+DEFAULT_CHANNELS = None
+DEFAULT_BUFFERING = None
+SND_INITIALIZED = False
 AUDIO_ENCODINGS = { 8 : numpy.uint8,   # unsigned 8-bit
      16 : numpy.uint16, # unsigned 16-bit
      -8 : numpy.int8,   # signed 8-bit
@@ -47,7 +37,36 @@ AUDIO_ENCODINGS = { 8 : numpy.uint8,   # unsigned 8-bit
      }
 
 ####################------------------------------------------------------------
-## Sound object
+## Initializer
+####################------------------------------------------------------------
+
+def init_sound(samp_rate=44100, encoding=-16, channels=2):
+    '''Initialize this module. Must be done before any sounds are created.
+    
+    WARNING: If used with picture.py, it must be initialized after initializing
+    picture.py.'''
+    
+    global SND_INITIALIZED, DEFAULT_SAMP_RATE, DEFAULT_ENCODING, \
+    DEFAULT_CHANNELS, DEFAULT_BUFFERING
+            
+    if not SND_INITIALIZED:
+        if not mw._THREAD_RUNNING:
+            mw.init_mediawindows()
+        DEFAULT_SAMP_RATE = samp_rate
+        DEFAULT_ENCODING = encoding
+        DEFAULT_CHANNELS = channels
+        DEFAULT_BUFFERING = 3072
+        pygame.mixer.pre_init(DEFAULT_SAMP_RATE, 
+                              DEFAULT_ENCODING, 
+                              DEFAULT_CHANNELS, 
+                              DEFAULT_BUFFERING)
+        mw.thread_exec(pygame.mixer.init)
+        SND_INITIALIZED = True
+    else:
+        raise Exception('Sound has already been initialized!')
+
+####################------------------------------------------------------------
+## Sound class
 ####################------------------------------------------------------------
 
 
@@ -68,10 +87,14 @@ class Sound(object):
         Filename takes precedence over samples, which take precedence 
         over seconds, which in turn takes precedence over sound.'''
         
+        if not SND_INITIALIZED:
+            raise Exception('Sound is not initialized. Run init_sound() first.')
+        
         self.channels = DEFAULT_CHANNELS
         self.samp_rate = DEFAULT_SAMP_RATE
         self.numpy_encoding = AUDIO_ENCODINGS[DEFAULT_ENCODING]
         self.encoding = DEFAULT_ENCODING
+        self.inspectpic = None
         self.set_filename(filename)
         
         if filename != None:
@@ -92,7 +115,7 @@ class Sound(object):
                     
         self.set_pygame_sound(snd)
             
-            
+    
     def __str__(self):
         '''Return the number of Samples in this Sound as a str.'''
         
@@ -191,14 +214,14 @@ class Sound(object):
             first_chunk = self.samples[:i]
             second_chunk = self.samples[i:]
             new_samples = numpy.concatenate((first_chunk, 
-                                             snd.sound_array, 
+                                             snd.samples, 
                                              second_chunk))
             self.set_pygame_sound(sample_array_to_pygame(new_samples))
         elif self.get_channels() == snd.get_channels() == 2:
             first_chunk = self.samples[:i, :]
             second_chunk = self.samples[i:, :]
             new_samples = numpy.vstack((first_chunk, 
-                                        snd.sound_array, 
+                                        snd.samples, 
                                         second_chunk))
             
             self.set_pygame_sound(sample_array_to_pygame(new_samples))
@@ -228,25 +251,35 @@ class Sound(object):
         self.samples = self.samples * min(int(32767/maximum), int(32767/abs(minimum)))
         
         
-    def inspect(self, first=0, last=-1, theme='BLACKONWHITE'):
+    def inspect(self, first=0, last=-1, theme='DEFAULT'):
         '''Make and display this Sound's waveform graph from index first 
-        to last.'''
+        to last. If the Sound is already displayed updated it's open
+        Picture.'''
         
         chunk = self.copy()
         chunk.crop(first, last)
-        graph = chunk.get_waveform_graph(len(chunk) / 12500, x=1250, y=128, theme=theme)
-        graph.image.show()
-
-
-    def get_waveform_graph(self, s_per_pixel, x=None, y=None, theme='BLACKONWHITE'):
+        if self.inspectpic and not self.inspectpic.is_closed():
+            graph = chunk.get_waveform_image(len(chunk) / 12500, theme=theme)
+            graph = graph.resize((1250, 128), Image.ANTIALIAS)
+            self.inspectpic.set_image(graph)
+            self.inspectpic.update()
+        else:
+            self.inspectpic = chunk.get_waveform_graph(len(chunk) / 12500, x=1250, y=128, theme=theme)
+            self.inspectpic.show()
+        
+        
+    def get_waveform_graph(self, s_per_pixel, x=None, y=None, theme='DEFAULT'):
         '''Return a Picture object with this Sound's waveform point graph
         with s_per_pixel samples per pixel. If specified the picture will
         be resized to x pixels wide and y pixels high. This works best 
         with sounds in a 16 signed bits encoding.
         
-        WARNING: This can take very long if too many samples per pixel 
-        are asked for. 600 s_per_pixel for songs of around 3 minutes is 
-        recommended, 100 for 30 seconds, etc.'''
+        WARNING: 
+        This can take very long if too many samples per pixel 
+        are asked for.
+        
+        RECOMMENDED ARGUMENTS: 
+        somesound.get_waveform_graph(len(somesound) / 12500, x=1250, y=128)'''
     
         graph = self.get_waveform_image(s_per_pixel, theme=theme)
         if x and y:
@@ -254,17 +287,18 @@ class Sound(object):
         return picture.Picture(image=graph)
     
     
-    def get_waveform_image(self, s_per_pixel, v_per_pixel=128, theme="BLACKONWHITE"):
+    def get_waveform_image(self, s_per_pixel, v_per_pixel=128, theme="DEFAULT"):
         '''Return a PIL Image object with this Sound's waveform point graph
         with s_per_pixel samples per pixel and v_per_pixel values per pixel. 
         
-        NOTE: Sounds encoded in 16 bits have a possible range of values from
-        -32768 to 32767. This is a range of about 65536. Therefore to have a graph
-        of 512 pixels high a v_per_pixel of 128 is default.
+        NOTE: 
+        Sounds encoded in 16 bits have a possible range of values from
+        -32768 to 32767. This is a range of about 65536. Therefore to have 
+        a graph of 512 pixels high a v_per_pixel of 128 is needed as default.
         
-        WARNING: This method can take very long if too many samples per pixel 
-        are asked for. 600 s_per_pixel for sounds of around 3 minutes is 
-        recommended, 100 for 30 seconds, etc.'''
+        WARNING: 
+        This method can take very long if too many samples per pixel 
+        are asked for.'''
         
         if v_per_pixel < 1:
             v_per_pixel = 1
@@ -431,10 +465,14 @@ class Note(Sound):
         positive or negative int. Positive to raise by that many octaves
         and negative to lower by that many.'''
         
+        if not SND_INITIALIZED:
+            raise Exception('Sound is not initialized. Run init_sound() first.')
+        
         self.channels = DEFAULT_CHANNELS
         self.samp_rate = DEFAULT_SAMP_RATE
         self.numpy_encoding = AUDIO_ENCODINGS[DEFAULT_ENCODING]
         self.encoding = DEFAULT_ENCODING
+        self.inspectpic = None
         self.set_filename(None)
 
         if octave < 0:
