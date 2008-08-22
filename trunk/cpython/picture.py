@@ -402,6 +402,7 @@ class Picture(object):
             self.image.save(filename + '.bmp')
         else:
             self.save_as(self.filename)
+            
     
     def save_as(self, filename):
         '''Write this Picture to filename filename and re-set filename and
