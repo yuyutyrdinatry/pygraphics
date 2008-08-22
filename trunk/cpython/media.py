@@ -9,17 +9,19 @@ Sounds support only uncompressed WAV files. For best quality use WAV files
 with sampling rates of either 22050 or 44100. The default number of channels,
 sampling rate, encoding, and buffering can be changed in the sound.py file.'''
 
-
-import os
-import pygame
-import wx
-import wx.lib.imagebrowser as ib
 from picture import *
 from sound import *
+from color import *
+import mediawindows as mw
+import os
 
-##
-## Global picture functions ---------------------------------------------------
-##
+mw.init_mediawindows()
+init_sound()
+init_picture()
+
+####################------------------------------------------------------------
+## Global Picture Functions
+####################------------------------------------------------------------
 
 
 def load_picture(filename):
@@ -138,9 +140,9 @@ def add_polygon_filled(pic, point_list, col):
     pic.add_polygon_filled(col, point_list)
 
 
-##
-## Global pixel functions ------------------------------------------------------
-##
+####################------------------------------------------------------------
+## Global Pixel Functions
+####################------------------------------------------------------------
 
 
 def set_red(pix, r):
@@ -203,9 +205,9 @@ def get_y(pix):
     return pix.get_y()
 
 
-##
-## Global color functions ------------------------------------------------------
-##
+####################------------------------------------------------------------
+## Global Color Functions
+####################------------------------------------------------------------
 
 
 def distance(col1, col2):
@@ -233,9 +235,9 @@ def create_color(r, g, b):
     return Color(r, g, b)
 
 
-##
-## Global sound functions ------------------------------------------------------
-##
+####################------------------------------------------------------------
+## Global Sound Functions
+####################------------------------------------------------------------
 
 
 def load_sound(filename):
@@ -305,9 +307,9 @@ def get_sample(snd, i):
     return snd.get_sample(i)
 
 
-##
-## Global sample functions -----------------------------------------------------
-##
+####################------------------------------------------------------------
+## Global Sample Functions
+####################------------------------------------------------------------
 
 
 def set_value(mono_samp, v):
@@ -378,9 +380,9 @@ def get_spectrum(snd, width=1024, height=300):
   
     pass
 
-##
-## Media functions -------------------------------------------------------
-##
+####################------------------------------------------------------------
+## Global Media Object Functions
+####################------------------------------------------------------------
 
 
 def save_as(obj, filename=None):
@@ -417,213 +419,31 @@ def copy(obj):
     return obj.copy()
 
 
+####################------------------------------------------------------------
+## Dialogs
+####################------------------------------------------------------------
+
 def choose_save_filename():
     '''Prompt user to pick a directory and filename. Return the path
     to the new file. Change the current working directory to the directory 
     where the file chosen by the user is.'''
-    
-    app = wx.App()
-       
-    dlg = wx.FileDialog(None, message="Choose a filename:", 
-                        defaultDir=os.getcwd(), style=wx.SAVE)
-    if dlg.ShowModal() == wx.ID_OK:
-        path = dlg.GetPath()
-        os.chdir(os.path.dirname(path))
-        return path
-    dlg.Destroy()
 
+    return mw.choose_save_filename()
 
 def choose_file():
     '''Prompt user to pick a file. Return the path to that file. 
     Change the current working directory to the directory 
     where the file chosen by the user is'''
     
-    app = wx.App()
-         
-    dlg = wx.FileDialog(None, message="Choose a file:", defaultDir=os.getcwd(),
-                        style=wx.OPEN)
-    if dlg.ShowModal() == wx.ID_OK:
-        path = dlg.GetPath()
-        os.chdir(os.path.dirname(path))
-        return path
-    dlg.Destroy()
-
+    return mw.choose_file()
 
 def choose_folder():
     '''Prompt user to pick a folder. Return the path to that folder. 
     Change the current working directory to the directory chosen by the user.'''
-   
-    app = wx.App()
 
-    dlg = wx.DirDialog(None, defaultPath=os.getcwd())
-    if dlg.ShowModal() == wx.ID_OK:
-        path = dlg.GetPath()
-        os.chdir(os.path.dirname(path))
-        return path
-    dlg.Destroy()
-
+    return mw.choose_folder()
 
 def choose_color():
     '''Prompt user to pick a color. Return a RGB Color object.'''
-    
-    app = wx.App()
-     
-    dlg = wx.ColourDialog(None)
-    dlg.GetColourData().SetChooseFull(True)
-    if dlg.ShowModal() == wx.ID_OK:
-        data = dlg.GetColourData().GetColour().Get()
-        return Color(data[0], data[1], data[2])
-    dlg.Destroy()
 
- 
-def get_formats():
-    '''Return a string from the global variable IMAGE_FORMATS.
-    
-    This string is usable by the wxFileDialog object to specify
-    the available file formats.'''
-    
-    formats = ''
-    for format in IMAGE_FORMATS:
-        format = format[-3:].upper() + ' files (' + format + ')|' + format + '|'
-        formats += format
-    for format in AUDIO_FORMATS:
-        format = format[-3:].upper() + ' files (' + format + ')|' + format + '|'
-        formats += format
-    
-    return formats[:-1]
-
-
-def ask(s, num=False, hidden=False, choices=None, multi=False):
-    '''Display a dialog containing s, a text field for a response, and an "OK"
-    and "CANCEL" button. The optional parameters modify the look of the dialog
-    in listed priority: 
-        If the optional bool num is given as True, the dialog will contain
-    a numerical input slider. Return an int of the input.
-        If the optional bool hidden is given as True, the entry box will show
-    all text given in a manner similar to a password box. Return a str of the
-    input.
-        If the optional list choices is given which is a list of strings, the 
-    dialog box will show a selection box from where the user may choose one 
-    of the given options. Return an int indicating the index of the chosen
-    option in choices. If the bool multi is given as True, the user may choose
-    multiple options from the given choices. Will return a list of ints
-    indicating the indices of the selected options from the given choices.'''
-
-    app = wx.App()
-    
-    # Ignore all other parameters, will only show a number entry box!
-    if ( num is not False ):
-        dlg, get_bind = _ask_num(s)
-    
-    # Now we want a password input box, all other parameters ignored.
-    elif ( hidden is not False ):
-        dlg, get_bind = _ask_hidden(s)
-        
-    # Choices have been specified, so show a selection dialog
-    elif ( choices is not None ):
-        dlg, get_bind = _ask_multi(s, choices, multi)
-    
-    # Default behaviour, simple text entry dialog
-    else:
-        dlg, get_bind = _ask_default(s)
-        
-    if ( dlg.ShowModal() == wx.ID_OK ):
-        dlg.Destroy()
-        return get_bind()
-
-def _ask_num(s):
-    '''Given a str s, show a wxNumberEntryDialog with the given text. The user
-    may input a number between [0, 2**30] inclusive. Return a tuple of the
-    open dialog box and the method which can be used to retrieve the data from
-    the dialog box. Assumes a wxApp is already open.'''
-    
-    dlg = wx.NumberEntryDialog(None, s, prompt="Input:", 
-                               caption="Please enter a number...", value=0,
-                               min=0, max=2**30)
-    get_bind = dlg.GetValue
-    return (dlg, get_bind)
-
-def _ask_hidden(s):
-    '''Given a str s, show a wxPasswordEntryDialog with the given text. The user
-    may input any string. Return a tuple of the open dialog box and the method 
-    which can be used to retrieve the data from the dialog box. Assumes a wxApp
-    is already open.'''
-    
-    dlg = wx.PasswordEntryDialog(None, s, caption="Please input data...")
-    get_bind = dlg.GetValue
-    return (dlg, get_bind)
-
-def _ask_multi(s, choices, multi=False):
-    '''Given a str s, and a list of strs choices, show a wxSingleChoiceDialog
-    with the given text s. If the optional boolean multi is True, then show a
-    wxMultiChoiceDialog instead. The open dialog will be populated by the
-    options given in choices. Return a tuple of the open dialog box and the 
-    method which can be used to retrieve the data from the dialog box. Assumes a
-    wxApp is already open.'''
-    
-    if ( multi is False ):
-        dlg = wx.SingleChoiceDialog(None, s, "Please choose an option...",
-                                    choices)
-        get_bind = dlg.GetSelection
-    else:
-        dlg = wx.MultiChoiceDialog(None, s, 
-                                   "Please choose one or more options...",
-                                   choices)
-        get_bind = dlg.GetSelections
-    return (dlg, get_bind)
-
-def _ask_default(s):
-    '''Given a str s, show a wxTextEntryDialog with the given text. The user may
-    input any string. Return a tuple of the open dialog box and the method which
-    can be used to retrieve the data from the dialog box. Assumes a wxApp is 
-    already open.'''
-    
-    dlg = wx.TextEntryDialog(None, s, "Please input data...")
-    get_bind = dlg.GetValue
-    return (dlg, get_bind)
-
-def say(s):
-    '''Display a dialog containing s and an "OK" button.'''
-    
-    app = wx.App()
-    
-    dlg = wx.MessageDialog(None, s, caption='Message for you!', 
-                           style=wx.OK|wx.ICON_INFORMATION|wx.STAY_ON_TOP)
-    dlg.ShowModal()
-    dlg.Destroy()
-
-def browse(dir=None):
-    '''Display an image browser for directory dir, or the current directory if
-    dir is None.'''
-    
-    app = wx.App()
-    #panel = wx.Panel(app, -1)
-    
-    # set the initial directory for the demo bitmaps
-    initial_dir = os.getcwd()
-
-    # open the image browser dialog
-    dlg = ib.ImageDialog(None, initial_dir)
-
-    dlg.Centre()
-    if dlg.ShowModal() == wx.ID_OK:
-        # show the selected file
-        say("You Selected File: " + dlg.GetFile())        
-    else:
-        say("You pressed Cancel\n")
-
-    dlg.Destroy()
-
-if __name__ == '__main__':
-    L = []
-    L.append(browse())
-    # L.append(say('this is a say box'))
-    # L.append(ask('plain old default ask box'))
-    # L.append(ask('we want a number', num=True))
-    # L.append(ask('passwords for all! :o', hidden=True))
-    # L.append(ask('so many choices...', choices=['choice 1', 'choice 2', 'choice 3']))
-    # L.append(ask('so little time...', choices=['oh', 'my', 'gawd'], multi=True))
-    print L
-    
-#    s = load_sound('/work/songsparrow.wav')
-#    s.play()
+    return mw.choose_color()
