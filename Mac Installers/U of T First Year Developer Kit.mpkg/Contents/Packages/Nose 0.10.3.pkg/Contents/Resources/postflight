@@ -1,0 +1,9 @@
+#!/bin/sh
+
+cd /Library/Frameworks/Python.framework/Versions/Current/lib/python2.5/site-packages
+chmod -v ug=rwX,o=r-X easy-install.pth
+chmod -v ug=rwX,o=r-X setuptools.pth
+
+cd $2
+rm -rf ./nose_installer_temp
+exit 0

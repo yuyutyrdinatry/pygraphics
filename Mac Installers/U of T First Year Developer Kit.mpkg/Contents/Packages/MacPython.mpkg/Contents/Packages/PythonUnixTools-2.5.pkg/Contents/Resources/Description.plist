@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IFPkgDescriptionDescription</key>
+	<string>This package installs the unix tools in /usr/local/bin for
+compatibility with older releases of MacPython. This package
+is not necessary to use MacPython.
+</string>
+	<key>IFPkgDescriptionTitle</key>
+	<string>UNIX command-line tools</string>
+	<key>IFPkgDescriptionVersion</key>
+	<string>2.5.2</string>
+</dict>
+</plist>

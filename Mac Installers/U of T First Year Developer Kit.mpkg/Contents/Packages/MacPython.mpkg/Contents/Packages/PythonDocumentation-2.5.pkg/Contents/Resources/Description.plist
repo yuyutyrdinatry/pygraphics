@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IFPkgDescriptionDescription</key>
+	<string>This package installs the python documentation at a location
+that is useable for pydoc and IDLE. If you have installed Xcode
+it will also install a link to the documentation in
+/Developer/Documentation/Python
+</string>
+	<key>IFPkgDescriptionTitle</key>
+	<string>Python Documentation</string>
+	<key>IFPkgDescriptionVersion</key>
+	<string>2.5.2</string>
+</dict>
+</plist>

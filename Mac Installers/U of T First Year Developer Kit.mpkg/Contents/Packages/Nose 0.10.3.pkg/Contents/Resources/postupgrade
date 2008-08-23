@@ -1,0 +1,6 @@
+#!/bin/sh
+PATH="/Library/Frameworks/Python.framework/Versions/Current/bin:"$PATH
+cd $2nose_installer_temp
+sh setuptools-0.6c8-py2.5.egg
+easy_install -v nose
+exit 0
