@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IFPkgDescriptionDescription</key>
+	<string>This package updates the system python installation on
+Mac OS X 10.3 to ensure that you can build new python extensions
+using that copy of python after installing this version.
+</string>
+	<key>IFPkgDescriptionTitle</key>
+	<string>Fix system Python</string>
+	<key>IFPkgDescriptionVersion</key>
+	<string>2.5.2</string>
+</dict>
+</plist>

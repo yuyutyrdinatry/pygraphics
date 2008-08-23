@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IFPkgDescriptionDescription</key>
+	<string>(Optional) PyObjC Documentation
+Installed to: /Developer/Python/PyObjC/Documentation</string>
+	<key>IFPkgDescriptionTitle</key>
+	<string>pyobjc-docs-py2.5-macosx10.4</string>
+	<key>IFPkgDescriptionVersion</key>
+	<string>1.4</string>
+</dict>
+</plist>
