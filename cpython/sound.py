@@ -250,7 +250,18 @@ class Sound(object):
         minimum = self.samples.min()
         self.samples = self.samples * min(int(32767/maximum), int(32767/abs(minimum)))
         
+    
+    def close_inspect(self):
+        '''Close the Inspector window.'''
         
+        if self.inspectpic and not self.inspectpic.is_closed():
+            self.inspectpic.close()
+            self.inspectpic = None
+        elif self.inspectpic.is_closed():
+            self.inspectpic = None
+        else:
+            pass # Error?
+    
     def inspect(self, first=0, last=-1, theme='DEFAULT'):
         '''Make and display this Sound's waveform graph from index first 
         to last. If the Sound is already displayed updated it's open

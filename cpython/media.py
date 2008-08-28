@@ -76,6 +76,25 @@ def show(pic):
     pic.show()
 
 
+def show_external(pic):
+    '''Display Picture pic in an external application. The specific application
+    depends on the operating system.'''
+    
+    pic.show_external()
+
+    
+def update(pic):
+    '''Update Picture pic's display window.'''
+    
+    pic.update()
+    
+
+def close(pic):
+    '''Close Picture pic's display.'''
+    
+    pic.close()
+
+
 def add_line(pic, x1, y1, x2, y2, col):
     '''Draw a line of Color col from (x1, y1) to (x2, y2) on Picture pic.'''
     
@@ -411,6 +430,13 @@ def inspect(obj):
     
     obj.inspect()
 
+
+def close_inspect(obj):
+    '''Close an open inspector window for object obj. Works on Sound and
+    Picture objects.'''
+    
+    obj.close_inspect()
+    
 
 def copy(obj):
     '''Return a deep copy of object obj. Works on Color, Sound, and Picture 
