@@ -167,9 +167,15 @@ class Picture(object):
         self._make_window(width, height + 20)
         self._draw_image_to_win(self.win)
         
+    def show_external(self):
+        '''Display this Picture in an external application. The application
+        used is system dependant.'''
+        
+        self.image.show()
+        
         
     def update(self):
-        '''Update an already opened display for this Picture.
+        '''Update an already opened internal display for this Picture.
         
         NOTE: This does not updated the window size. To do so re-show the
         window.'''
@@ -202,11 +208,21 @@ class Picture(object):
     
     
     def inspect(self):
-        '''Unimplemented.'''
+        '''Inspect this Picture in a PictureInspector window, where inspection
+        of specific pixels is possible.'''
         
         if self.inspector:
             mw.thread_exec(self.inspector.destroy)
         self.inspector = mw.thread_exec_return(mw.PictureInspector, self)
+
+
+    def close_inspect(self):
+        '''Close this Picture's open PictureInspector window.'''
+        
+        if self.inspector:
+            mw.thread_exec(self.inspector.destroy)
+        self.inspector = None
+        
     
     def get_pixel(self, x, y):
         '''Return the Pixel at coordinates (x, y).'''
