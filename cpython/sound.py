@@ -468,13 +468,15 @@ class Note(Sound):
     
     def __init__(self, note, s, octave=0):
         '''Create a Note s samples long with the frequency according to 
-        str note. The following notes are available, starting at middle C:
-        
+        str note. The following are acceptable arguments for note, starting 
+        at middle C:
+            
         'C', 'D', 'E', 'F', 'G', 'A', and 'B'
-        
+            
         To raise or lower an octave specify the argument octave as a
         positive or negative int. Positive to raise by that many octaves
         and negative to lower by that many.'''
+
         
         if not SND_INITIALIZED:
             raise Exception('Sound is not initialized. Run init_sound() first.')
