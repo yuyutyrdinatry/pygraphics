@@ -37,7 +37,7 @@ def create_picture(w, h, col=white):
     return Picture(w, h, col)
 
 
-def crop(pic, x1, y1, x2, y2):
+def crop_picture(pic, x1, y1, x2, y2):
     '''Crop Picture pic so that only pixels inside the rectangular region 
     with upper-left coordinates (x1, y1) and lower-right coordinates (x2, y2) 
     remain.  The new upper-left coordinate is (0, 0).'''
@@ -272,11 +272,39 @@ def create_sound(samp):
     return Sound(samples=samp)
 
 
+def create_note(note, samp, octave=0):
+    '''Return a Sound samp samples long with the frequency according to 
+    str note. The following are acceptable arguments for note, starting 
+    at middle C:
+        
+    'C', 'D', 'E', 'F', 'G', 'A', and 'B'
+        
+    To raise or lower an octave specify the argument octave as a
+    positive or negative int. Positive to raise by that many octaves
+    and negative to lower by that many.'''
+
+    return Note(note, samples, octave=octave)
+
+
 def get_samples(snd):
     '''Return a list of Samples in Sound snd.'''
 
     return [samp for samp in snd]
 
+
+def get_max_sample(snd):
+    '''Return Sound snd's highest sample value. If snd is stereo
+    return the absolute highest for both channels.'''
+
+    snd.get_max()
+    
+    
+def get_min_sample(snd):
+    '''Return Sound snd's lowest sample value. If snd is stereo
+    return the absolute lowest for both channels.'''
+    
+    snd.get_min()
+    
 
 def concatenate(snd1, snd2):
     '''Return a new Sound object with Sound snd1 followed by Sound snd2.'''
@@ -289,6 +317,14 @@ def append_silence(snd, samp):
     
     snd.append_silence(samp)
 
+
+def crop_sound(snd, first, last):
+    '''Crop snd Sound so that all Samples before int first and 
+    after int last are removed. Cannot crop to a single sample. 
+    Negative indices are supported.'''
+
+    snd.crop(first, last)
+    
 
 def insert(snd1, snd2, i):
     '''Insert Sound snd2 in Sound snd1 at index i.'''
@@ -326,9 +362,37 @@ def get_sample(snd, i):
     return snd.get_sample(i)
 
 
+def get_waveform(snd, first=0, last=-1, width=1250, height=128, theme='DEFAULT'):
+    '''Return a Picture width pixels wide and height pixels high
+    of the waveform graph of Sound snd from index first to last.
+    Use the color scheme denoted by the str theme. Available arguments
+    are 'DEFAULT', 'PRO', 'OCEAN', 'NOTEBOOK', 'HEART'.'''
+    
+    snd_copy = snd.copy()
+    snd_copy.crop(first, last)
+    return snd_copy.get_waveform_graph(len(snd_copy)/12500, width, height, theme)
+    
+    
+def get_spectrogram(snd, width=1024, height=300):
+    '''Unimplemented'''
+
+    pass
+
+
+def get_spectrum(snd, width=1024, height=300):
+    '''Unimplemented'''
+  
+    pass
+
+
 ####################------------------------------------------------------------
 ## Global Sample Functions
 ####################------------------------------------------------------------
+
+def get_index(samp):
+    '''Return Sample samp's index.'''
+    
+    return samp.get_index()
 
 
 def set_value(mono_samp, v):
@@ -379,25 +443,6 @@ def get_right(stereo_samp):
 
     return stereo_samp.get_right()
 
-##
-## Global sound graphing functions ---------------------------------------------
-##
-def get_waveform(snd, width=1250, height=128):
-    '''Return a Picture width pixels wide and height pixels high 
-    of the waveform graph of Sound snd.'''
-
-    return snd.get_waveform_graph(len(snd)/12500, width, height)
-    
-    
-def get_spectrogram(snd, width=1024, height=300):
-    '''Unimplemented'''
-
-    pass
-
-def get_spectrum(snd, width=1024, height=300):
-    '''Unimplemented'''
-  
-    pass
 
 ####################------------------------------------------------------------
 ## Global Media Object Functions
