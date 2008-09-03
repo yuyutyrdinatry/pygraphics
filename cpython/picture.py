@@ -162,9 +162,9 @@ class Picture(object):
         if self.win:
             self.close()
             
-        width = self.get_width()
-        height = self.get_height()
-        self._make_window(width, height + 20)
+        width = max(self.get_width(), 150)
+        height = max(self.get_height(), 150)
+        self._make_window(width, height)
         self._draw_image_to_win(self.win)
         
     def show_external(self):
