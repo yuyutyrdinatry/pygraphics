@@ -9,6 +9,7 @@ import color
 import mediawindows as mw
 import os
 import pixel
+from mediawindows import *
 
 ####################------------------------------------------------------------
 ## Defaults

@@ -9,9 +9,9 @@ LOCK = threading.Lock()
 
 OBJ_CREATE, EVT_OBJECT_CREATE = wx.lib.newevent.NewEvent()
 
-class hMainApp(wx.PySimpleApp):
+class hMainApp(wx.App):
     def __init__(self):
-        wx.PySimpleApp.__init__(self)
+        wx.App.__init__(self)
         
         self.objs = {}
         self.event_frame = wx.Frame(None, pos=(-10,-10), size=(0,0))
