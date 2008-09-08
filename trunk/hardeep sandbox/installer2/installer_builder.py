@@ -102,7 +102,7 @@ class InstallerBuilder(object):
         SetOutPath "$INSTDIR"
         WriteUninstaller "$INSTDIR\Uninstall.exe"
         ; Enable Logging
-            LogSet on
+        ;    LogSet on
     SectionEnd\n'''
         sections = '%s%s' % (sections, new_section)
         
@@ -154,6 +154,8 @@ class InstallerBuilder(object):
             # folder!
             if obj.cmds.has_key('PYTHON_MODULE_SRC'):
                 files = '%s        SetOutPath "$INSTDIR\python\Lib\site-packages"\n' % files
+            elif obj.cmds.has_key('PYTHON_DATA_COPY'):
+                files = '%s        SetOutPath "$INSTDIR\python"\n' % files
             else:
                 files = '%s        SetOutPath "$INSTDIR\%s"\n' % (files, sec_name)
                 
@@ -166,6 +168,8 @@ class InstallerBuilder(object):
                     
                     if obj.cmds.has_key('PYTHON_MODULE_SRC'):
                         files = '%s        SetOutPath "$INSTDIR\python\Lib\site-packages%s"\n' % (files, out_path)
+                    elif obj.cmds.has_key('PYTHON_DATA_COPY'):
+                        files = '%s        SetOutPath "$INSTDIR\python%s"\n' % (files, out_path)
                     else:
                         files = '%s        SetOutPath "$INSTDIR\%s%s"\n' % (files, sec_name, out_path)
                      
@@ -199,7 +203,10 @@ class InstallerBuilder(object):
                     cmds = '%s        %s\n' % (cmds, self._parse_cmd(obj.cmds[c]))
                     
             elif c == 'PYTHON_MODULE_SRC':
-                print "Set Module To Copy On Install"
+                print "SET Module To Copy On Install"
+                
+            elif c == 'PYTHON_DATA_COPY':
+                print "SET Direct copy to python folder"
             
             else:
                 print 'Unknown Command: %s -> %s' % (c, obj.cmds[c])  

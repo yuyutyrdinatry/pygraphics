@@ -17,8 +17,8 @@ INST_FILE = 'uoft_installer' # Will automatically append .exe/.pkg/etc...
 # Windows Settings
 #===============================================================================
 WIN_PATH_NSIS = os.path.join('c:\\', 'Program Files', 'NSIS')
-#http://nsis.sourceforge.net/Special_Builds
-WIN_PATH_NSIS = os.path.join('c:\\', 'Program Files', 'nsis-2.38-log')
+#http://nsis.sourceforge.net/Special_Builds - Advanced logging build
+WIN_PATH_NSIS = os.path.join('c:\\', 'Program Files', 'NSIS-log')
 WIN_PATH_DEFAULT_INSTALL = "$PROGRAMFILES\uoft"
 
 #===============================================================================
