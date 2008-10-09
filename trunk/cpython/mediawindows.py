@@ -5,7 +5,7 @@ import Image
 import ImageDraw
 import ImageTk
 import tkFont
-
+import re
 
 ####################------------------------------------------------------------
 ## Exceptions
@@ -775,12 +775,188 @@ class PictureInspector(_InspectorBase):
         except ValueError:
             rgb = "X,Y Coordinates must be integers!"
             self.v.set(rgb)
-
+            
+####################------------------------------------------------------------
+## Ask and Say dialogs
+####################------------------------------------------------------------
+class SayDialog(tk.Frame):
+    '''Simple Say dialog.'''
+    
+    def __init__(self, s=''):
+        tk.Frame.__init__(self, _ROOT)
+        
+        self.s = s
+        self._set_display()
+        
+    def _set_display(self):
+        self._set_master_properties()
+        self._set_dimensions()
+        self._center_window()
+        self.grid()
+        self._display_components()
+        self.master.wait_window(self.master)
+        
+    def _set_master_properties(self):
+        self.master.title('Attention...')
+        self.master.deiconify()
+        self.bind("<Return>", self.master.destroy)
+        self.bind("<Escape>", self.handle_escape)
+        
+    def _set_dimensions(self):
+        self.h = 75
+        self.w = 250
+        
+    def _display_components(self):
+        self._display_say_text()
+        self._display_OK_button()
+        
+    def _display_say_text(self):
+        self.text_say = tk.Label(self, text=self.s)
+        self.text_say.grid(column=0, row=0)
+    
+    def _display_OK_button(self):
+        self.btn_OK = tk.Button(self, text='Close', command=self.master.destroy)
+        self.btn_OK.grid(column=0, row=1)
+        
+    def _center_window(self):
+        screen_height = self.master.winfo_screenheight()
+        screen_width = self.master.winfo_screenwidth()
+        window_height = self.h
+        window_width = self.w
+        
+        new_y_position = (screen_height - window_height) / 2
+        new_x_position = (screen_width - window_width) / 2
+        new_position = '%dx%d+%d+%d' % (window_width, window_height, 
+                                          new_x_position, new_y_position)
+        self.master.geometry(newGeometry=new_position)
+        
+    def handle_escape(self, e):
+        self.master.destroy()
+        
+class AskDialog(SayDialog):
+    '''Simple Ask Dialog with a one line entry.'''
+    
+    def _set_master_properties(self):
+        SayDialog._set_master_properties(self)
+        self.master.title('Prompt...')
+        
+    def _set_dimensions(self):
+        self.h = 100
+        self.w = 250
+    
+    def _display_components(self):
+        self._display_say_text()
+        self._display_input()
+        self._display_OK_button()
+        self._display_cancel_button()
+        
+        self.text_say.grid(column=0, row=0, columnspan=2)
+        
+    def _display_input(self):
+        self.input_var = tk.StringVar()
+        self.input = tk.Entry(self, textvariable=self.input_var)
+        self.input.grid(column=0, row=1, columnspan=2)
+        
+    def _display_OK_button(self):
+        self.btn_OK = tk.Button(self, text='OK', command=self.master.destroy)
+        self.btn_OK.grid(column=0, row=2)
+    
+    def _display_cancel_button(self):
+        self.btn_cancel = tk.Button(self, text='Cancel', 
+                                    command=self.handle_escape)
+        self.btn_cancel.grid(column=1, row=2)
+        
+    def get_result(self):
+        if self.input_var is not None:
+            return self.input_var.get()
+    
+    def handle_escape(self, e=None):
+        self.input_var = None
+        self.master.destroy()
+    
+class AskNumberDialog(AskDialog):
+    '''Ask Dialog for numbers only.'''
+    
+    def _display_input(self):
+        self.input_var = tk.StringVar()
+        self.input = tk.Entry(self, textvariable=self.input_var, width=15)
+        self.input.bind('<KeyPress>', self.handler_input_entry)
+        self.input.bind('<KeyRelease>', self.handler_input_entry)
+        self.input.grid(column=0, row=1, columnspan=2)
+        
+        self.p = re.compile('\d*')
+        
+    def get_result(self):
+        if self.input_var is not None:
+            return int(self.input_var.get())
+    
+    def handler_input_entry(self, e=None):
+         a = ''.join(self.p.findall(self.input_var.get()))
+         self.input_var.set(str(a))
+         
+class AskHiddenDialog(AskDialog):
+    def _display_input(self):
+        AskDialog._display_input(self)
+        self.input.configure(show='*')
+        
+class AskChoicesDialog(AskDialog):
+    def __init__(self, s='', choices=[]):
+        self.choices = choices
+        
+        AskDialog.__init__(self, s)
+        
+    def _set_dimensions(self):
+        self.h = 150
+        self.w = 250
+        
+    def _display_input(self):
+        self.result = None
+        
+        self.yScroll = tk.Scrollbar(self, orient=tk.VERTICAL)
+        self.yScroll.grid(column=1, row=1, columnspan=2, sticky=tk.N+tk.S)
+        self.xScroll = tk.Scrollbar(self, orient=tk.HORIZONTAL)
+        self.xScroll.grid(column=0, row=2, columnspan=2, sticky=tk.E+tk.W)
+        
+        self.input = tk.Listbox(self, height=5, selectmode=tk.BROWSE,
+                                xscrollcommand=self.xScroll.set,
+                                yscrollcommand=self.yScroll.set)
+        self.input.grid(column=0, row=1, columnspan=2, 
+                        sticky=tk.N+tk.S+tk.E+tk.W,)
+        
+        self.xScroll["command"] = self.input.xview
+        self.yScroll["command"] = self.input.yview
+        
+        self._populate_list()
+        
+    def _populate_list(self):
+        for item in self.choices:
+            self.input.insert(tk.END, item)
+        
+    def _display_OK_button(self):
+        self.btn_OK = tk.Button(self, text='OK', command=self.handle_button_ok)
+        self.btn_OK.grid(column=0, row=3)
+    
+    def _display_cancel_button(self):
+        self.btn_cancel = tk.Button(self, text='Cancel', 
+                                    command=self.master.destroy)
+        self.btn_cancel.grid(column=1, row=3)
+        
+    def handle_button_ok(self, e=None):
+        self.result = self.input.curselection()
+        self.master.destroy()
+        
+    def get_result(self):
+        if self.result is not None:
+            return self.result
+        
+class AskChoicesMultiDialog(AskChoicesDialog):
+    def _display_input(self):
+        AskChoicesDialog._display_input(self)
+        self.input.configure(selectmode=tk.EXTENDED)
 
 ####################------------------------------------------------------------
 ## Dialogs
 ####################------------------------------------------------------------
-
 
 def choose_save_filename():
     '''Prompt user to pick a directory and filename. Return the path
@@ -836,3 +1012,39 @@ def choose_color():
         pass
     if color[0]:
         return Color(color[0][0], color[0][1], color[0][2])
+    
+def ask(s, num=False, hidden=False, choices=None, multi=False):
+    '''Display a dialog containing s, a text field for a response, and an "OK"
+    and "CANCEL" button. The optional parameters modify the look of the dialog
+    in listed priority:
+        If the optional bool num is given as True, the dialog will contain
+    a numerical input slider. Return an int of the input.
+        If the optional bool hidden is given as True, the entry box will show
+    all text given in a manner similar to a password box. Return a str of the
+    input.
+        If the optional list choices is given which is a list of strings, the
+    dialog box will show a selection box from where the user may choose one
+    of the given options. Return an int indicating the index of the chosen
+    option in choices. If the bool multi is given as True, the user may choose
+    multiple options from the given choices. Will return a list of ints
+    indicating the indices of the selected options from the given choices.'''
+    
+    if num is not False:
+        return AskNumberDialog(s).get_result()
+        
+    if hidden is not False:
+        return AskHiddenDialog(s).get_result()
+    
+    if choices is not None:
+        dialog = AskChoicesDialog
+        
+        if multi is True:
+            dialog = AskChoicesMultiDialog
+            
+        return dialog(s, choices).get_result()
+    
+    return AskDialog(s).get_result()
+
+def say(s):
+    '''Display a dialog containing the str s, and a "CLOSE" button.'''
+    SayDialog(s)
