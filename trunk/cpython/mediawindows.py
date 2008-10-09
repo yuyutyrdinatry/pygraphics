@@ -782,6 +782,8 @@ class PictureInspector(_InspectorBase):
 class SayDialog(tk.Frame):
     '''Simple Say dialog.'''
     
+    window_title = "Message!"
+    
     def __init__(self, s=''):
         tk.Frame.__init__(self, _ROOT)
         
@@ -797,7 +799,7 @@ class SayDialog(tk.Frame):
         self.master.wait_window(self.master)
         
     def _set_master_properties(self):
-        self.master.title('Attention...')
+        self.master.title(self.window_title)
         self.master.deiconify()
         self.bind("<Return>", self.master.destroy)
         self.bind("<Escape>", self.handle_escape)
@@ -836,9 +838,7 @@ class SayDialog(tk.Frame):
 class AskDialog(SayDialog):
     '''Simple Ask Dialog with a one line entry.'''
     
-    def _set_master_properties(self):
-        SayDialog._set_master_properties(self)
-        self.master.title('Prompt...')
+    window_title = "Please input data..."
         
     def _set_dimensions(self):
         self.h = 100
@@ -877,6 +877,8 @@ class AskDialog(SayDialog):
 class AskNumberDialog(AskDialog):
     '''Ask Dialog for numbers only.'''
     
+    window_title = "Please input a number..."
+    
     def _display_input(self):
         self.input_var = tk.StringVar()
         self.input = tk.Entry(self, textvariable=self.input_var, width=15)
@@ -895,11 +897,15 @@ class AskNumberDialog(AskDialog):
          self.input_var.set(str(a))
          
 class AskHiddenDialog(AskDialog):
+    window_title = "Please input data..."
+    
     def _display_input(self):
         AskDialog._display_input(self)
         self.input.configure(show='*')
         
 class AskChoicesDialog(AskDialog):
+    window_title = "Please choose an option..."
+    
     def __init__(self, s='', choices=[]):
         self.choices = choices
         
@@ -913,15 +919,15 @@ class AskChoicesDialog(AskDialog):
         self.result = None
         
         self.yScroll = tk.Scrollbar(self, orient=tk.VERTICAL)
-        self.yScroll.grid(column=1, row=1, columnspan=2, sticky=tk.N+tk.S)
+        self.yScroll.grid(column=1, row=1, sticky=tk.N+tk.S)
         self.xScroll = tk.Scrollbar(self, orient=tk.HORIZONTAL)
-        self.xScroll.grid(column=0, row=2, columnspan=2, sticky=tk.E+tk.W)
+        self.xScroll.grid(column=0, row=2, sticky=tk.E+tk.W)
         
         self.input = tk.Listbox(self, height=5, selectmode=tk.BROWSE,
                                 xscrollcommand=self.xScroll.set,
                                 yscrollcommand=self.yScroll.set)
-        self.input.grid(column=0, row=1, columnspan=2, 
-                        sticky=tk.N+tk.S+tk.E+tk.W,)
+        self.input.grid(column=0, row=1, 
+                        sticky=tk.N+tk.S+tk.E+tk.W)
         
         self.xScroll["command"] = self.input.xview
         self.yScroll["command"] = self.input.yview
@@ -950,6 +956,8 @@ class AskChoicesDialog(AskDialog):
             return self.result
         
 class AskChoicesMultiDialog(AskChoicesDialog):
+    window_title = "Please choose one or more options..."
+    
     def _display_input(self):
         AskChoicesDialog._display_input(self)
         self.input.configure(selectmode=tk.EXTENDED)
