@@ -40,7 +40,7 @@ AUDIO_ENCODINGS = { 8 : numpy.uint8,   # unsigned 8-bit
 ## Initializer
 ####################------------------------------------------------------------
 
-def init_sound(samp_rate=44100, encoding=-16, channels=2):
+def init_sound(samp_rate=22050, encoding=-16, channels=1): 
     '''Initialize this module. Must be done before any sounds are created.
     
     WARNING: If used with picture.py, it must be initialized after initializing
@@ -60,7 +60,8 @@ def init_sound(samp_rate=44100, encoding=-16, channels=2):
                               DEFAULT_ENCODING, 
                               DEFAULT_CHANNELS, 
                               DEFAULT_BUFFERING)
-        mw.thread_exec(pygame.mixer.init)
+        #Dan - removed mw.thread_exec(
+        pygame.mixer.init()
         SND_INITIALIZED = True
     else:
         raise Exception('Sound has already been initialized!')
@@ -248,7 +249,9 @@ class Sound(object):
         
         maximum = self.samples.max()
         minimum = self.samples.min()
-        self.samples = self.samples * min(int(32767/maximum), int(32767/abs(minimum)))
+        factor = min(32767.0/maximum, 32767.0/abs(minimum))        
+        for i in range(len(self.samples)):        
+            self.samples[i] = int(self.samples[i] * factor)
         
     
     def close_inspect(self):
@@ -368,7 +371,7 @@ class Sound(object):
 
     def get_sample(self, i):
         '''Return this Sound's Sample object at index i. Negative indices are
-        supported. Negative indices are supported.'''
+        supported.'''
 
         if self.channels == 1:
             return sample.MonoSample(self.samples, i)
@@ -455,14 +458,14 @@ class Note(Sound):
     '''A Note class to create different notes of the C scale. Inherits from Sound,
     does everything Sounds do, and can be combined with Sounds.'''
     
-    # These are in Hz
-    frequencies = {'C' : 264,
-                   'D' : 297,
-                   'E' : 330,
-                   'F' : 352,
-                   'G' : 396,
+    # These are in Hz. 
+    frequencies = {'C' : 261.63,
+                   'D' : 293.66,
+                   'E' : 329.63,
+                   'F' : 349.23,
+                   'G' : 392,
                    'A' : 440,
-                   'B' : 494}
+                   'B' : 493.88}
     
     default_amp = 6000
     
@@ -488,13 +491,13 @@ class Note(Sound):
         self.inspectpic = None
         self.set_filename(None)
 
-        if octave < 0:
-            freq = self.frequencies[note] / abs(octave)
+        if octave < 0: 
+            freq = self.frequencies[note] / (2 ** abs(octave))
         elif octave > 0:
-            freq = self.frequencies[note] * abs(octave)
+            freq = self.frequencies[note] * (2 ** octave)
         else:
             freq = self.frequencies[note]
-            
+        
         snd = create_sine_wave(int(freq), self.default_amp, s)
         self.set_pygame_sound(snd)
                 
@@ -565,8 +568,12 @@ def create_sine_wave(hz, amp, samp):
     samples = numpy.sin((samples * 2.0 * math.pi) / samples_per_period) * amp
     
     # Convert the array back into one with the appropriate encoding
+    
     samples = numpy.array(samples, AUDIO_ENCODINGS[DEFAULT_ENCODING])
+    
     return sample_array_to_pygame(samples)
+
+
 
 
 def pygame_to_sample_array(pygame_snd):
