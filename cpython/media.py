@@ -16,8 +16,8 @@ import mediawindows as mw
 import os
 
 mw.init_mediawindows()
-init_sound()
 init_picture()
+init_sound()
 
 ####################------------------------------------------------------------
 ## Global Picture Functions
@@ -272,7 +272,7 @@ def create_sound(samp):
     return Sound(samples=samp)
 
 
-def create_note(note, samp, octave=0):
+def create_note(note, samp, octave=0): 
     '''Return a Sound samp samples long with the frequency according to 
     str note. The following are acceptable arguments for note, starting 
     at middle C:
@@ -283,7 +283,7 @@ def create_note(note, samp, octave=0):
     positive or negative int. Positive to raise by that many octaves
     and negative to lower by that many.'''
 
-    return Note(note, samples, octave=octave)
+    return Note(note, samp, octave=octave)
 
 
 def get_samples(snd):
