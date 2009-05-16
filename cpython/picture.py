@@ -92,13 +92,13 @@ class Picture(object):
     
     def __iter__(self):
         '''Return this Picture's Pixels from top to bottom,
-        left to right
+        left to right.'''
         
         for x in xrange(0, self.get_width()):
             for y in xrange(0, self.get_height()):
                 yield pixel.Pixel(self.pixels, x, y)
 
-    
+
     def has_coordinates(self, x, y):
         '''Return True if (x, y) is a valid coordinate for this Picture.'''
         
@@ -159,8 +159,8 @@ class Picture(object):
         '''Display this Picture. If it is already being displayed,
         close the old display and re-display it.'''
         
-        #if self.win:
-            #self.close()
+        if self.win:
+            self.close()
             
         width = max(self.get_width(), 150)
         height = max(self.get_height(), 150)
