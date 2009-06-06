@@ -116,7 +116,17 @@ class Sound(object):
                     
         self.set_pygame_sound(snd)
             
-    
+    def __eq__ (self, snd):
+        if self.get_channels() == 1 and snd.get_channels() == 1:
+            return len(self) == len(snd) \
+              and all ([self.samples[i] == snd.samples[i] for i in range(0, len(self.samples))]) 
+        elif self.get_channels() == 2 and snd.get_channels() == 2:
+            return len(self) == len(snd) \
+	      and all ([self.samples[i][j] == snd.samples[i][j] for i in range(len(self.samples)) 
+	        for j in range(2)]) 
+        else:
+            raise ValueError('Sound snd must have same number of channels.')
+        
     def __str__(self):
         '''Return the number of Samples in this Sound as a str.'''
         
