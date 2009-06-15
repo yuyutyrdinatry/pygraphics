@@ -40,7 +40,10 @@ class MonoSample(object):
         
         return self.index
     
-
+    def __cmp__ (self, other):
+        return cmp(self.samp_array[self.index], other.samp_array[other.index])
+        
+        
 class StereoSample(object):
     '''A sample in a two-channeled Sound with a left and a right value.'''
 
@@ -107,3 +110,10 @@ class StereoSample(object):
         '''Return this Sample's index.'''
         
         return self.index
+        
+def __cmp__ (self, other):
+  a, b = self.get_values()
+  c, d = other.get_values()
+  self_max = max(a, b)
+  other_max = max(c, d)
+  return max (self_max, other_max)
