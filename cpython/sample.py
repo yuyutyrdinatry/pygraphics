@@ -112,8 +112,8 @@ class StereoSample(object):
         return self.index
         
 def __cmp__ (self, other):
-  a, b = self.get_values()
-  c, d = other.get_values()
-  self_max = max(a, b)
-  other_max = max(c, d)
+  '''The bigger sample is the one with the biggest sample in any channel'''
+  
+  self_max = max(self.get_values())
+  other_max = max(other.get_values())
   return max (self_max, other_max)
