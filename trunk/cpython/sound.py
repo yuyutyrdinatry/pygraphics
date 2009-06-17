@@ -118,12 +118,9 @@ class Sound(object):
             
     def __eq__ (self, snd):
         if self.get_channels() == 1 and snd.get_channels() == 1:
-            return len(self) == len(snd) \
-              and all ([self.samples[i] == snd.samples[i] for i in range(0, len(self.samples))]) 
+            return numpy.all (self.samples == snd.samples)
         elif self.get_channels() == 2 and snd.get_channels() == 2:
-            return len(self) == len(snd) \
-	      and all ([self.samples[i][j] == snd.samples[i][j] for i in range(len(self.samples)) 
-	        for j in range(2)]) 
+            return numpy.all (self.samples == snd.samples)
         else:
             raise ValueError('Sound snd must have same number of channels.')
         
@@ -245,7 +242,6 @@ class Sound(object):
         after int last are removed. Cannot crop to a single sample. 
         Negative indices are supported'''
 
-        # Negative indices are supported
         first = first % len(self)
         last = last % len(self)
         
@@ -260,8 +256,7 @@ class Sound(object):
         maximum = self.samples.max()
         minimum = self.samples.min()
         factor = min(32767.0/maximum, 32767.0/abs(minimum))        
-        for i in range(len(self.samples)):        
-            self.samples[i] = int(self.samples[i] * factor)
+        self.samples *= factor        
         
     
     def close_inspect(self):
