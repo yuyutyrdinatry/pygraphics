@@ -52,8 +52,8 @@ def get_pixel(pic, x, y):
 
 
 def get_pixels(pic):
-    '''Return a list of Picture pic's Pixels from left to right, 
-    top row to bottom row.'''
+    '''Return a list of Picture pic's Pixels from top to bottom, 
+    left to right.'''
 
     return [pixel for pixel in pic]
 
