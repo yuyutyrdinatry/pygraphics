@@ -61,6 +61,7 @@ def init_sound(samp_rate=22050, encoding=-16, channels=1):
                               DEFAULT_CHANNELS, 
                               DEFAULT_BUFFERING)
         #Dan - removed mw.thread_exec(
+        # This breaks media.choose_file() on some platforms -- not real fix 
         pygame.mixer.init()
         SND_INITIALIZED = True
     else:
