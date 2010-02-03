@@ -1,0 +1,6 @@
+#summary Windows Installation Instructions
+
+= Windows Installation Instructions =
+
+    * Ensure that you have Python 2.6 installed on your computer. You can download 2.6.4 from [http://www.python.org/download/releases/2.6.4/]. 
+    * Download the Windows executable for PyGraphics here: [http://pygraphics.googlecode.com/files/PyGraphics-1.5.win32.exe]
