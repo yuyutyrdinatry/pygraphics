@@ -9,4 +9,4 @@
     * Download and install `Nose`, `NumPy`, and `PyGame`, if you do not already have those packages. They are available via apt-get under the names python-nose, python-numpy, and python-pygame. In each case, 'apt-get install packagename'. *Note:* Nose is required only if you intend to use the test suite.
     * Download and install Python's Tk imaging package: 'apt-get install python-imaging-tk'.
 
-Now you're ready to make some music (and some pictures)!
+Now you and `PyGraphics` should be ready to make beautiful music (and pictures!) together.
