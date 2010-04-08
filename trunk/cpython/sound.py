@@ -134,11 +134,13 @@ class Sound(object):
     def __iter__(self):
         '''Return this Sound's Samples from start to finish.'''
         
+        l = len(self)
+        
         if self.channels == 1:
-            for i in range(len(self)):
+            for i in range(l):
                 yield sample.MonoSample(self.samples, i)
         elif self.channels == 2:
-            for i in range(len(self)):
+            for i in range(l):
                 yield sample.StereoSample(self.samples, i)
                 
 
@@ -160,7 +162,9 @@ class Sound(object):
         '''Return a Sound object with this Sound repeated num times.'''
         
         new = self.copy()
-        for time in range(int(num) - 1):
+        l = int(num) - 1
+        
+        for time in range(l):
             new.append(self)
         return new
 

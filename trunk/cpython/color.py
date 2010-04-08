@@ -36,7 +36,10 @@ class Color(object):
         this Color and Color color.'''
 
         values = [self.r - color.r, self.g - color.g, self.b - color.b]
-        for idx in range(len(values)):
+        
+        l = len(values)
+        
+        for idx in range(l):
             if values[idx] < 0:
                 values[idx] = 0
         return Color(values[0], values[1], values[2])
@@ -47,7 +50,10 @@ class Color(object):
         this Color and Color color.'''
 
         values = [self.r + color.r, self.g + color.g, self.b + color.b]
-        for idx in range(len(values)):
+        
+        l = len(values)
+        
+        for idx in range(l):
             if values[idx] > 256:
                 values[idx] = 255
         return Color(values[0], values[1], values[2])
