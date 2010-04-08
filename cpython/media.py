@@ -16,7 +16,7 @@ import mediawindows as mw
 import os
 
 mw.init_mediawindows()
-init_picture()
+picture.init_picture()
 init_sound()
 
 ####################------------------------------------------------------------

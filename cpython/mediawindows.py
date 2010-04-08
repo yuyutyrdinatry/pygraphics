@@ -120,6 +120,9 @@ def _thread_shutdown():
 def init_mediawindows():
     '''Initialized the mediawindows thread.'''
     
+    print "Current version of Tk:"
+    print tk.Tk().tk.call('tk', 'windowingsystem') 
+    
     global _THREAD_RUNNING 
     _THREAD_RUNNING = True
     

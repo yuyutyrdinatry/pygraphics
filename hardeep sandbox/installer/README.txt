@@ -1,8 +1,0 @@
-REQUIREMENTS
-----------------------
-
-Windows
- * 
- 
-Mac
- * 

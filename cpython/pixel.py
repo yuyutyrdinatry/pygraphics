@@ -17,7 +17,7 @@ class Pixel(object):
             
         # This is a trick to raise an IndexError if out of bounds.
         self.pixels[x, y]
-        
+     
     
     def __str__(self):
         '''Return a str with location and color information
@@ -43,7 +43,6 @@ class Pixel(object):
         '''Set the green value of this Pixel to int g.'''
         
         if 0 <= g <= 255:
-            
             self.pixels[self.x, self.y] = \
                 (self.pixels[self.x, self.y][0], 
                  g, 

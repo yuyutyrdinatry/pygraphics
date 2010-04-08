@@ -93,9 +93,12 @@ class Picture(object):
     def __iter__(self):
         '''Return this Picture's Pixels from top to bottom,
         left to right.'''
+
+        width = self.get_width()
+        height = self.get_height()
         
-        for x in xrange(0, self.get_width()):
-            for y in xrange(0, self.get_height()):
+        for x in xrange(0, width):
+            for y in xrange(0, height):
                 yield pixel.Pixel(self.pixels, x, y)
 
 
@@ -325,7 +328,9 @@ class Picture(object):
         three coordinate pairs.'''
         
         i = 0
-        while i < len(point_list):
+        l = len(point_list)
+        
+        while i < l:
             if not self.has_coordinates(point_list[i], point_list[i + 1]):
                 raise IndexError("Invalid coordinates specified.")
             i += 2
@@ -343,7 +348,9 @@ class Picture(object):
         three coordinate pairs.'''
         
         i = 0
-        while i < len(point_list):
+        l = len(point_list)
+        
+        while i < l:
             if not self.has_coordinates(point_list[i], point_list[i + 1]):
                 raise IndexError("Invalid coordinates specified.")
             i += 2
