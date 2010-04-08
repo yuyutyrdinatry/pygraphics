@@ -1,4 +1,4 @@
-= Why Doesn't PyGraphics Work on OS X? =
+= Why Doesn't `PyGraphics` Work on OS X? =
 
 Although a Mac version of `PyGraphics` exists, support is not currently available for Snow Leopard. If you are using an earlier version of OS X, `PyGraphics` should work for you; the Downloads page contains the appropriate installer. 
 
