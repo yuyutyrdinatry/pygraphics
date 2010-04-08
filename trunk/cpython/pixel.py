@@ -17,7 +17,6 @@ class Pixel(object):
             
         # This is a trick to raise an IndexError if out of bounds.
         self.pixels[x, y]
-     
     
     def __str__(self):
         '''Return a str with location and color information
@@ -25,7 +24,6 @@ class Pixel(object):
    
         return "Pixel (%d, %d): color=%s" % (self.x, self.y,
                                             repr(self.get_color()))
-        
           
     def set_red(self, r):
         '''Set the red value of this Pixel to int r.'''
@@ -37,7 +35,6 @@ class Pixel(object):
                  self.pixels[self.x, self.y][2])
         else:
             raise ValueError('Invalid red value specified.')
-        
 
     def set_green(self, g):
         '''Set the green value of this Pixel to int g.'''
@@ -49,7 +46,6 @@ class Pixel(object):
                  self.pixels[self.x, self.y][2])
         else:
             raise ValueError('Invalid green value specified.')
-        
 
     def set_blue(self, b):
         '''Set the blue value of this Pixel to int b.'''
@@ -61,31 +57,26 @@ class Pixel(object):
                  b)
         else:
             raise ValueError('Invalid blue value specified.')
-        
 
     def get_red(self):
         '''Return the red value of this Pixel.'''
         
         return self.pixels[self.x, self.y][0]
-    
 
     def get_green(self):
         '''Return the green value of this Pixel.'''
         
         return self.pixels[self.x, self.y][1]
-    
 
     def get_blue(self):
         '''Return the blue value of this Pixel.'''
         
         return self.pixels[self.x, self.y][2]
 
-
     def get_color(self):
         '''Return a Color object representing the color of this Pixel.'''
         
         return color.Color(self.get_red(), self.get_green(), self.get_blue())
-
 
     def set_color(self, color):
         '''Set the color values of this Pixel to those of Color object color.'''
@@ -94,15 +85,12 @@ class Pixel(object):
         self.set_green(color.get_green())
         self.set_blue(color.get_blue())
 
-
     def get_x(self):
         '''Return the x value of this Pixel.'''
         
         return self.x
 
-
     def get_y(self):
         '''Return the y value of this Pixel.'''
         
         return self.y
-    

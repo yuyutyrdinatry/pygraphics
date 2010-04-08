@@ -13,8 +13,7 @@ class Color(object):
             self.b = int(b)
         else:
             raise ValueError('Color values out of range (0, 255)')
-        
-                
+                        
     def __str__(self):
         '''Return a str representation of this Color.'''
         
@@ -22,14 +21,12 @@ class Color(object):
                     " g=" + str(self.get_green()) + \
                     " b=" + str(self.get_blue())
 
-
     def __repr__(self):
         '''Return an executable str representation of this Color.'''
         
         return "Color(" + str(self.get_red()) + ", " \
                         + str(self.get_green()) + ", "\
                         + str(self.get_blue()) + ")"
-
 
     def __sub__(self, color):
         '''Return a Color object with RGB values equal to the difference between
@@ -43,7 +40,6 @@ class Color(object):
             if values[idx] < 0:
                 values[idx] = 0
         return Color(values[0], values[1], values[2])
-            
 
     def __add__(self, color):
         '''Return a Color object with RGB values equal to the sum of
@@ -58,25 +54,21 @@ class Color(object):
                 values[idx] = 255
         return Color(values[0], values[1], values[2])
 
-
     def __eq__(self, newcolor):
         '''Return True if this Color has the same RGB values as Color newcolor.'''
         
         return self.get_red() == newcolor.get_red() and self.get_green() == \
             newcolor.get_green() and self.get_blue() == newcolor.get_blue()
 
-
     def __ne__(self, newcolor):
         '''Return True if this Color has different value from Color newcolor.'''
         
         return not self.__eq__(newcolor)
 
-
     def copy(self):
         '''Return a deep copy of this Color.'''
         
         return Color(self.r, self.g, self.b)
-
 
     def distance(self, color):
         '''Return the Euclidean distance between the RGB values of this Color 
@@ -87,31 +79,26 @@ class Color(object):
         b = pow(self.b - color.b, 2)
         return math.sqrt(r + g + b)
 
-
     def get_rgb(self):
         '''Return a tuple of the RGB values of this Color.'''
         
         return (self.r, self.g, self.b)
-
 
     def get_red(self):
         '''Return the red value of this Color.'''
         
         return self.r
 
-
     def get_green(self):
         '''Return the green value of this Color.'''
         
         return self.g
-
 
     def get_blue(self):
         '''Return the blue value of this Color.'''
         
         return self.b
     
-
     def set_red(self, value):
         '''Set the red value of this Color to int value.'''
         
@@ -119,7 +106,6 @@ class Color(object):
             self.r = int(value)
         else:
             raise ValueError('Color value out of range (0, 255)')
-
 
     def set_green(self, value):
         '''Set the green value of this Color to int value.'''
@@ -129,7 +115,6 @@ class Color(object):
         else:
             raise ValueError('Color value out of range (0, 255)')
 
-
     def set_blue(self, value):
         '''Set the blue value of this Color to int value.'''
         
@@ -138,14 +123,12 @@ class Color(object):
         else:
             raise ValueError('Color value out of range (0, 255)')
 
-
     def make_lighter(self):
         '''Increase the RGB values of this Color by 35%.'''
         
         self.r = int((255 - self.r) * .35 + self.r)
         self.g = int((255 - self.g) * .35 + self.g)
         self.b = int((255 - self.b) * .35 + self.b)
-
 
     def make_darker(self):
         '''Decrease the RGB values of this Color by 35%.'''

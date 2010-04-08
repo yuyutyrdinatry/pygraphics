@@ -81,15 +81,13 @@ class Picture(object):
         
         self.show_window = None
         self.poll_thread = None
-
     
     def __str__(self):
         '''Return a str of this Picture with its filename, width, and height.'''
         
         return "Picture, filename=" + self.filename + " height=" + \
             str(self.get_height()) + " width=" + str(self.get_width())
-
-    
+   
     def __iter__(self):
         '''Return this Picture's Pixels from top to bottom,
         left to right.'''
@@ -101,13 +99,11 @@ class Picture(object):
             for y in xrange(0, height):
                 yield pixel.Pixel(self.pixels, x, y)
 
-
     def has_coordinates(self, x, y):
         '''Return True if (x, y) is a valid coordinate for this Picture.'''
         
         return 0 <= x < self.get_width() and 0 <= y < self.get_height()
-    
-    
+  
     def set_image(self, image):
         '''Set the PIL RGB Image image in this Picture and load
         the PixelAccess object from the Image.'''
@@ -119,13 +115,11 @@ class Picture(object):
         
         # Load pixels 2D array from the Image
         self.pixels = image.load()
-
     
     def get_image(self):
         '''Return this Picture's PIL Image object.'''
         
         return self.image
-    
     
     def copy(self):
         '''Return a deep copy of this Picture.'''
@@ -133,7 +127,6 @@ class Picture(object):
         pic = Picture(image=self.image.copy())
         pic.set_filename_and_title(self.filename)
         return pic
-    
     
     def _make_window(self, x, y):
         '''Create a PictureWindow x pixels wide and y pixels high and
@@ -147,7 +140,6 @@ class Picture(object):
         self.win = mw.PictureWindow(title=title, width=x, height=y)
         self.win.setCoords(0, y - 1, x - 1, 0)
     
-    
     def _draw_image_to_win(self, win):
         '''Draw self.showimage on PictureWindow win.'''
         
@@ -156,8 +148,7 @@ class Picture(object):
         self.showimage = mw.WindowImage(mw.WindowPoint(width/2, height/2), \
                                         ImageTk.PhotoImage(self.get_image()))
         self.showimage.draw(win)
-        
-
+ 
     def show(self):
         '''Display this Picture. If it is already being displayed,
         close the old display and re-display it.'''
@@ -176,7 +167,6 @@ class Picture(object):
         
         self.image.show()
         
-        
     def update(self):
         '''Update an already opened internal display for this Picture.
         
@@ -191,7 +181,6 @@ class Picture(object):
         elif self.win and self.win.is_closed():
             self.show()
             
-            
     def close(self):
         '''Close this Picture's display.'''
         
@@ -199,7 +188,6 @@ class Picture(object):
             self.win.close()
             self.win = None
             self.showimage = None
-            
             
     def is_closed(self):
         '''Return True if this Picture is not being displayed.'''
@@ -209,7 +197,6 @@ class Picture(object):
         else:
             return True
     
-    
     def inspect(self):
         '''Inspect this Picture in a PictureInspector window, where inspection
         of specific pixels is possible.'''
@@ -218,26 +205,22 @@ class Picture(object):
             mw.thread_exec(self.inspector.destroy)
         self.inspector = mw.thread_exec_return(mw.PictureInspector, self)
 
-
     def close_inspect(self):
         '''Close this Picture's open PictureInspector window.'''
         
         if self.inspector:
             mw.thread_exec(self.inspector.destroy)
         self.inspector = None
-        
     
     def get_pixel(self, x, y):
         '''Return the Pixel at coordinates (x, y).'''
         
         return pixel.Pixel(self.pixels, x, y)
-
     
     def set_title(self, title):
         '''Set title of this Picture to str title.'''
         
         self.title = title
-        
     
     def set_filename_and_title(self, filename):
         '''If filename is a file set the filename and title of this Picture.
@@ -250,30 +233,25 @@ class Picture(object):
             self.filename = ''
             self.title = ''
     
-    
     def get_filename(self):
         '''Return this Picture's filename.'''
         
         return self.filename
-    
     
     def get_title(self):
         '''Return this Picture's title.'''
         
         return self.title
     
-    
     def get_width(self):
         '''Return how many pixels wide this Picture is.'''
         
         return self.image.size[0]
     
-    
     def get_height(self):
         '''Return how many pixels high this Picture is.'''
         
         return self.image.size[1]
-        
     
     def crop(self, x1, y1, x2, y2):
         '''Crop Picture pic so that only pixels inside the rectangular region
@@ -291,7 +269,6 @@ class Picture(object):
         temp = self.image.crop(corners)
         new = temp.copy()
         self.set_image(new)
-            
     
     def add_rect_filled(self, col, x, y, w, h):
         '''Draw a filled rectangle of Color col, width w, and height h
@@ -305,7 +282,6 @@ class Picture(object):
         draw.rectangle([x, y, x + w, y + h], outline=tuple(col.get_rgb()),
                        fill=tuple(col.get_rgb()))
     
-    
     def add_rect(self, col, x, y, w, h):
         '''Draw an empty rectangle of Color col, width w, and height h
         on this Picture. The upper left corner of the rectangle is at (x, y).'''
@@ -316,7 +292,6 @@ class Picture(object):
             raise ValueError('Invalid width/height specified.')
         draw = ImageDraw.Draw(self.image)
         draw.rectangle([x, y, x + w, y + h], outline=tuple(col.get_rgb()))
-    
     
     def add_polygon(self, col, point_list):
         '''Draw an empty polygon of Color col with corners for every vertex
@@ -336,7 +311,6 @@ class Picture(object):
             i += 2
         draw = ImageDraw.Draw(self.image)
         draw.polygon(point_list, outline=tuple(col.get_rgb()))
-    
     
     def add_polygon_filled(self, col, point_list):
         '''Draw a filled polygon of Color col with corners for every vertex
@@ -358,7 +332,6 @@ class Picture(object):
         draw.polygon(point_list, outline=tuple(col.get_rgb()), fill=
                      tuple(col.get_rgb()))
     
-    
     def add_oval_filled(self, col, x, y, w, h):
         '''Draw a filled oval of Color col, width w, and height h
         on this Picture. The upper left corner of the oval is at (x, y).'''
@@ -370,7 +343,6 @@ class Picture(object):
         draw = ImageDraw.Draw(self.image)
         draw.ellipse([x, y, x + w, y + h], outline=tuple(col.get_rgb()),
                      fill=tuple(col.get_rgb()))
-        
     
     def add_oval(self, col, x, y, w, h):
         '''Draw an empty oval of Color col, width w, and height h
@@ -382,7 +354,6 @@ class Picture(object):
             raise ValueError('Invalid width/height specified.')
         draw = ImageDraw.Draw(self.image)
         draw.ellipse([x, y, x + w, y + h], outline=tuple(col.get_rgb()))
-        
     
     def add_line(self, col, x1, y1, x2, y2, width=1):
         '''Draw a line of Color col and width width from (x1, y1) to (x2, y2)
@@ -394,7 +365,6 @@ class Picture(object):
         draw.line([x1, y1, x2, y2], fill=tuple(col.get_rgb()), width=
                   width)
     
-    
     def add_text(self, col, x, y, s):
         '''Draw str s in Color col on this Picture starting at (x, y).'''
         
@@ -402,7 +372,6 @@ class Picture(object):
             raise IndexError("Invalid coordinates specified.")
         global DEFAULT_FONT
         self.add_text_with_style(col, x, y, s, DEFAULT_FONT)
-    
     
     def add_text_with_style(self, col, x, y, s, font):
         '''Draw str s in Color col and font font on this Picture
@@ -413,8 +382,7 @@ class Picture(object):
         draw = ImageDraw.Draw(self.image)
         draw.text((x, y), text=s, fill=tuple(col.get_rgb()),
                   font=font)
-        
-    
+     
     def save(self):
         '''Write this Picture back to its file. If an extension is not
         specified the default is .bmp.'''
@@ -425,7 +393,6 @@ class Picture(object):
             self.image.save(filename + '.bmp')
         else:
             self.save_as(self.filename)
-            
     
     def save_as(self, filename):
         '''Write this Picture to filename filename and re-set filename and
