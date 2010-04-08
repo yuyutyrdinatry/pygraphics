@@ -1,4 +1,6 @@
-import time, os, sys
+import time
+import os
+import sys
 import Tkinter as tk
 import tkFileDialog
 import Image
@@ -52,6 +54,7 @@ def _mediawindows_thread():
     _ROOT.after(_POLL_INTERVAL, _pump)
     _ROOT.mainloop()
 
+
 def _pump():
     '''Get functions from _THREAD_REQUEST and try executing them. If
     return values are called for put that return in _THREAD_RESULT. If
@@ -73,6 +76,7 @@ def _pump():
             raise # re-raise the exception -- kills the thread
     if _THREAD_RUNNING:
         _ROOT.after(_POLL_INTERVAL, _pump)
+
 
 def thread_exec_return(f, *args, **kw):
     '''Execute synchronous call to f in the Tk thread. Return it's
@@ -146,7 +150,6 @@ class PictureWindow(tk.Canvas):
         
         thread_exec_return(self.__init_help, title, width, height, autoflush)
  
-    
     def __init_help(self, title, width, height, autoflush):
         
         master = tk.Toplevel(_ROOT)
@@ -168,11 +171,9 @@ class PictureWindow(tk.Canvas):
         self.closed = False
         if autoflush: _ROOT.update()
 
-
     def __checkOpen(self):
         if self.closed:
             raise MediaWindowsError, "window is closed"
-
 
     def setBackground(self, color):
         """Set background color of the window"""
@@ -184,11 +185,9 @@ class PictureWindow(tk.Canvas):
         lower-left corner to (x2,y2) in the upper-right corner."""
         self.trans = Transform(self.width, self.height, x1, y1, x2, y2)
 
-
     def close(self):
         if self.closed: return
         thread_exec_return(self.__close_help)
-        
         
     def __close_help(self):
         """Close the window"""
@@ -327,6 +326,7 @@ DEFAULT_CONFIG = {"fill":"",
 		  "justify":"center",
                   "font": ("helvetica", 12, "normal")}
 
+
 class GraphicsObject(object):
 
     """Generic base class for all of the drawable objects"""
@@ -437,6 +437,7 @@ class GraphicsObject(object):
         """updates internal state of object to move it dx,dy units"""
         pass # must override in subclass
          
+
 class WindowPoint(GraphicsObject):
     
     def __init__(self, x, y):
@@ -445,24 +446,21 @@ class WindowPoint(GraphicsObject):
         self.x = x
         self.y = y
         
-        
     def _draw(self, canvas, options):
         x,y = canvas.toScreen(self.x,self.y)
         return canvas.create_rectangle(x,y,x+1,y+1,options)
-        
         
     def _move(self, dx, dy):
         self.x = self.x + dx
         self.y = self.y + dy
         
-        
     def clone(self):
         other = WindowPoint(self.x,self.y)
         other.config = self.config.copy()
         return other
-            
                 
     def getX(self): return self.x
+
     def getY(self): return self.y
 
 
@@ -479,7 +477,6 @@ class WindowImage(GraphicsObject):
         WindowImage.id_count += 1
         self.img = image
 
-
     def _draw(self, canvas, options):
         
         p = self.anchor
@@ -487,34 +484,28 @@ class WindowImage(GraphicsObject):
         self.image_cache[self.image_id] = self.img # save a reference  
         return canvas.create_image(x, y, image=self.img)
     
-    
     def _move(self, dx, dy):
         
         self.anchor.move(dx,dy)
-    
     
     def get_height(self):
         
         height = thread_exec_return(self.img.height)
         return height
         
-        
     def get_width(self):
         
         width = thread_exec_return(self.img.width)
         return width
-
     
     def undraw(self):
         
         del self.image_cache[self.image_id]  # allow gc of tk photoimage
         GraphicsObject.undraw(self)
 
-
     def get_anchor(self):
         
         return self.anchor.clone()
-    		
             
     def clone(self):
         
@@ -540,8 +531,6 @@ class _InspectorBase(tk.Toplevel):
         self.image = self.picture.get_image()
         self.orig_image = self.image
         self.display()
-        
-
 
     def display(self):
         '''Run this PictureWindow.'''
@@ -549,7 +538,6 @@ class _InspectorBase(tk.Toplevel):
         self.set_up_display()
         self.set_up_functionalities()
         self.center_window()
-
 
     def set_up_display(self):
         '''Set up the display for this PictureWindow.'''
@@ -573,7 +561,6 @@ class _InspectorBase(tk.Toplevel):
         self.hbar.pack(side=tk.BOTTOM, fill=tk.X)
         self.canvas1.pack(anchor=tk.NW)
         self.draw_image(self.image)
-        
 
     def draw_image(self, image):
         '''Update this OpenPictureTool's Canvas with Image image.'''
@@ -598,7 +585,6 @@ class _InspectorBase(tk.Toplevel):
 
         img = self.canvas1.create_image(0, 0, image=self.photoimage, anchor=tk.NW)
 
-
     def center_window(self):
         '''Center this PictureWindow on the screen.'''
         
@@ -611,7 +597,6 @@ class _InspectorBase(tk.Toplevel):
         new_x_position = (screen_width - window_width) / 2
         new_position = '+%d+%d' % (new_x_position, new_y_position)
         self.geometry(newGeometry=new_position)
-    
     
     def set_up_functionalities(self):
         '''Set up all the peripheral functionalities for this PictureWindow.
@@ -677,7 +662,6 @@ class PictureInspector(_InspectorBase):
         self.canvas1.bind('<Double-Button-1>', self.canvas_click)
         self.set_up_zoommenu()
         self.set_up_fields()
-        
             
     def set_up_zoommenu(self):
         '''Set up the zoom menu for this OpenPictureTool.'''
@@ -727,7 +711,6 @@ class PictureInspector(_InspectorBase):
                          command=lambda : self.fetch(self.entries))
         button1.pack(side=tk.TOP, padx=6, pady=1)
 
-
     def zoom_by_factor(self, factor):
         '''Zoom in or out by a factor of float factor.'''
         
@@ -746,8 +729,7 @@ class PictureInspector(_InspectorBase):
         else:
             rgb = "X,Y Out of Range"
             self.v.set(rgb)
-            
-
+ 
     def update_information(self, x, y):
         '''Update this OpenPictureTool's display information 
         for coordinate (x, y).'''
@@ -761,7 +743,6 @@ class PictureInspector(_InspectorBase):
         entry_x.insert(0, str(int(x)))
         entry_y.delete(0, tk.END)
         entry_y.insert(0, str(int(y)))
-
 
     def fetch(self, entries):
         
@@ -782,6 +763,7 @@ class PictureInspector(_InspectorBase):
 ####################------------------------------------------------------------
 ## Ask and Say dialogs
 ####################------------------------------------------------------------
+
 class SayDialog(tk.Frame):
     '''Simple Say dialog.'''
     
@@ -838,6 +820,7 @@ class SayDialog(tk.Frame):
     def handle_escape(self, e):
         self.master.destroy()
         
+
 class AskDialog(SayDialog):
     '''Simple Ask Dialog with a one line entry.'''
     
@@ -876,7 +859,8 @@ class AskDialog(SayDialog):
     def handle_escape(self, e=None):
         self.input_var = None
         self.master.destroy()
-    
+   
+ 
 class AskNumberDialog(AskDialog):
     '''Ask Dialog for numbers only.'''
     
@@ -898,14 +882,16 @@ class AskNumberDialog(AskDialog):
     def handler_input_entry(self, e=None):
          a = ''.join(self.p.findall(self.input_var.get()))
          self.input_var.set(str(a))
-         
+      
+   
 class AskHiddenDialog(AskDialog):
     window_title = "Please input data..."
     
     def _display_input(self):
         AskDialog._display_input(self)
         self.input.configure(show='*')
-        
+     
+   
 class AskChoicesDialog(AskDialog):
     window_title = "Please choose an option..."
     
@@ -958,6 +944,7 @@ class AskChoicesDialog(AskDialog):
         if self.result is not None:
             return self.result
         
+
 class AskChoicesMultiDialog(AskChoicesDialog):
     window_title = "Please choose one or more options..."
     
@@ -1024,6 +1011,7 @@ def choose_color():
     if color[0]:
         return Color(color[0][0], color[0][1], color[0][2])
     
+
 def ask(s, num=False, hidden=False, choices=None, multi=False):
     '''Display a dialog containing s, a text field for a response, and an "OK"
     and "CANCEL" button. The optional parameters modify the look of the dialog
@@ -1055,6 +1043,7 @@ def ask(s, num=False, hidden=False, choices=None, multi=False):
         return dialog(s, choices).get_result()
     
     return AskDialog(s).get_result()
+
 
 def say(s):
     '''Display a dialog containing the str s, and a "CLOSE" button.'''

@@ -130,7 +130,6 @@ class Sound(object):
         
         return "Sound of length " + str(len(self))
 
-
     def __iter__(self):
         '''Return this Sound's Samples from start to finish.'''
         
@@ -142,13 +141,11 @@ class Sound(object):
         elif self.channels == 2:
             for i in range(l):
                 yield sample.StereoSample(self.samples, i)
-                
-
+  
     def __len__(self):
         '''Return the number of Samples in this Sound.'''
         
         return len(self.samples)
-
 
     def __add__(self, snd):
         '''Return a Sound object with this Sound followed by Sound snd.'''
@@ -156,7 +153,6 @@ class Sound(object):
         new = self.copy()
         new.append(snd)
         return new
-
 
     def __mul__(self, num):
         '''Return a Sound object with this Sound repeated num times.'''
@@ -167,7 +163,6 @@ class Sound(object):
         for time in range(l):
             new.append(self)
         return new
-
 
     def set_pygame_sound(self, pygame_snd):
         '''Set this Sound's pygame Sound object.'''
@@ -180,12 +175,10 @@ class Sound(object):
         self.samples = pygame_to_sample_array(pygame_snd)
         self.player = None
         
-        
     def get_pygame_sound(self):
         '''Return this Sound's pygame Sound object.'''
         
         return self.pygame_sound
-
 
     def copy(self):
         '''Return a deep copy of this Sound.'''
@@ -193,7 +186,6 @@ class Sound(object):
         samples = self.samples.copy()
         new_pygame_snd =  sample_array_to_pygame(samples)
         return Sound(sound=new_pygame_snd)
-
 
     def append_silence(self, s):
         '''Append s samples of silence to each of this Sound's channels.'''
@@ -204,7 +196,6 @@ class Sound(object):
             silence_array = numpy.zeros((s, 2), self.numpy_encoding)
         pygame_silence =  sample_array_to_pygame(silence_array)
         self.append(Sound(sound=pygame_silence))
-
 
     def append(self, snd):
         '''Append Sound snd to this Sound. Requires that snd has same number of
@@ -217,7 +208,6 @@ class Sound(object):
             self.set_pygame_sound(sample_array_to_pygame(new_samples))
         else:
             raise ValueError('Sound snd must have same number of channels.')
-    
     
     def insert(self, snd, i):
         '''Insert Sound snd at index i. Requires that snd has same number of
@@ -241,7 +231,6 @@ class Sound(object):
         else:
             raise ValueError("Sound snd must have same number of channels.")
 
-
     def crop(self, first, last):
         '''Crop this Sound so that all Samples before int first and 
         after int last are removed. Cannot crop to a single sample. 
@@ -253,7 +242,6 @@ class Sound(object):
         new_samples = self.samples[first:last + 1]
         self.set_pygame_sound(sample_array_to_pygame(new_samples))
 
-
     def normalize(self):
         '''Maximize the amplitude of this Sound's wave. This will increase
         the volume of the Sound.'''
@@ -262,7 +250,6 @@ class Sound(object):
         minimum = self.samples.min()
         factor = min(32767.0/maximum, 32767.0/abs(minimum))        
         self.samples *= factor        
-        
     
     def close_inspect(self):
         '''Close the Inspector window.'''
@@ -290,8 +277,7 @@ class Sound(object):
         else:
             self.inspectpic = chunk.get_waveform_graph(len(chunk) / 12500, x=1250, y=128, theme=theme)
             self.inspectpic.show()
-        
-        
+         
     def get_waveform_graph(self, s_per_pixel, x=None, y=None, theme='DEFAULT'):
         '''Return a Picture object with this Sound's waveform point graph
         with s_per_pixel samples per pixel. If specified the picture will
@@ -309,7 +295,6 @@ class Sound(object):
         if x and y:
             graph = graph.resize((x, y), Image.ANTIALIAS)
         return picture.Picture(image=graph)
-    
     
     def get_waveform_image(self, s_per_pixel, v_per_pixel=128, theme="DEFAULT"):
         '''Return a PIL Image object with this Sound's waveform point graph
@@ -356,7 +341,6 @@ class Sound(object):
                     
         return graph
 
-
     def play(self, first=0, last=-1):
         '''Play this Sound from sample index first to last. As default play
         the entire Sound.'''
@@ -365,19 +349,16 @@ class Sound(object):
         self.player.crop(first, last)
         self.player.get_pygame_sound().play()
 
-
     def stop(self):
         '''Stop playing this Sound.'''
         
         if self.player:
             self.player.get_pygame_sound().stop()
-        
 
     def get_sampling_rate(self):
         '''Return the number of Samples this Sound plays per second.'''
 
         return self.samp_rate
-
 
     def get_sample(self, i):
         '''Return this Sound's Sample object at index i. Negative indices are
@@ -387,7 +368,6 @@ class Sound(object):
             return sample.MonoSample(self.samples, i)
         elif self.channels == 2:
             return sample.StereoSample(self.samples, i)
-
     
     def get_max(self):
         '''Return this Sound's highest sample value. If this Sound is stereo
@@ -395,19 +375,16 @@ class Sound(object):
         
         return self.samples.max()
         
-        
     def get_min(self):
         '''Return this Sound's lowest sample value. If this Sound is stereo
         return the absolute lowest for both channels.'''
         
         return self.samples.min()
 
-
     def get_channels(self):
         '''Return the number of channels in this Sound.'''
         
         return self.channels
-    
 
     def set_filename(self, filename=None):
         '''Set this Sound's filename to filename. If filename is None 
@@ -418,13 +395,11 @@ class Sound(object):
         else:
             self.filename = ''
     
-    
     def get_filename(self):
         '''Return this Sound's filename.'''
 
         return self.filename
-        
-        
+         
     def save_as(self, filename):
         '''Save this Sound to filename filename and set its filename.'''
         
@@ -445,7 +420,6 @@ class Sound(object):
         else:
             raise ValueError("%s is not one of the supported file formats." \
                              % ext)        
-        
         
     def save(self):
         '''Save this Sound to its filename. If an extension is not specified
@@ -584,8 +558,6 @@ def create_sine_wave(hz, amp, samp):
     return sample_array_to_pygame(samples)
 
 
-
-
 def pygame_to_sample_array(pygame_snd):
     '''Return a numpy array object, which allows direct access to specific
     sample values in the buffer of the pygame.mixer.Sound object pygame_snd.'''
@@ -618,6 +590,7 @@ def sample_array_to_pygame(samp_array):
             raise ValueError("Array depth must match number of sound channels")
     
     return pygame.mixer.Sound(samp_array)
+
 
 def _draw_dot(pix, x, y, color_tuple):
     '''Draw a 3 X 3 pixel dot on PixelAccess object pix with center (x, y).'''
