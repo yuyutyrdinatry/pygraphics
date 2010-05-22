@@ -1,8 +1,7 @@
-'''The Sound class and helper functions. This currently supports only 
-uncompressed .wav files. For best quality use .wav files with sampling
-rates of either 22050 or 44100. The default number of channels,
-sampling rate, encoding, and buffering can be changed in the sound.py
-file.'''
+'''The Sound class and helper functions. This currently supports only
+uncompressed .wav files. For best quality use .wav files with sampling rates
+of either 22050 or 44100. The default number of channels, sampling rate,
+encoding, and buffering can be changed in the sound.py file.'''
 
 import sample
 import picture
@@ -15,36 +14,36 @@ import wave
 import sndhdr
 import os
 
-####################------------------------------------------------------------
+####################----------------------------------------------------------
 ## Defaults and Globals
-####################------------------------------------------------------------
+####################----------------------------------------------------------
 
-GRAPH_COLOR_THEMES = {'NOTEBOOK' : ((229, 225, 193), (34, 13, 13)),
-                      'OCEAN' : ((0, 64, 128), (255, 255, 255)),
-                      'HEART' : ((0, 0, 0), (0, 255, 0)),
-                      'DEFAULT' : ((255, 255, 255), (0, 0, 0)),
-                      'PRO' : ((0, 0, 0), (255, 255, 255))}
+GRAPH_COLOR_THEMES = {'NOTEBOOK': ((229, 225, 193), (34, 13, 13)),
+                      'OCEAN': ((0, 64, 128), (255, 255, 255)),
+                      'HEART': ((0, 0, 0), (0, 255, 0)),
+                      'DEFAULT': ((255, 255, 255), (0, 0, 0)),
+                      'PRO': ((0, 0, 0), (255, 255, 255))}
 SOUND_FORMATS = ['.wav']
 DEFAULT_SAMP_RATE = None
 DEFAULT_ENCODING = None
 DEFAULT_CHANNELS = None
 DEFAULT_BUFFERING = None
 SND_INITIALIZED = False
-AUDIO_ENCODINGS = { 8 : numpy.uint8,   # unsigned 8-bit
-     16 : numpy.uint16, # unsigned 16-bit
-     -8 : numpy.int8,   # signed 8-bit
-     -16 : numpy.int16  # signed 16-bit
-     }
+AUDIO_ENCODINGS = {8: numpy.uint8, # unsigned 8-bit
+    16: numpy.uint16, # unsigned 16-bit
+    -8: numpy.int8, # signed 8-bit
+    -16: numpy.int16} # signed 16-bit
 
-####################------------------------------------------------------------
+####################----------------------------------------------------------
 ## Initializer
-####################------------------------------------------------------------
+####################----------------------------------------------------------
+
 
 def init_sound(samp_rate=22050, encoding=-16, channels=1): 
     '''Initialize this module. Must be done before any sounds are created.
     
-    WARNING: If used with picture.py, it must be initialized after initializing
-    picture.py.'''
+    WARNING: If used with picture.py, it must be initialized after
+    initializing picture.py.'''
     
     global SND_INITIALIZED, DEFAULT_SAMP_RATE, DEFAULT_ENCODING, \
     DEFAULT_CHANNELS, DEFAULT_BUFFERING
@@ -67,9 +66,9 @@ def init_sound(samp_rate=22050, encoding=-16, channels=1):
     else:
         raise Exception('Sound has already been initialized!')
 
-####################------------------------------------------------------------
+####################----------------------------------------------------------
 ## Sound class
-####################------------------------------------------------------------
+####################----------------------------------------------------------
 
 
 class Sound(object):
@@ -90,7 +89,8 @@ class Sound(object):
         over seconds, which in turn takes precedence over sound.'''
         
         if not SND_INITIALIZED:
-            raise Exception('Sound is not initialized. Run init_sound() first.')
+            raise Exception(
+                'Sound is not initialized. Run init_sound() first.')
         
         self.channels = DEFAULT_CHANNELS
         self.samp_rate = DEFAULT_SAMP_RATE
@@ -113,15 +113,18 @@ class Sound(object):
             snd = sound
             
         else:
-            raise TypeError("No arguments were given to the Sound constructor.")
+            raise TypeError(
+                "No arguments were given to the Sound constructor.")
                     
         self.set_pygame_sound(snd)
             
-    def __eq__ (self, snd):
+    def __eq__(self, snd):
+        '''Return whether this sound is equal to snd.'''
+        
         if self.get_channels() == 1 and snd.get_channels() == 1:
-            return numpy.all (self.samples == snd.samples)
+            return numpy.all(self.samples == snd.samples)
         elif self.get_channels() == 2 and snd.get_channels() == 2:
-            return numpy.all (self.samples == snd.samples)
+            return numpy.all(self.samples == snd.samples)
         else:
             raise ValueError('Sound snd must have same number of channels.')
         
@@ -169,9 +172,9 @@ class Sound(object):
         
         self.pygame_sound = pygame_snd
         
-        # self.samples is a numpy array object (either 1D or 2D depending on the
-        # number of channels). This object allows access to specific samples
-        # in the buffer.
+        # self.samples is a numpy array object (either 1D or 2D depending on
+        # the number of channels). This object allows access to specific
+        # samples in the buffer.
         self.samples = pygame_to_sample_array(pygame_snd)
         self.player = None
         
@@ -184,7 +187,7 @@ class Sound(object):
         '''Return a deep copy of this Sound.'''
         
         samples = self.samples.copy()
-        new_pygame_snd =  sample_array_to_pygame(samples)
+        new_pygame_snd = sample_array_to_pygame(samples)
         return Sound(sound=new_pygame_snd)
 
     def append_silence(self, s):
@@ -194,7 +197,7 @@ class Sound(object):
             silence_array = numpy.zeros(s, self.numpy_encoding)
         else:
             silence_array = numpy.zeros((s, 2), self.numpy_encoding)
-        pygame_silence =  sample_array_to_pygame(silence_array)
+        pygame_silence = sample_array_to_pygame(silence_array)
         self.append(Sound(sound=pygame_silence))
 
     def append(self, snd):
@@ -221,8 +224,8 @@ class Sound(object):
                                              second_chunk))
             self.set_pygame_sound(sample_array_to_pygame(new_samples))
         elif self.get_channels() == snd.get_channels() == 2:
-            first_chunk = self.samples[:i, :]
-            second_chunk = self.samples[i:, :]
+            first_chunk = self.samples[:i, 0:]
+            second_chunk = self.samples[i:, 0:]
             new_samples = numpy.vstack((first_chunk, 
                                         snd.samples, 
                                         second_chunk))
@@ -248,8 +251,8 @@ class Sound(object):
         
         maximum = self.samples.max()
         minimum = self.samples.min()
-        factor = min(32767.0/maximum, 32767.0/abs(minimum))        
-        self.samples *= factor        
+        factor = min(32767.0 / maximum, 32767.0 / abs(minimum))
+        self.samples *= factor
     
     def close_inspect(self):
         '''Close the Inspector window.'''
@@ -275,20 +278,20 @@ class Sound(object):
             self.inspectpic.set_image(graph)
             self.inspectpic.update()
         else:
-            self.inspectpic = chunk.get_waveform_graph(len(chunk) / 12500, x=1250, y=128, theme=theme)
+            self.inspectpic = chunk.get_waveform_graph(
+                len(chunk) / 12500, x=1250, y=128, theme=theme)
             self.inspectpic.show()
          
     def get_waveform_graph(self, s_per_pixel, x=None, y=None, theme='DEFAULT'):
-        '''Return a Picture object with this Sound's waveform point graph
-        with s_per_pixel samples per pixel. If specified the picture will
-        be resized to x pixels wide and y pixels high. This works best 
-        with sounds in a 16 signed bits encoding.
+        '''Return a Picture object with this Sound's waveform point graph with
+        s_per_pixel samples per pixel. If specified the picture will be
+        resized to x pixels wide and y pixels high. This works best with
+        sounds in a 16 signed bits encoding.
         
-        WARNING: 
-        This can take very long if too many samples per pixel 
-        are asked for.
+        WARNING: This can take very long if too many samples per pixel are
+        asked for.
         
-        RECOMMENDED ARGUMENTS: 
+        RECOMMENDED ARGUMENTS:
         somesound.get_waveform_graph(len(somesound) / 12500, x=1250, y=128)'''
     
         graph = self.get_waveform_image(s_per_pixel, theme=theme)
@@ -296,17 +299,16 @@ class Sound(object):
             graph = graph.resize((x, y), Image.ANTIALIAS)
         return picture.Picture(image=graph)
     
-    def get_waveform_image(self, s_per_pixel, v_per_pixel=128, theme="DEFAULT"):
+    def get_waveform_image(self, s_per_pixel, v_per_pixel=128,
+            theme="DEFAULT"):
         '''Return a PIL Image object with this Sound's waveform point graph
-        with s_per_pixel samples per pixel and v_per_pixel values per pixel. 
+        with s_per_pixel samples per pixel and v_per_pixel values per pixel.
         
-        NOTE: 
-        Sounds encoded in 16 bits have a possible range of values from
-        -32768 to 32767. This is a range of about 65536. Therefore to have 
-        a graph of 512 pixels high a v_per_pixel of 128 is needed as default.
+        NOTE: Sounds encoded in 16 bits have a possible range of values from
+        -32768 to 32767. This is a range of about 65536. Therefore to have a
+        graph of 512 pixels high a v_per_pixel of 128 is needed as default.
         
-        WARNING: 
-        This method can take very long if too many samples per pixel 
+        WARNING: This method can take very long if too many samples per pixel
         are asked for.'''
         
         if v_per_pixel < 1:
@@ -330,7 +332,8 @@ class Sound(object):
         while i < width - 1:
             
             # This is the zero line
-            pixels[i, int(32768 / v_per_pixel) + 1] = GRAPH_COLOR_THEMES[theme][1]
+            pixels[i, int(32768 / v_per_pixel) + 1] = \
+                GRAPH_COLOR_THEMES[theme][1]
             
             # Get the value and calculate it's appropriate y coordinate
             val = self.samples[sample_i, 0]
@@ -342,7 +345,7 @@ class Sound(object):
         return graph
 
     def play(self, first=0, last=-1):
-        '''Play this Sound from sample index first to last. As default play
+        '''Play this Sound from sample index first to last. By default, play
         the entire Sound.'''
         
         self.player = self.copy()
@@ -370,13 +373,13 @@ class Sound(object):
             return sample.StereoSample(self.samples, i)
     
     def get_max(self):
-        '''Return this Sound's highest sample value. If this Sound is stereo
+        '''Return this Sound's highest sample value. If this Sound is stereo,
         return the absolute highest for both channels.'''
         
         return self.samples.max()
         
     def get_min(self):
-        '''Return this Sound's lowest sample value. If this Sound is stereo
+        '''Return this Sound's lowest sample value. If this Sound is stereo,
         return the absolute lowest for both channels.'''
         
         return self.samples.min()
@@ -387,19 +390,14 @@ class Sound(object):
         return self.channels
 
     def set_filename(self, filename=None):
-        '''Set this Sound's filename to filename. If filename is None 
-        set this Sound's filename to the empty string.'''
+        '''Set this Sound's filename to filename. If filename is None, set
+        this Sound's filename to the empty string.'''
         
         if filename != None:
             self.filename = filename
         else:
             self.filename = ''
     
-    def get_filename(self):
-        '''Return this Sound's filename.'''
-
-        return self.filename
-         
     def save_as(self, filename):
         '''Save this Sound to filename filename and set its filename.'''
         
@@ -425,34 +423,36 @@ class Sound(object):
         '''Save this Sound to its filename. If an extension is not specified
         the default is .wav.'''
  
-        filename = os.path.splitext(self.get_filename())[0]
-        ext = os.path.splitext(self.get_filename())[-1]
+        filename = os.path.splitext(self.filename)[0]
+        ext = os.path.splitext(self.filename)[-1]
         if ext == '':
             self.save_as(filename + '.wav')
         else:
-            self.save_as(self.get_filename())
+            self.save_as(self.filename)
         
         
-####################------------------------------------------------------------
+####################----------------------------------------------------------
 ## Note class
-####################------------------------------------------------------------
+####################----------------------------------------------------------
 
 
 class Note(Sound):
-    '''A Note class to create different notes of the C scale. Inherits from Sound,
-    does everything Sounds do, and can be combined with Sounds.'''
+    '''A Note class to create different notes of the C scale. Inherits from
+    Sound, does everything Sounds do, and can be combined with Sounds.'''
     
+    # TODO: should a Note *have* a sound rather than *be* a sound?
+
     # These are in Hz. 
-    frequencies = {'C' : 261.63,
-                   'D' : 293.66,
-                   'E' : 329.63,
-                   'F' : 349.23,
-                   'G' : 392,
-                   'A' : 440,
-                   'B' : 493.88}
+    frequencies = {'C': 261.63,
+                   'D': 293.66,
+                   'E': 329.63,
+                   'F': 349.23,
+                   'G': 392,
+                   'A': 440,
+                   'B': 493.88}
     
     default_amp = 6000
-    
+
     def __init__(self, note, s, octave=0):
         '''Create a Note s samples long with the frequency according to 
         str note. The following are acceptable arguments for note, starting 
@@ -466,7 +466,8 @@ class Note(Sound):
 
         
         if not SND_INITIALIZED:
-            raise Exception('Sound is not initialized. Run init_sound() first.')
+            raise Exception(
+                'Sound is not initialized. Run init_sound() first.')
         
         self.channels = DEFAULT_CHANNELS
         self.samp_rate = DEFAULT_SAMP_RATE
@@ -486,9 +487,9 @@ class Note(Sound):
         self.set_pygame_sound(snd)
                 
         
-####################------------------------------------------------------------
+####################----------------------------------------------------------
 ## Helper functions
-####################------------------------------------------------------------
+####################----------------------------------------------------------
 
 
 def load_pygame_sound(filepath):
@@ -503,8 +504,8 @@ def load_pygame_sound(filepath):
     if sndhdr.what(filepath):
         assert sndhdr.what(filepath)[0] == 'wav', "The file is not a .wav file"
     
-    # Check the compression. Wave_read.getcomptype() will raise an Error if it is
-    # compressed.
+    # Check the compression. Wave_read.getcomptype() will raise an Error if it
+    # is compressed.
     wav = wave.open(filepath, 'r')
     try:
         wav.getcomptype()
@@ -539,11 +540,9 @@ def create_sine_wave(hz, amp, samp):
     seconds_per_period = 1.0 / hz
     samples_per_period = samples_per_second * seconds_per_period
     if DEFAULT_CHANNELS == 1:
-        samples = numpy.array(range(samp), 
-                              numpy.float)
+        samples = numpy.array(range(samp), numpy.float)
     else:
-        samples = numpy.array([range(samp), range(samp)], 
-                              numpy.float)
+        samples = numpy.array([range(samp), range(samp)], numpy.float)
         samples = samples.transpose()
     
     # For each value in the array multiply it by 2 pi, divide by the 
@@ -560,7 +559,8 @@ def create_sine_wave(hz, amp, samp):
 
 def pygame_to_sample_array(pygame_snd):
     '''Return a numpy array object, which allows direct access to specific
-    sample values in the buffer of the pygame.mixer.Sound object pygame_snd.'''
+    sample values in the buffer of the pygame.mixer.Sound object
+    pygame_snd.'''
      
     data = pygame_snd.get_buffer()
     
@@ -574,17 +574,17 @@ def pygame_to_sample_array(pygame_snd):
 
 
 def sample_array_to_pygame(samp_array):
-    '''Return a new pygame.mixer.Sound object from a numpy array object 
+    '''Return a new pygame.mixer.Sound object from a numpy array object
     samp_array. Requires that samp_array is an appropriate 1D or 2D shape.'''
 
     shape = samp_array.shape
     
     # Check if array has the right shape
     if DEFAULT_CHANNELS == 1:
-        if len (shape) != 1:
+        if len(shape) != 1:
             raise ValueError("Array must be 1-dimensional for mono sound")
     else:
-        if len (shape) != 2:
+        if len(shape) != 2:
             raise ValueError("Array must be 2-dimensional for stereo sound")
         elif shape[1] != DEFAULT_CHANNELS:
             raise ValueError("Array depth must match number of sound channels")
