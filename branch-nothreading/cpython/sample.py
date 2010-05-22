@@ -1,6 +1,7 @@
 '''The Sample classes that support the Sound class and allow manipulation
 of individual sample values.'''
 
+
 class MonoSample(object):
     '''A sample in a single-channeled Sound with a value.'''
     
@@ -18,8 +19,7 @@ class MonoSample(object):
     def __str__(self):
         '''Return a str with index and value information.'''
         
-        return "Sample at " + str(self.index) + " with value " \
-                 + str(self.get_value())
+        return "Sample at %s with value %s." % (self.index, self.get_value())
 
     def set_value(self, v):
         '''Set this Sample's value to v.'''
@@ -36,16 +36,18 @@ class MonoSample(object):
         
         return self.index
     
-    def __cmp__ (self, other):
+    def __cmp__(self, other):
+        '''Return < 0 if this Sample < other, 0 if they are equal, and > 0 if
+        this Sample > other.'''
+        
         return cmp(self.samp_array[self.index], other.samp_array[other.index])
         
         
 class StereoSample(object):
     '''A sample in a two-channeled Sound with a left and a right value.'''
-
     
     def __init__(self, samp_array, i):
-        '''Create a StereoSample object at index i from numpy array object 
+        '''Create a StereoSample object at index i from numpy array object
         samp_array, which has access to the Sound's buffer.'''
        
         # negative indices are supported
@@ -58,19 +60,18 @@ class StereoSample(object):
     def __str__(self):
         '''Return a str with index and value information.'''
         
-        return "Sample at " + str(self.index) + " with left value " \
-                 + str(self.get_left()) + " and right value " + \
-                 str(self.get_right())
+        return "Sample at %s with left value %s and right value %s." % \
+            (self.index, self.get_left(), self.get_right())
     
     def set_values(self, left, right):
-        '''Set this StereoSample's left value to left and 
-        right value to right.'''
+        '''Set this StereoSample's left value to left and right value to
+        right.'''
         
         self.samp_array[self.index] = [int(left), int(right)]
 
-    def get_values(self):        
-        '''Return this StereoSample's left and right values as a tuple 
-        (left, right) of two ints.'''
+    def get_values(self):
+        '''Return this StereoSample's left and right values as a tuple (left,
+        right) of two ints.'''
         
         return tuple(self.samp_array[self.index])
     
@@ -100,9 +101,9 @@ class StereoSample(object):
         return self.index
         
 
-def __cmp__ (self, other):
-  '''The bigger sample is the one with the biggest sample in any channel'''
+def __cmp__(self, other):
+    '''The bigger sample is the one with the biggest sample in any channel.'''
   
-  self_max = max(self.get_values())
-  other_max = max(other.get_values())
-  return max (self_max, other_max)
+    self_max = max(self.get_values())
+    other_max = max(other.get_values())
+    return max(self_max, other_max)
