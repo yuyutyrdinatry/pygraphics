@@ -1,0 +1,775 @@
+Testing load_sound
+         112895 function calls (110897 primitive calls) in 1.409 CPU seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    1.409    1.409 <string>:1(<module>)
+        1    0.013    0.013    1.409    1.409 ProfilingSounds.py:6(test_load_sound)
+        1    0.000    0.000    0.001    0.001 aifc.py:135(<module>)
+        1    0.000    0.000    0.000    0.000 aifc.py:142(Error)
+        1    0.000    0.000    0.000    0.000 aifc.py:246(Aifc_read)
+        1    0.000    0.000    0.000    0.000 aifc.py:527(Aifc_write)
+     1998    0.010    0.000    0.010    0.000 chunk.py:115(tell)
+8991/6993    0.151    0.000    0.183    0.000 chunk.py:120(read)
+      999    0.017    0.000    0.036    0.000 chunk.py:143(skip)
+     2997    0.169    0.000    0.293    0.000 chunk.py:52(__init__)
+     2997    0.010    0.000    0.010    0.000 chunk.py:78(getname)
+      999    0.015    0.000    0.019    0.000 chunk.py:96(seek)
+      999    0.011    0.000    1.396    0.001 media.py:262(load_sound)
+     1998    0.010    0.000    0.010    0.000 sndhdr.py:108(test_hcom)
+     1998    0.010    0.000    0.010    0.000 sndhdr.py:117(test_voc)
+     1998    0.048    0.000    0.157    0.000 sndhdr.py:130(test_wav)
+     1998    0.025    0.000    0.037    0.000 sndhdr.py:177(get_long_le)
+     5994    0.050    0.000    0.071    0.000 sndhdr.py:183(get_short_le)
+     1998    0.040    0.000    0.497    0.000 sndhdr.py:35(what)
+     1998    0.098    0.000    0.457    0.000 sndhdr.py:41(whathdr)
+     1998    0.083    0.000    0.084    0.000 sndhdr.py:58(test_aifc)
+     1998    0.013    0.000    0.013    0.000 sndhdr.py:79(test_au)
+      999    0.011    0.000    0.035    0.000 sound.py:168(set_pygame_sound)
+      999    0.007    0.000    0.007    0.000 sound.py:408(set_filename)
+      999    0.140    0.000    1.287    0.001 sound.py:516(load_pygame_sound)
+      999    0.014    0.000    0.025    0.000 sound.py:585(pygame_to_sample_array)
+      999    0.044    0.000    1.385    0.001 sound.py:78(__init__)
+      999    0.090    0.000    0.560    0.001 wave.py:125(initfp)
+      999    0.020    0.000    0.598    0.001 wave.py:156(__init__)
+      999    0.007    0.000    0.012    0.000 wave.py:169(__del__)
+     1998    0.016    0.000    0.030    0.000 wave.py:181(close)
+      999    0.003    0.000    0.003    0.000 wave.py:202(getcomptype)
+      999    0.025    0.000    0.110    0.000 wave.py:263(_read_fmt_chunk)
+      999    0.012    0.000    0.611    0.001 wave.py:486(open)
+     4995    0.011    0.000    0.011    0.000 {_struct.unpack}
+      999    0.003    0.000    0.003    0.000 {isinstance}
+    11988    0.019    0.000    0.019    0.000 {len}
+      999    0.014    0.000    0.014    0.000 {method 'close' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+      999    0.003    0.000    0.003    0.000 {method 'get_buffer' of 'pygame.mixer.Sound' objects}
+    10989    0.090    0.000    0.090    0.000 {method 'read' of 'file' objects}
+      999    0.005    0.000    0.005    0.000 {method 'seek' of 'file' objects}
+      999    0.004    0.000    0.004    0.000 {method 'tell' of 'file' objects}
+      999    0.008    0.000    0.008    0.000 {numpy.core.multiarray.frombuffer}
+     2997    0.047    0.000    0.047    0.000 {open}
+    19980    0.034    0.000    0.034    0.000 {ord}
+      999    0.011    0.000    0.011    0.000 {posix.access}
+        1    0.000    0.000    0.000    0.000 {range}
+
+
+Testing create_sound
+         10993 function calls in 0.110 CPU seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.110    0.110 <string>:1(<module>)
+        1    0.008    0.008    0.110    0.110 ProfilingSounds.py:11(test_create_sound)
+      999    0.010    0.000    0.102    0.000 media.py:269(create_sound)
+      999    0.009    0.000    0.033    0.000 sound.py:168(set_pygame_sound)
+      999    0.005    0.000    0.005    0.000 sound.py:408(set_filename)
+      999    0.012    0.000    0.029    0.000 sound.py:540(create_pygame_sound)
+      999    0.019    0.000    0.024    0.000 sound.py:585(pygame_to_sample_array)
+      999    0.011    0.000    0.012    0.000 sound.py:600(sample_array_to_pygame)
+      999    0.024    0.000    0.093    0.000 sound.py:78(__init__)
+      999    0.002    0.000    0.002    0.000 {len}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+      999    0.002    0.000    0.002    0.000 {method 'get_buffer' of 'pygame.mixer.Sound' objects}
+      999    0.003    0.000    0.003    0.000 {numpy.core.multiarray.frombuffer}
+      999    0.006    0.000    0.006    0.000 {numpy.core.multiarray.zeros}
+        1    0.000    0.000    0.000    0.000 {range}
+
+
+Testing create_note
+         12991 function calls in 0.182 CPU seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.182    0.182 <string>:1(<module>)
+        1    0.009    0.009    0.182    0.182 ProfilingSounds.py:16(test_create_note)
+      999    0.009    0.000    0.172    0.000 media.py:275(create_note)
+      999    0.010    0.000    0.028    0.000 sound.py:168(set_pygame_sound)
+      999    0.007    0.000    0.007    0.000 sound.py:408(set_filename)
+      999    0.028    0.000    0.163    0.000 sound.py:478(__init__)
+      999    0.064    0.000    0.100    0.000 sound.py:553(create_sine_wave)
+      999    0.012    0.000    0.018    0.000 sound.py:585(pygame_to_sample_array)
+      999    0.012    0.000    0.014    0.000 sound.py:600(sample_array_to_pygame)
+      999    0.002    0.000    0.002    0.000 {len}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+      999    0.003    0.000    0.003    0.000 {method 'get_buffer' of 'pygame.mixer.Sound' objects}
+     1998    0.019    0.000    0.019    0.000 {numpy.core.multiarray.array}
+      999    0.004    0.000    0.004    0.000 {numpy.core.multiarray.frombuffer}
+     1000    0.003    0.000    0.003    0.000 {range}
+
+
+Testing get_samples
+         45969 function calls (44970 primitive calls) in 0.294 CPU seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.294    0.294 <string>:1(<module>)
+        1    0.008    0.008    0.294    0.294 ProfilingSounds.py:21(test_get_samples)
+        1    0.000    0.000    0.000    0.000 media.py:269(create_sound)
+      999    0.046    0.000    0.287    0.000 media.py:289(get_samples)
+     9990    0.099    0.000    0.130    0.000 sample.py:7(__init__)
+    10989    0.096    0.000    0.241    0.000 sound.py:134(__iter__)
+      999    0.005    0.000    0.007    0.000 sound.py:145(__len__)
+        1    0.000    0.000    0.000    0.000 sound.py:168(set_pygame_sound)
+        1    0.000    0.000    0.000    0.000 sound.py:408(set_filename)
+        1    0.000    0.000    0.000    0.000 sound.py:540(create_pygame_sound)
+        1    0.000    0.000    0.000    0.000 sound.py:585(pygame_to_sample_array)
+        1    0.000    0.000    0.000    0.000 sound.py:600(sample_array_to_pygame)
+        1    0.000    0.000    0.000    0.000 sound.py:78(__init__)
+21979/20980    0.038    0.000    0.043    0.000 {len}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 {method 'get_buffer' of 'pygame.mixer.Sound' objects}
+        1    0.000    0.000    0.000    0.000 {numpy.core.multiarray.frombuffer}
+        1    0.000    0.000    0.000    0.000 {numpy.core.multiarray.zeros}
+     1000    0.003    0.000    0.003    0.000 {range}
+
+
+Testing get_max_sample
+         3114 function calls (3112 primitive calls) in 0.185 CPU seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.185    0.185 <string>:1(<module>)
+        1    0.006    0.006    0.185    0.185 ProfilingSounds.py:27(test_get_max_sample)
+        2    0.000    0.000    0.000    0.000 chunk.py:115(tell)
+      9/7    0.000    0.000    0.000    0.000 chunk.py:120(read)
+        1    0.000    0.000    0.000    0.000 chunk.py:143(skip)
+        3    0.000    0.000    0.000    0.000 chunk.py:52(__init__)
+        3    0.000    0.000    0.000    0.000 chunk.py:78(getname)
+        1    0.000    0.000    0.000    0.000 chunk.py:96(seek)
+        1    0.000    0.000    0.003    0.003 media.py:262(load_sound)
+      999    0.008    0.000    0.177    0.000 media.py:295(get_max_sample)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:108(test_hcom)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:117(test_voc)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:130(test_wav)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:177(get_long_le)
+        6    0.000    0.000    0.000    0.000 sndhdr.py:183(get_short_le)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:35(what)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:41(whathdr)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:58(test_aifc)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:79(test_au)
+        1    0.000    0.000    0.000    0.000 sound.py:168(set_pygame_sound)
+      999    0.007    0.000    0.169    0.000 sound.py:388(get_max)
+        1    0.000    0.000    0.000    0.000 sound.py:408(set_filename)
+        1    0.000    0.000    0.003    0.003 sound.py:516(load_pygame_sound)
+        1    0.000    0.000    0.000    0.000 sound.py:585(pygame_to_sample_array)
+        1    0.000    0.000    0.003    0.003 sound.py:78(__init__)
+        1    0.001    0.001    0.002    0.002 wave.py:125(initfp)
+        1    0.000    0.000    0.002    0.002 wave.py:156(__init__)
+        1    0.000    0.000    0.000    0.000 wave.py:169(__del__)
+        2    0.000    0.000    0.000    0.000 wave.py:181(close)
+        1    0.000    0.000    0.000    0.000 wave.py:202(getcomptype)
+        1    0.000    0.000    0.000    0.000 wave.py:263(_read_fmt_chunk)
+        1    0.000    0.000    0.002    0.002 wave.py:486(open)
+        5    0.000    0.000    0.000    0.000 {_struct.unpack}
+        1    0.000    0.000    0.000    0.000 {isinstance}
+       12    0.000    0.000    0.000    0.000 {len}
+        1    0.000    0.000    0.000    0.000 {method 'close' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 {method 'get_buffer' of 'pygame.mixer.Sound' objects}
+      999    0.162    0.000    0.162    0.000 {method 'max' of 'numpy.ndarray' objects}
+       11    0.000    0.000    0.000    0.000 {method 'read' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'seek' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'tell' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {numpy.core.multiarray.frombuffer}
+        3    0.000    0.000    0.000    0.000 {open}
+       20    0.000    0.000    0.000    0.000 {ord}
+        1    0.000    0.000    0.000    0.000 {posix.access}
+        1    0.000    0.000    0.000    0.000 {range}
+
+
+Testing get_min_sample
+         3114 function calls (3112 primitive calls) in 0.174 CPU seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.174    0.174 <string>:1(<module>)
+        1    0.006    0.006    0.174    0.174 ProfilingSounds.py:33(test_get_min_sample)
+        2    0.000    0.000    0.000    0.000 chunk.py:115(tell)
+      9/7    0.000    0.000    0.000    0.000 chunk.py:120(read)
+        1    0.000    0.000    0.000    0.000 chunk.py:143(skip)
+        3    0.000    0.000    0.000    0.000 chunk.py:52(__init__)
+        3    0.000    0.000    0.000    0.000 chunk.py:78(getname)
+        1    0.000    0.000    0.000    0.000 chunk.py:96(seek)
+        1    0.000    0.000    0.002    0.002 media.py:262(load_sound)
+      999    0.007    0.000    0.166    0.000 media.py:302(get_min_sample)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:108(test_hcom)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:117(test_voc)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:130(test_wav)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:177(get_long_le)
+        6    0.000    0.000    0.000    0.000 sndhdr.py:183(get_short_le)
+        2    0.000    0.000    0.001    0.000 sndhdr.py:35(what)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:41(whathdr)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:58(test_aifc)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:79(test_au)
+        1    0.000    0.000    0.000    0.000 sound.py:168(set_pygame_sound)
+      999    0.007    0.000    0.159    0.000 sound.py:395(get_min)
+        1    0.000    0.000    0.000    0.000 sound.py:408(set_filename)
+        1    0.000    0.000    0.002    0.002 sound.py:516(load_pygame_sound)
+        1    0.000    0.000    0.000    0.000 sound.py:585(pygame_to_sample_array)
+        1    0.000    0.000    0.002    0.002 sound.py:78(__init__)
+        1    0.000    0.000    0.001    0.001 wave.py:125(initfp)
+        1    0.000    0.000    0.001    0.001 wave.py:156(__init__)
+        1    0.000    0.000    0.000    0.000 wave.py:169(__del__)
+        2    0.000    0.000    0.000    0.000 wave.py:181(close)
+        1    0.000    0.000    0.000    0.000 wave.py:202(getcomptype)
+        1    0.000    0.000    0.000    0.000 wave.py:263(_read_fmt_chunk)
+        1    0.000    0.000    0.001    0.001 wave.py:486(open)
+        5    0.000    0.000    0.000    0.000 {_struct.unpack}
+        1    0.000    0.000    0.000    0.000 {isinstance}
+       12    0.000    0.000    0.000    0.000 {len}
+        1    0.000    0.000    0.000    0.000 {method 'close' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 {method 'get_buffer' of 'pygame.mixer.Sound' objects}
+      999    0.153    0.000    0.153    0.000 {method 'min' of 'numpy.ndarray' objects}
+       11    0.000    0.000    0.000    0.000 {method 'read' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'seek' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'tell' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {numpy.core.multiarray.frombuffer}
+        3    0.000    0.000    0.000    0.000 {open}
+       20    0.000    0.000    0.000    0.000 {ord}
+        1    0.000    0.000    0.000    0.000 {posix.access}
+        1    0.000    0.000    0.000    0.000 {range}
+
+
+Testing concatenate
+         26204 function calls (26200 primitive calls) in 0.324 CPU seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.324    0.324 <string>:1(<module>)
+        1    0.010    0.010    0.324    0.324 ProfilingSounds.py:39(test_concatenate)
+        4    0.000    0.000    0.000    0.000 chunk.py:115(tell)
+    18/14    0.000    0.000    0.000    0.000 chunk.py:120(read)
+        2    0.000    0.000    0.000    0.000 chunk.py:143(skip)
+        6    0.000    0.000    0.001    0.000 chunk.py:52(__init__)
+        6    0.000    0.000    0.000    0.000 chunk.py:78(getname)
+        2    0.000    0.000    0.000    0.000 chunk.py:96(seek)
+        2    0.000    0.000    0.003    0.001 media.py:262(load_sound)
+      999    0.010    0.000    0.311    0.000 media.py:309(concatenate)
+        4    0.000    0.000    0.000    0.000 sndhdr.py:108(test_hcom)
+        4    0.000    0.000    0.000    0.000 sndhdr.py:117(test_voc)
+        4    0.000    0.000    0.000    0.000 sndhdr.py:130(test_wav)
+        4    0.000    0.000    0.000    0.000 sndhdr.py:177(get_long_le)
+       12    0.000    0.000    0.000    0.000 sndhdr.py:183(get_short_le)
+        4    0.000    0.000    0.001    0.000 sndhdr.py:35(what)
+        4    0.000    0.000    0.001    0.000 sndhdr.py:41(whathdr)
+        4    0.000    0.000    0.000    0.000 sndhdr.py:58(test_aifc)
+        4    0.000    0.000    0.000    0.000 sndhdr.py:79(test_au)
+      999    0.016    0.000    0.301    0.000 sound.py:151(__add__)
+     2000    0.019    0.000    0.055    0.000 sound.py:168(set_pygame_sound)
+      999    0.004    0.000    0.004    0.000 sound.py:180(get_pygame_sound)
+      999    0.021    0.000    0.126    0.000 sound.py:186(copy)
+      999    0.035    0.000    0.159    0.000 sound.py:205(append)
+     1998    0.007    0.000    0.007    0.000 sound.py:402(get_channels)
+     1001    0.006    0.000    0.006    0.000 sound.py:408(set_filename)
+        2    0.000    0.000    0.002    0.001 sound.py:516(load_pygame_sound)
+     2999    0.035    0.000    0.052    0.000 sound.py:585(pygame_to_sample_array)
+     1998    0.065    0.000    0.068    0.000 sound.py:600(sample_array_to_pygame)
+     1001    0.025    0.000    0.060    0.000 sound.py:78(__init__)
+        2    0.000    0.000    0.001    0.001 wave.py:125(initfp)
+        2    0.000    0.000    0.001    0.001 wave.py:156(__init__)
+        2    0.000    0.000    0.000    0.000 wave.py:169(__del__)
+        4    0.000    0.000    0.000    0.000 wave.py:181(close)
+        2    0.000    0.000    0.000    0.000 wave.py:202(getcomptype)
+        2    0.000    0.000    0.000    0.000 wave.py:263(_read_fmt_chunk)
+        2    0.000    0.000    0.001    0.001 wave.py:486(open)
+       10    0.000    0.000    0.000    0.000 {_struct.unpack}
+        2    0.000    0.000    0.000    0.000 {isinstance}
+     2022    0.003    0.000    0.003    0.000 {len}
+        2    0.000    0.000    0.000    0.000 {method 'close' of 'file' objects}
+      999    0.020    0.000    0.020    0.000 {method 'copy' of 'numpy.ndarray' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+     2999    0.006    0.000    0.006    0.000 {method 'get_buffer' of 'pygame.mixer.Sound' objects}
+       22    0.000    0.000    0.000    0.000 {method 'read' of 'file' objects}
+        2    0.000    0.000    0.000    0.000 {method 'seek' of 'file' objects}
+        2    0.000    0.000    0.000    0.000 {method 'tell' of 'file' objects}
+      999    0.029    0.000    0.029    0.000 {numpy.core.multiarray.concatenate}
+     2999    0.011    0.000    0.011    0.000 {numpy.core.multiarray.frombuffer}
+        6    0.000    0.000    0.000    0.000 {open}
+       40    0.000    0.000    0.000    0.000 {ord}
+        2    0.000    0.000    0.000    0.000 {posix.access}
+        1    0.000    0.000    0.000    0.000 {range}
+
+
+Testing append_silence
+         25092 function calls (25090 primitive calls) in 0.247 CPU seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.247    0.247 <string>:1(<module>)
+        1    0.007    0.007    0.247    0.247 ProfilingSounds.py:46(test_append_silence)
+        2    0.000    0.000    0.000    0.000 chunk.py:115(tell)
+      9/7    0.000    0.000    0.000    0.000 chunk.py:120(read)
+        1    0.000    0.000    0.000    0.000 chunk.py:143(skip)
+        3    0.000    0.000    0.000    0.000 chunk.py:52(__init__)
+        3    0.000    0.000    0.000    0.000 chunk.py:78(getname)
+        1    0.000    0.000    0.000    0.000 chunk.py:96(seek)
+        1    0.000    0.000    0.002    0.002 media.py:262(load_sound)
+      999    0.008    0.000    0.239    0.000 media.py:315(append_silence)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:108(test_hcom)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:117(test_voc)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:130(test_wav)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:177(get_long_le)
+        6    0.000    0.000    0.000    0.000 sndhdr.py:183(get_short_le)
+        2    0.000    0.000    0.001    0.000 sndhdr.py:35(what)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:41(whathdr)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:58(test_aifc)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:79(test_au)
+     1999    0.020    0.000    0.054    0.000 sound.py:168(set_pygame_sound)
+      999    0.004    0.000    0.004    0.000 sound.py:180(get_pygame_sound)
+      999    0.027    0.000    0.230    0.000 sound.py:194(append_silence)
+      999    0.032    0.000    0.128    0.000 sound.py:205(append)
+     1998    0.007    0.000    0.007    0.000 sound.py:402(get_channels)
+     1000    0.006    0.000    0.006    0.000 sound.py:408(set_filename)
+        1    0.000    0.000    0.001    0.001 sound.py:516(load_pygame_sound)
+     2998    0.035    0.000    0.050    0.000 sound.py:585(pygame_to_sample_array)
+     1998    0.033    0.000    0.037    0.000 sound.py:600(sample_array_to_pygame)
+     1000    0.025    0.000    0.058    0.000 sound.py:78(__init__)
+        1    0.000    0.000    0.001    0.001 wave.py:125(initfp)
+        1    0.000    0.000    0.001    0.001 wave.py:156(__init__)
+        1    0.000    0.000    0.000    0.000 wave.py:169(__del__)
+        2    0.000    0.000    0.000    0.000 wave.py:181(close)
+        1    0.000    0.000    0.000    0.000 wave.py:202(getcomptype)
+        1    0.000    0.000    0.000    0.000 wave.py:263(_read_fmt_chunk)
+        1    0.000    0.000    0.001    0.001 wave.py:486(open)
+        5    0.000    0.000    0.000    0.000 {_struct.unpack}
+        1    0.000    0.000    0.000    0.000 {isinstance}
+     2010    0.003    0.000    0.003    0.000 {len}
+        1    0.000    0.000    0.000    0.000 {method 'close' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+     2998    0.006    0.000    0.006    0.000 {method 'get_buffer' of 'pygame.mixer.Sound' objects}
+       11    0.000    0.000    0.000    0.000 {method 'read' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'seek' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'tell' of 'file' objects}
+      999    0.016    0.000    0.016    0.000 {numpy.core.multiarray.concatenate}
+     2998    0.010    0.000    0.010    0.000 {numpy.core.multiarray.frombuffer}
+      999    0.006    0.000    0.006    0.000 {numpy.core.multiarray.zeros}
+        3    0.000    0.000    0.000    0.000 {open}
+       20    0.000    0.000    0.000    0.000 {ord}
+        1    0.000    0.000    0.000    0.000 {posix.access}
+        1    0.000    0.000    0.000    0.000 {range}
+
+Testing load_sound
+         112895 function calls (110897 primitive calls) in 1.409 CPU seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    1.409    1.409 <string>:1(<module>)
+        1    0.013    0.013    1.409    1.409 ProfilingSounds.py:6(test_load_sound)
+        1    0.000    0.000    0.001    0.001 aifc.py:135(<module>)
+        1    0.000    0.000    0.000    0.000 aifc.py:142(Error)
+        1    0.000    0.000    0.000    0.000 aifc.py:246(Aifc_read)
+        1    0.000    0.000    0.000    0.000 aifc.py:527(Aifc_write)
+     1998    0.010    0.000    0.010    0.000 chunk.py:115(tell)
+8991/6993    0.151    0.000    0.183    0.000 chunk.py:120(read)
+      999    0.017    0.000    0.036    0.000 chunk.py:143(skip)
+     2997    0.169    0.000    0.293    0.000 chunk.py:52(__init__)
+     2997    0.010    0.000    0.010    0.000 chunk.py:78(getname)
+      999    0.015    0.000    0.019    0.000 chunk.py:96(seek)
+      999    0.011    0.000    1.396    0.001 media.py:262(load_sound)
+     1998    0.010    0.000    0.010    0.000 sndhdr.py:108(test_hcom)
+     1998    0.010    0.000    0.010    0.000 sndhdr.py:117(test_voc)
+     1998    0.048    0.000    0.157    0.000 sndhdr.py:130(test_wav)
+     1998    0.025    0.000    0.037    0.000 sndhdr.py:177(get_long_le)
+     5994    0.050    0.000    0.071    0.000 sndhdr.py:183(get_short_le)
+     1998    0.040    0.000    0.497    0.000 sndhdr.py:35(what)
+     1998    0.098    0.000    0.457    0.000 sndhdr.py:41(whathdr)
+     1998    0.083    0.000    0.084    0.000 sndhdr.py:58(test_aifc)
+     1998    0.013    0.000    0.013    0.000 sndhdr.py:79(test_au)
+      999    0.011    0.000    0.035    0.000 sound.py:168(set_pygame_sound)
+      999    0.007    0.000    0.007    0.000 sound.py:408(set_filename)
+      999    0.140    0.000    1.287    0.001 sound.py:516(load_pygame_sound)
+      999    0.014    0.000    0.025    0.000 sound.py:585(pygame_to_sample_array)
+      999    0.044    0.000    1.385    0.001 sound.py:78(__init__)
+      999    0.090    0.000    0.560    0.001 wave.py:125(initfp)
+      999    0.020    0.000    0.598    0.001 wave.py:156(__init__)
+      999    0.007    0.000    0.012    0.000 wave.py:169(__del__)
+     1998    0.016    0.000    0.030    0.000 wave.py:181(close)
+      999    0.003    0.000    0.003    0.000 wave.py:202(getcomptype)
+      999    0.025    0.000    0.110    0.000 wave.py:263(_read_fmt_chunk)
+      999    0.012    0.000    0.611    0.001 wave.py:486(open)
+     4995    0.011    0.000    0.011    0.000 {_struct.unpack}
+      999    0.003    0.000    0.003    0.000 {isinstance}
+    11988    0.019    0.000    0.019    0.000 {len}
+      999    0.014    0.000    0.014    0.000 {method 'close' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+      999    0.003    0.000    0.003    0.000 {method 'get_buffer' of 'pygame.mixer.Sound' objects}
+    10989    0.090    0.000    0.090    0.000 {method 'read' of 'file' objects}
+      999    0.005    0.000    0.005    0.000 {method 'seek' of 'file' objects}
+      999    0.004    0.000    0.004    0.000 {method 'tell' of 'file' objects}
+      999    0.008    0.000    0.008    0.000 {numpy.core.multiarray.frombuffer}
+     2997    0.047    0.000    0.047    0.000 {open}
+    19980    0.034    0.000    0.034    0.000 {ord}
+      999    0.011    0.000    0.011    0.000 {posix.access}
+        1    0.000    0.000    0.000    0.000 {range}
+
+
+Testing create_sound
+         10993 function calls in 0.110 CPU seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.110    0.110 <string>:1(<module>)
+        1    0.008    0.008    0.110    0.110 ProfilingSounds.py:11(test_create_sound)
+      999    0.010    0.000    0.102    0.000 media.py:269(create_sound)
+      999    0.009    0.000    0.033    0.000 sound.py:168(set_pygame_sound)
+      999    0.005    0.000    0.005    0.000 sound.py:408(set_filename)
+      999    0.012    0.000    0.029    0.000 sound.py:540(create_pygame_sound)
+      999    0.019    0.000    0.024    0.000 sound.py:585(pygame_to_sample_array)
+      999    0.011    0.000    0.012    0.000 sound.py:600(sample_array_to_pygame)
+      999    0.024    0.000    0.093    0.000 sound.py:78(__init__)
+      999    0.002    0.000    0.002    0.000 {len}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+      999    0.002    0.000    0.002    0.000 {method 'get_buffer' of 'pygame.mixer.Sound' objects}
+      999    0.003    0.000    0.003    0.000 {numpy.core.multiarray.frombuffer}
+      999    0.006    0.000    0.006    0.000 {numpy.core.multiarray.zeros}
+        1    0.000    0.000    0.000    0.000 {range}
+
+
+Testing create_note
+         12991 function calls in 0.182 CPU seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.182    0.182 <string>:1(<module>)
+        1    0.009    0.009    0.182    0.182 ProfilingSounds.py:16(test_create_note)
+      999    0.009    0.000    0.172    0.000 media.py:275(create_note)
+      999    0.010    0.000    0.028    0.000 sound.py:168(set_pygame_sound)
+      999    0.007    0.000    0.007    0.000 sound.py:408(set_filename)
+      999    0.028    0.000    0.163    0.000 sound.py:478(__init__)
+      999    0.064    0.000    0.100    0.000 sound.py:553(create_sine_wave)
+      999    0.012    0.000    0.018    0.000 sound.py:585(pygame_to_sample_array)
+      999    0.012    0.000    0.014    0.000 sound.py:600(sample_array_to_pygame)
+      999    0.002    0.000    0.002    0.000 {len}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+      999    0.003    0.000    0.003    0.000 {method 'get_buffer' of 'pygame.mixer.Sound' objects}
+     1998    0.019    0.000    0.019    0.000 {numpy.core.multiarray.array}
+      999    0.004    0.000    0.004    0.000 {numpy.core.multiarray.frombuffer}
+     1000    0.003    0.000    0.003    0.000 {range}
+
+
+Testing get_samples
+         45969 function calls (44970 primitive calls) in 0.294 CPU seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.294    0.294 <string>:1(<module>)
+        1    0.008    0.008    0.294    0.294 ProfilingSounds.py:21(test_get_samples)
+        1    0.000    0.000    0.000    0.000 media.py:269(create_sound)
+      999    0.046    0.000    0.287    0.000 media.py:289(get_samples)
+     9990    0.099    0.000    0.130    0.000 sample.py:7(__init__)
+    10989    0.096    0.000    0.241    0.000 sound.py:134(__iter__)
+      999    0.005    0.000    0.007    0.000 sound.py:145(__len__)
+        1    0.000    0.000    0.000    0.000 sound.py:168(set_pygame_sound)
+        1    0.000    0.000    0.000    0.000 sound.py:408(set_filename)
+        1    0.000    0.000    0.000    0.000 sound.py:540(create_pygame_sound)
+        1    0.000    0.000    0.000    0.000 sound.py:585(pygame_to_sample_array)
+        1    0.000    0.000    0.000    0.000 sound.py:600(sample_array_to_pygame)
+        1    0.000    0.000    0.000    0.000 sound.py:78(__init__)
+21979/20980    0.038    0.000    0.043    0.000 {len}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 {method 'get_buffer' of 'pygame.mixer.Sound' objects}
+        1    0.000    0.000    0.000    0.000 {numpy.core.multiarray.frombuffer}
+        1    0.000    0.000    0.000    0.000 {numpy.core.multiarray.zeros}
+     1000    0.003    0.000    0.003    0.000 {range}
+
+
+Testing get_max_sample
+         3114 function calls (3112 primitive calls) in 0.185 CPU seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.185    0.185 <string>:1(<module>)
+        1    0.006    0.006    0.185    0.185 ProfilingSounds.py:27(test_get_max_sample)
+        2    0.000    0.000    0.000    0.000 chunk.py:115(tell)
+      9/7    0.000    0.000    0.000    0.000 chunk.py:120(read)
+        1    0.000    0.000    0.000    0.000 chunk.py:143(skip)
+        3    0.000    0.000    0.000    0.000 chunk.py:52(__init__)
+        3    0.000    0.000    0.000    0.000 chunk.py:78(getname)
+        1    0.000    0.000    0.000    0.000 chunk.py:96(seek)
+        1    0.000    0.000    0.003    0.003 media.py:262(load_sound)
+      999    0.008    0.000    0.177    0.000 media.py:295(get_max_sample)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:108(test_hcom)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:117(test_voc)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:130(test_wav)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:177(get_long_le)
+        6    0.000    0.000    0.000    0.000 sndhdr.py:183(get_short_le)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:35(what)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:41(whathdr)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:58(test_aifc)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:79(test_au)
+        1    0.000    0.000    0.000    0.000 sound.py:168(set_pygame_sound)
+      999    0.007    0.000    0.169    0.000 sound.py:388(get_max)
+        1    0.000    0.000    0.000    0.000 sound.py:408(set_filename)
+        1    0.000    0.000    0.003    0.003 sound.py:516(load_pygame_sound)
+        1    0.000    0.000    0.000    0.000 sound.py:585(pygame_to_sample_array)
+        1    0.000    0.000    0.003    0.003 sound.py:78(__init__)
+        1    0.001    0.001    0.002    0.002 wave.py:125(initfp)
+        1    0.000    0.000    0.002    0.002 wave.py:156(__init__)
+        1    0.000    0.000    0.000    0.000 wave.py:169(__del__)
+        2    0.000    0.000    0.000    0.000 wave.py:181(close)
+        1    0.000    0.000    0.000    0.000 wave.py:202(getcomptype)
+        1    0.000    0.000    0.000    0.000 wave.py:263(_read_fmt_chunk)
+        1    0.000    0.000    0.002    0.002 wave.py:486(open)
+        5    0.000    0.000    0.000    0.000 {_struct.unpack}
+        1    0.000    0.000    0.000    0.000 {isinstance}
+       12    0.000    0.000    0.000    0.000 {len}
+        1    0.000    0.000    0.000    0.000 {method 'close' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 {method 'get_buffer' of 'pygame.mixer.Sound' objects}
+      999    0.162    0.000    0.162    0.000 {method 'max' of 'numpy.ndarray' objects}
+       11    0.000    0.000    0.000    0.000 {method 'read' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'seek' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'tell' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {numpy.core.multiarray.frombuffer}
+        3    0.000    0.000    0.000    0.000 {open}
+       20    0.000    0.000    0.000    0.000 {ord}
+        1    0.000    0.000    0.000    0.000 {posix.access}
+        1    0.000    0.000    0.000    0.000 {range}
+
+
+Testing get_min_sample
+         3114 function calls (3112 primitive calls) in 0.174 CPU seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.174    0.174 <string>:1(<module>)
+        1    0.006    0.006    0.174    0.174 ProfilingSounds.py:33(test_get_min_sample)
+        2    0.000    0.000    0.000    0.000 chunk.py:115(tell)
+      9/7    0.000    0.000    0.000    0.000 chunk.py:120(read)
+        1    0.000    0.000    0.000    0.000 chunk.py:143(skip)
+        3    0.000    0.000    0.000    0.000 chunk.py:52(__init__)
+        3    0.000    0.000    0.000    0.000 chunk.py:78(getname)
+        1    0.000    0.000    0.000    0.000 chunk.py:96(seek)
+        1    0.000    0.000    0.002    0.002 media.py:262(load_sound)
+      999    0.007    0.000    0.166    0.000 media.py:302(get_min_sample)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:108(test_hcom)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:117(test_voc)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:130(test_wav)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:177(get_long_le)
+        6    0.000    0.000    0.000    0.000 sndhdr.py:183(get_short_le)
+        2    0.000    0.000    0.001    0.000 sndhdr.py:35(what)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:41(whathdr)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:58(test_aifc)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:79(test_au)
+        1    0.000    0.000    0.000    0.000 sound.py:168(set_pygame_sound)
+      999    0.007    0.000    0.159    0.000 sound.py:395(get_min)
+        1    0.000    0.000    0.000    0.000 sound.py:408(set_filename)
+        1    0.000    0.000    0.002    0.002 sound.py:516(load_pygame_sound)
+        1    0.000    0.000    0.000    0.000 sound.py:585(pygame_to_sample_array)
+        1    0.000    0.000    0.002    0.002 sound.py:78(__init__)
+        1    0.000    0.000    0.001    0.001 wave.py:125(initfp)
+        1    0.000    0.000    0.001    0.001 wave.py:156(__init__)
+        1    0.000    0.000    0.000    0.000 wave.py:169(__del__)
+        2    0.000    0.000    0.000    0.000 wave.py:181(close)
+        1    0.000    0.000    0.000    0.000 wave.py:202(getcomptype)
+        1    0.000    0.000    0.000    0.000 wave.py:263(_read_fmt_chunk)
+        1    0.000    0.000    0.001    0.001 wave.py:486(open)
+        5    0.000    0.000    0.000    0.000 {_struct.unpack}
+        1    0.000    0.000    0.000    0.000 {isinstance}
+       12    0.000    0.000    0.000    0.000 {len}
+        1    0.000    0.000    0.000    0.000 {method 'close' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 {method 'get_buffer' of 'pygame.mixer.Sound' objects}
+      999    0.153    0.000    0.153    0.000 {method 'min' of 'numpy.ndarray' objects}
+       11    0.000    0.000    0.000    0.000 {method 'read' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'seek' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'tell' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {numpy.core.multiarray.frombuffer}
+        3    0.000    0.000    0.000    0.000 {open}
+       20    0.000    0.000    0.000    0.000 {ord}
+        1    0.000    0.000    0.000    0.000 {posix.access}
+        1    0.000    0.000    0.000    0.000 {range}
+
+
+Testing concatenate
+         26204 function calls (26200 primitive calls) in 0.324 CPU seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.324    0.324 <string>:1(<module>)
+        1    0.010    0.010    0.324    0.324 ProfilingSounds.py:39(test_concatenate)
+        4    0.000    0.000    0.000    0.000 chunk.py:115(tell)
+    18/14    0.000    0.000    0.000    0.000 chunk.py:120(read)
+        2    0.000    0.000    0.000    0.000 chunk.py:143(skip)
+        6    0.000    0.000    0.001    0.000 chunk.py:52(__init__)
+        6    0.000    0.000    0.000    0.000 chunk.py:78(getname)
+        2    0.000    0.000    0.000    0.000 chunk.py:96(seek)
+        2    0.000    0.000    0.003    0.001 media.py:262(load_sound)
+      999    0.010    0.000    0.311    0.000 media.py:309(concatenate)
+        4    0.000    0.000    0.000    0.000 sndhdr.py:108(test_hcom)
+        4    0.000    0.000    0.000    0.000 sndhdr.py:117(test_voc)
+        4    0.000    0.000    0.000    0.000 sndhdr.py:130(test_wav)
+        4    0.000    0.000    0.000    0.000 sndhdr.py:177(get_long_le)
+       12    0.000    0.000    0.000    0.000 sndhdr.py:183(get_short_le)
+        4    0.000    0.000    0.001    0.000 sndhdr.py:35(what)
+        4    0.000    0.000    0.001    0.000 sndhdr.py:41(whathdr)
+        4    0.000    0.000    0.000    0.000 sndhdr.py:58(test_aifc)
+        4    0.000    0.000    0.000    0.000 sndhdr.py:79(test_au)
+      999    0.016    0.000    0.301    0.000 sound.py:151(__add__)
+     2000    0.019    0.000    0.055    0.000 sound.py:168(set_pygame_sound)
+      999    0.004    0.000    0.004    0.000 sound.py:180(get_pygame_sound)
+      999    0.021    0.000    0.126    0.000 sound.py:186(copy)
+      999    0.035    0.000    0.159    0.000 sound.py:205(append)
+     1998    0.007    0.000    0.007    0.000 sound.py:402(get_channels)
+     1001    0.006    0.000    0.006    0.000 sound.py:408(set_filename)
+        2    0.000    0.000    0.002    0.001 sound.py:516(load_pygame_sound)
+     2999    0.035    0.000    0.052    0.000 sound.py:585(pygame_to_sample_array)
+     1998    0.065    0.000    0.068    0.000 sound.py:600(sample_array_to_pygame)
+     1001    0.025    0.000    0.060    0.000 sound.py:78(__init__)
+        2    0.000    0.000    0.001    0.001 wave.py:125(initfp)
+        2    0.000    0.000    0.001    0.001 wave.py:156(__init__)
+        2    0.000    0.000    0.000    0.000 wave.py:169(__del__)
+        4    0.000    0.000    0.000    0.000 wave.py:181(close)
+        2    0.000    0.000    0.000    0.000 wave.py:202(getcomptype)
+        2    0.000    0.000    0.000    0.000 wave.py:263(_read_fmt_chunk)
+        2    0.000    0.000    0.001    0.001 wave.py:486(open)
+       10    0.000    0.000    0.000    0.000 {_struct.unpack}
+        2    0.000    0.000    0.000    0.000 {isinstance}
+     2022    0.003    0.000    0.003    0.000 {len}
+        2    0.000    0.000    0.000    0.000 {method 'close' of 'file' objects}
+      999    0.020    0.000    0.020    0.000 {method 'copy' of 'numpy.ndarray' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+     2999    0.006    0.000    0.006    0.000 {method 'get_buffer' of 'pygame.mixer.Sound' objects}
+       22    0.000    0.000    0.000    0.000 {method 'read' of 'file' objects}
+        2    0.000    0.000    0.000    0.000 {method 'seek' of 'file' objects}
+        2    0.000    0.000    0.000    0.000 {method 'tell' of 'file' objects}
+      999    0.029    0.000    0.029    0.000 {numpy.core.multiarray.concatenate}
+     2999    0.011    0.000    0.011    0.000 {numpy.core.multiarray.frombuffer}
+        6    0.000    0.000    0.000    0.000 {open}
+       40    0.000    0.000    0.000    0.000 {ord}
+        2    0.000    0.000    0.000    0.000 {posix.access}
+        1    0.000    0.000    0.000    0.000 {range}
+
+
+Testing append_silence
+         25092 function calls (25090 primitive calls) in 0.247 CPU seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.247    0.247 <string>:1(<module>)
+        1    0.007    0.007    0.247    0.247 ProfilingSounds.py:46(test_append_silence)
+        2    0.000    0.000    0.000    0.000 chunk.py:115(tell)
+      9/7    0.000    0.000    0.000    0.000 chunk.py:120(read)
+        1    0.000    0.000    0.000    0.000 chunk.py:143(skip)
+        3    0.000    0.000    0.000    0.000 chunk.py:52(__init__)
+        3    0.000    0.000    0.000    0.000 chunk.py:78(getname)
+        1    0.000    0.000    0.000    0.000 chunk.py:96(seek)
+        1    0.000    0.000    0.002    0.002 media.py:262(load_sound)
+      999    0.008    0.000    0.239    0.000 media.py:315(append_silence)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:108(test_hcom)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:117(test_voc)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:130(test_wav)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:177(get_long_le)
+        6    0.000    0.000    0.000    0.000 sndhdr.py:183(get_short_le)
+        2    0.000    0.000    0.001    0.000 sndhdr.py:35(what)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:41(whathdr)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:58(test_aifc)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:79(test_au)
+     1999    0.020    0.000    0.054    0.000 sound.py:168(set_pygame_sound)
+      999    0.004    0.000    0.004    0.000 sound.py:180(get_pygame_sound)
+      999    0.027    0.000    0.230    0.000 sound.py:194(append_silence)
+      999    0.032    0.000    0.128    0.000 sound.py:205(append)
+     1998    0.007    0.000    0.007    0.000 sound.py:402(get_channels)
+     1000    0.006    0.000    0.006    0.000 sound.py:408(set_filename)
+        1    0.000    0.000    0.001    0.001 sound.py:516(load_pygame_sound)
+     2998    0.035    0.000    0.050    0.000 sound.py:585(pygame_to_sample_array)
+     1998    0.033    0.000    0.037    0.000 sound.py:600(sample_array_to_pygame)
+     1000    0.025    0.000    0.058    0.000 sound.py:78(__init__)
+        1    0.000    0.000    0.001    0.001 wave.py:125(initfp)
+        1    0.000    0.000    0.001    0.001 wave.py:156(__init__)
+        1    0.000    0.000    0.000    0.000 wave.py:169(__del__)
+        2    0.000    0.000    0.000    0.000 wave.py:181(close)
+        1    0.000    0.000    0.000    0.000 wave.py:202(getcomptype)
+        1    0.000    0.000    0.000    0.000 wave.py:263(_read_fmt_chunk)
+        1    0.000    0.000    0.001    0.001 wave.py:486(open)
+        5    0.000    0.000    0.000    0.000 {_struct.unpack}
+        1    0.000    0.000    0.000    0.000 {isinstance}
+     2010    0.003    0.000    0.003    0.000 {len}
+        1    0.000    0.000    0.000    0.000 {method 'close' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+     2998    0.006    0.000    0.006    0.000 {method 'get_buffer' of 'pygame.mixer.Sound' objects}
+       11    0.000    0.000    0.000    0.000 {method 'read' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'seek' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'tell' of 'file' objects}
+      999    0.016    0.000    0.016    0.000 {numpy.core.multiarray.concatenate}
+     2998    0.010    0.000    0.010    0.000 {numpy.core.multiarray.frombuffer}
+      999    0.006    0.000    0.006    0.000 {numpy.core.multiarray.zeros}
+        3    0.000    0.000    0.000    0.000 {open}
+       20    0.000    0.000    0.000    0.000 {ord}
+        1    0.000    0.000    0.000    0.000 {posix.access}
+        1    0.000    0.000    0.000    0.000 {range}
+
+
+Testing crop_sound
+         150 function calls (143 primitive calls) in 0.040 CPU seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.040    0.040 <string>:1(<module>)
+        1    0.000    0.000    0.040    0.040 ProfilingSounds.py:52(test_crop_sound)
+        2    0.000    0.000    0.000    0.000 chunk.py:115(tell)
+      9/7    0.000    0.000    0.000    0.000 chunk.py:120(read)
+        1    0.000    0.000    0.000    0.000 chunk.py:143(skip)
+        3    0.000    0.000    0.000    0.000 chunk.py:52(__init__)
+        3    0.000    0.000    0.000    0.000 chunk.py:78(getname)
+        1    0.000    0.000    0.000    0.000 chunk.py:96(seek)
+        1    0.000    0.000    0.040    0.040 media.py:262(load_sound)
+        3    0.000    0.000    0.000    0.000 media.py:321(crop_sound)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:108(test_hcom)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:117(test_voc)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:130(test_wav)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:177(get_long_le)
+        6    0.000    0.000    0.000    0.000 sndhdr.py:183(get_short_le)
+        2    0.000    0.000    0.003    0.002 sndhdr.py:35(what)
+        2    0.000    0.000    0.003    0.002 sndhdr.py:41(whathdr)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:58(test_aifc)
+        2    0.000    0.000    0.000    0.000 sndhdr.py:79(test_au)
+        5    0.000    0.000    0.000    0.000 sound.py:145(__len__)
+        3    0.000    0.000    0.000    0.000 sound.py:168(set_pygame_sound)
+        3    0.000    0.000    0.000    0.000 sound.py:241(crop)
+        1    0.000    0.000    0.000    0.000 sound.py:408(set_filename)
+        1    0.035    0.035    0.039    0.039 sound.py:516(load_pygame_sound)
+        3    0.000    0.000    0.000    0.000 sound.py:585(pygame_to_sample_array)
+        2    0.000    0.000    0.000    0.000 sound.py:600(sample_array_to_pygame)
+        1    0.000    0.000    0.040    0.040 sound.py:78(__init__)
+        1    0.000    0.000    0.001    0.001 wave.py:125(initfp)
+        1    0.000    0.000    0.001    0.001 wave.py:156(__init__)
+        1    0.000    0.000    0.000    0.000 wave.py:169(__del__)
+        2    0.000    0.000    0.000    0.000 wave.py:181(close)
+        1    0.000    0.000    0.000    0.000 wave.py:202(getcomptype)
+        1    0.000    0.000    0.000    0.000 wave.py:263(_read_fmt_chunk)
+        1    0.000    0.000    0.001    0.001 wave.py:486(open)
+        5    0.000    0.000    0.000    0.000 {_struct.unpack}
+        1    0.000    0.000    0.000    0.000 {isinstance}
+    24/19    0.000    0.000    0.000    0.000 {len}
+        1    0.000    0.000    0.000    0.000 {method 'close' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        3    0.000    0.000    0.000    0.000 {method 'get_buffer' of 'pygame.mixer.Sound' objects}
+       11    0.003    0.000    0.003    0.000 {method 'read' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'seek' of 'file' objects}
+        1    0.000    0.000    0.000    0.000 {method 'tell' of 'file' objects}
+        3    0.000    0.000    0.000    0.000 {numpy.core.multiarray.frombuffer}
+        3    0.000    0.000    0.000    0.000 {open}
+       20    0.000    0.000    0.000    0.000 {ord}
+        1    0.000    0.000    0.000    0.000 {posix.access}
+        1    0.000    0.000    0.000    0.000 {range}
+
+
