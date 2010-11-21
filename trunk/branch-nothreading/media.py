@@ -19,6 +19,9 @@ mw.init_mediawindows()
 picture.init_picture()
 init_sound()
 
+def interact():
+    mw.interact(None, force_interactive=True)
+
 ####################------------------------------------------------------------
 ## Global Picture Functions
 ####################------------------------------------------------------------
