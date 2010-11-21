@@ -3,11 +3,14 @@ import os
 import sys
 import Tkinter as tk
 import tkFileDialog
+import tkColorChooser
 import Image
 import ImageDraw
 import ImageTk
 import tkFont
 import re
+
+from color import Color
 
 ####################------------------------------------------------------------
 ## Exceptions
@@ -34,16 +37,12 @@ DEAD_THREAD = "Graphics thread quit unexpectedly"
 ####################------------------------------------------------------------
 
 from copy import copy
-from Queue import Queue
-import thread
 import atexit
 
-_THREAD_REQUEST = Queue(0) # Queue that can hold an infinite number of items
-_THREAD_RESULT = Queue(1) # Queue that can hold one item
-_POLL_INTERVAL = 10
-
 _ROOT = None
-_THREAD_RUNNING = False
+_RUNNING = True
+_LAST_WINDOW = None
+_THREAD_RUNNING = True
 
 def _mediawindows_thread():
     '''Creates the Tk object as _ROOT, runs _pump() and mainloop.'''
@@ -51,31 +50,6 @@ def _mediawindows_thread():
     global _ROOT
     _ROOT = tk.Tk()
     _ROOT.withdraw()
-    _ROOT.after(_POLL_INTERVAL, _pump)
-    _ROOT.mainloop()
-
-
-def _pump():
-    '''Get functions from _THREAD_REQUEST and try executing them. If
-    return values are called for put that return in _THREAD_RESULT. If
-    an error is raised kill the thread.'''
-    
-    global _THREAD_RUNNING
-    
-    while not _THREAD_REQUEST.empty():
-        command, returns_value = _THREAD_REQUEST.get()
-        try:
-            result = command()
-            if returns_value:
-                _THREAD_RESULT.put(result)
-                _THREAD_REQUEST.task_done()
-        except:
-            _THREAD_RUNNING = False
-            if returns_value:
-                _THREAD_RESULT.put(None) # release client
-            raise # re-raise the exception -- kills the thread
-    if _THREAD_RUNNING:
-        _ROOT.after(_POLL_INTERVAL, _pump)
 
 
 def thread_exec_return(f, *args, **kw):
@@ -83,16 +57,7 @@ def thread_exec_return(f, *args, **kw):
     return value. This is to be used from the main thread to communicate
     with the Tk thread. If it is used in the Tk thread it will crash.'''
 
-    if not _THREAD_RUNNING:
-        raise MediaWindowsError, DEAD_THREAD
-    
-    def func():
-        return f(*args, **kw)
-    
-    _THREAD_REQUEST.put((func,True), block=True)
-    
-    result = _THREAD_RESULT.get(True)
-    return result
+    return f(*args, **kw)
 
 
 def thread_exec(f, *args, **kw):
@@ -100,21 +65,49 @@ def thread_exec(f, *args, **kw):
     from the main thread to communicate with the Tk thread. If it is used
     in the Tk thread it will crash.'''
 
-    if not _THREAD_RUNNING:
-        raise MediaWindowsError, DEAD_THREAD
-    
-    def func():
-        return f(*args, **kw)
-    
-    _THREAD_REQUEST.put((func, False), block=True)
+    f(*args, **kw)
 
 
 def _thread_shutdown():
     '''Shut down the mediawindows thread.'''
 
-    global _THREAD_RUNNING
-    _THREAD_RUNNING = False
-    time.sleep(.5)
+
+def interact(target_window, force_interactive=False):
+    global _LAST_WINDOW
+    if target_window:
+        _LAST_WINDOW = target_window
+    
+    if force_interactive or _using_interactive_mode():
+        control_window = tk.Toplevel(_ROOT)
+        control_window.title('PyGraphics')
+        control_window.attributes('-topmost', 1)
+    
+        global _RUNNING
+        _RUNNING = True
+        def handle_return():
+            control_window.destroy()
+            global _RUNNING
+            _RUNNING = False
+    
+        control_window.protocol('WM_DELETE_WINDOW', handle_return)
+
+        button = tk.Button(control_window, text='Go Back to Python Shell', command=handle_return)
+        button.pack()
+
+        if not _LAST_WINDOW:
+            control_window.lift(_LAST_WINDOW)
+    
+        # We're in interactive mode so we'll process the Tk event queue
+        # and block until our control_window is closed.
+        _ROOT.wait_window(control_window)
+    else:
+        # We're not in interactive mode so we'll process any outstanding
+        # events in the queue and not block for more events.
+        _ROOT.update()
+
+def _using_interactive_mode():
+    return hasattr(sys, 'ps1') or hasattr(sys,
+'ipcompleter')
 
 ####################------------------------------------------------------------
 ## Initializer
@@ -124,17 +117,10 @@ def _thread_shutdown():
 def init_mediawindows():
     '''Initialized the mediawindows thread.'''
     
+    _mediawindows_thread()
+    
     print "Current version of Tk:"
-    print tk.Tk().tk.call('tk', 'windowingsystem') 
-    
-    global _THREAD_RUNNING 
-    _THREAD_RUNNING = True
-    
-    # Fire up the separate Tk thread
-    thread.start_new_thread(_mediawindows_thread,())
-    
-    # Kill the tk thread at exit
-    atexit.register(_thread_shutdown)
+    print _ROOT.tk.call('tk', 'windowingsystem') 
     
 
 
@@ -151,7 +137,6 @@ class PictureWindow(tk.Canvas):
         thread_exec_return(self.__init_help, title, width, height, autoflush)
  
     def __init_help(self, title, width, height, autoflush):
-        
         master = tk.Toplevel(_ROOT)
         master.protocol("WM_DELETE_WINDOW", self.__close_help)
         tk.Canvas.__init__(self, master, width=width, height=height)
@@ -993,6 +978,7 @@ def choose_folder():
     path = None
     try:
         path = thread_exec_return(tkFileDialog.askdirectory, parent=_ROOT, initialdir=os.getcwd())
+        interact(None, force_interactive=True)
     except:
         pass
     if path:
@@ -1005,10 +991,10 @@ def choose_color():
 
     color = None
     try: 
-        color = thread_exec_return(tkFileDialog.askcolor, parent=_ROOT)
+        color = thread_exec_return(tkColorChooser.askcolor, parent=_ROOT)
     except:
         pass
-    if color[0]:
+    if color and color[0]:
         return Color(color[0][0], color[0][1], color[0][2])
     
 
