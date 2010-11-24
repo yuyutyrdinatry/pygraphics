@@ -22,7 +22,6 @@ APP = ['__init__.py']
 DATA_FILES = ['color.py',
  'media.py',
  'mediawindows.py',
- 'old-setup.py',
  'picture.py',
  'pixel.py',
  'sample.py',
