@@ -119,8 +119,8 @@ def init_mediawindows():
     
     _mediawindows_thread()
     
-    print "Current version of Tk:"
-    print _ROOT.tk.call('tk', 'windowingsystem') 
+    # print "Current version of Tk:"
+    # print _ROOT.tk.call('tk', 'windowingsystem') 
     
 
 

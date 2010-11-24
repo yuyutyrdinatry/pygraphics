@@ -15,6 +15,8 @@ from color import *
 import mediawindows as mw
 import os
 
+print "version 2.1"
+
 mw.init_mediawindows()
 picture.init_picture()
 init_sound()
