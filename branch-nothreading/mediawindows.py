@@ -40,7 +40,7 @@ from copy import copy
 import atexit
 
 _ROOT = None
-_RUNNING = True
+_RUNNING = False
 _LAST_WINDOW = None
 _THREAD_RUNNING = True
 
@@ -51,6 +51,7 @@ def _mediawindows_thread():
     _ROOT = tk.Tk()
     _ROOT.withdraw()
 
+    atexit.register(interact, *[None], **{'force_interactive': True})
 
 def thread_exec_return(f, *args, **kw):
     '''Execute synchronous call to f in the Tk thread. Return it's
@@ -73,6 +74,12 @@ def _thread_shutdown():
 
 
 def interact(target_window, force_interactive=False):
+    global _RUNNING
+    if _RUNNING:
+        return
+    
+    _RUNNING = True
+
     global _LAST_WINDOW
     if target_window:
         _LAST_WINDOW = target_window
@@ -82,8 +89,6 @@ def interact(target_window, force_interactive=False):
         control_window.title('PyGraphics')
         control_window.attributes('-topmost', 1)
     
-        global _RUNNING
-        _RUNNING = True
         def handle_return():
             control_window.destroy()
             global _RUNNING
@@ -104,6 +109,7 @@ def interact(target_window, force_interactive=False):
         # We're not in interactive mode so we'll process any outstanding
         # events in the queue and not block for more events.
         _ROOT.update()
+    _RUNNING = False
 
 def _using_interactive_mode():
     return hasattr(sys, 'ps1') or hasattr(sys,
