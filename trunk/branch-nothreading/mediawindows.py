@@ -40,9 +40,9 @@ from copy import copy
 import atexit
 
 _ROOT = None
-_RUNNING = False
-_LAST_WINDOW = None
 _THREAD_RUNNING = True
+
+_ALL_WINDOWS = set()
 
 def _mediawindows_thread():
     '''Creates the Tk object as _ROOT, runs _pump() and mainloop.'''
@@ -51,7 +51,7 @@ def _mediawindows_thread():
     _ROOT = tk.Tk()
     _ROOT.withdraw()
 
-    atexit.register(interact, *[None], **{'force_interactive': True})
+    atexit.register(_shutdown)
 
 def thread_exec_return(f, *args, **kw):
     '''Execute synchronous call to f in the Tk thread. Return it's
@@ -69,51 +69,58 @@ def thread_exec(f, *args, **kw):
     f(*args, **kw)
 
 
+def _shutdown():
+    _ROOT.update()
+    global _ALL_WINDOWS
+    if len(_ALL_WINDOWS) > 0:
+        interact()
+    _ROOT.destroy()
+
 def _thread_shutdown():
     '''Shut down the mediawindows thread.'''
 
+def _register_window(window):
+    global _ALL_WINDOWS
+    _ALL_WINDOWS.add(window)
 
-def interact(target_window, force_interactive=False):
-    global _RUNNING
-    if _RUNNING:
-        return
-    
-    _RUNNING = True
+def _unregister_window(window):
+    global _ALL_WINDOWS
+    _ALL_WINDOWS.remove(window)
 
-    global _LAST_WINDOW
-    if target_window:
-        _LAST_WINDOW = target_window
-    
-    if force_interactive or _using_interactive_mode():
-        control_window = tk.Toplevel(_ROOT)
-        control_window.title('PyGraphics')
-        control_window.attributes('-topmost', 1)
-    
-        def handle_return():
-            control_window.destroy()
-            global _RUNNING
-            _RUNNING = False
-    
-        control_window.protocol('WM_DELETE_WINDOW', handle_return)
+def interact():
+    _ROOT.update()
+    control_window = tk.Toplevel(_ROOT)
+    control_window.title('PyGraphics')
+    control_window.attributes('-topmost', 1)
 
-        button = tk.Button(control_window, text='Go Back to Python Shell', command=handle_return)
-        button.pack()
+    def handle_return():
+        control_window.destroy()
+        if _use_mac_osx_wing_hack():
+            # We can break out of mainloop() this way.  It's dirty, but it's
+            # better than making the user force-kill Python.  Best of all,
+            # they get their WingIDE debugger/interpreter back.
+            sys.exit()
 
-        if not _LAST_WINDOW:
-            control_window.lift(_LAST_WINDOW)
+    control_window.protocol('WM_DELETE_WINDOW', handle_return)
+
+    button = tk.Button(control_window, text='Go Back to Python Shell', command=handle_return)
+    button.pack()
     
-        # We're in interactive mode so we'll process the Tk event queue
-        # and block until our control_window is closed.
-        _ROOT.wait_window(control_window)
+    if _use_mac_osx_wing_hack():
+        # Wing interacts with Tk's mainloop() in a special way which allows
+        # control to return to the interpreter/debugger.  So we need to call
+        # mainloop() instead of wait_window() on that platform.
+        _ROOT.mainloop()
     else:
-        # We're not in interactive mode so we'll process any outstanding
-        # events in the queue and not block for more events.
-        _ROOT.update()
-    _RUNNING = False
+        _ROOT.wait_window(control_window)
 
-def _using_interactive_mode():
-    return hasattr(sys, 'ps1') or hasattr(sys,
-'ipcompleter')
+def _use_mac_osx_wing_hack():
+    # Not sure if there's a cleaner way to detect we're running WingIDE on
+    # Mac OS X, but this seems to work.
+    for entry in sys.path:
+        if entry.endswith('MacOS/src/debug/tserver'):
+            return True
+    return False
 
 ####################------------------------------------------------------------
 ## Initializer
@@ -161,6 +168,7 @@ class PictureWindow(tk.Canvas):
         self.trans = None
         self.closed = False
         if autoflush: _ROOT.update()
+        _register_window(self)
 
     def __checkOpen(self):
         if self.closed:
@@ -185,6 +193,7 @@ class PictureWindow(tk.Canvas):
         self.closed = True
         self.master.destroy()
         _ROOT.update()
+        _unregister_window(self)
 
     def is_closed(self):
         return self.closed
@@ -517,12 +526,18 @@ class _InspectorBase(tk.Toplevel):
         '''Create an PictureWindow object with Picture pic.'''
         
         tk.Toplevel.__init__(self)
+        self.protocol("WM_DELETE_WINDOW", self.__close_help)
+
         self.filename = pic.get_filename()
         self.picture = pic.copy()
         self.image = self.picture.get_image()
         self.orig_image = self.image
         self.display()
+        _register_window(self)
 
+    def __close_help(self):
+        _unregister_window(self)
+    
     def display(self):
         '''Run this PictureWindow.'''
                 
