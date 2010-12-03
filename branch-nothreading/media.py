@@ -22,7 +22,7 @@ picture.init_picture()
 init_sound()
 
 def interact():
-    mw.interact(None, force_interactive=True)
+    mw.interact()
 
 ####################------------------------------------------------------------
 ## Global Picture Functions

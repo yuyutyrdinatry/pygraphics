@@ -161,7 +161,6 @@ class Picture(object):
         height = max(self.get_height(), 150)
         self._make_window(width, height)
         self._draw_image_to_win(self.win)
-        mw.interact(self.win)
         
     def show_external(self):
         '''Display this Picture in an external application. The application
