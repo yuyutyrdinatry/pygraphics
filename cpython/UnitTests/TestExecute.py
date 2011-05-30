@@ -6,41 +6,49 @@ import os
 import fnmatch
 import nose
 #import coverage
-'''
-Loads all the unit test files from the current directory and executes the test cases in each
-file.
-'''
+'''TextExecute: Load all the unit test files from the current directory and
+executes the test cases in each file.'''
 
-# get current working directory
-root_path = os.getcwd()    
+root_path = os.getcwd()
+
 # default resource paths, used by tests
-defaultResourcePath = os.path.join(root_path, "resources")
-defaultImagesPath = os.path.join(defaultResourcePath, "images")
-defaultSoundsPath = os.path.join(defaultResourcePath, "sounds")
+default_resource_path = os.path.join(root_path, "resources")
+default_images_path = os.path.join(default_resource_path, "images")
+default_sounds_path = os.path.join(default_resource_path, "sounds")
 
-class DummyClass:
-	''' A dummy object to pass into methods which check for class attributes '''
-	def __init__(self):
-		do = None
+
+class DummyClass(object):
+    '''A dummy object to pass into methods which check for class
+    attributes.'''
+
+    def __init__(self):
+        '''Initialize this class.'''
+        do = None
+
 
 def resi(filename):
-    '''Returns a image resource uri given the filename: resources/images/filename '''
+    '''Return an image resource uri given the filename:
+    resources/images/filename.'''
     if not os.path.isabs(filename):
-        file = os.path.join(defaultImagesPath, filename)
+        which_file = os.path.join(default_images_path, filename)
     else:
-        file = filename
-    return os.path.abspath(file);
+        which_file = filename
+    return os.path.abspath(which_file)
+
 
 def ress(filename):
-    '''Returns a sound resource uri given the filename: resources/sounds/filename '''
+    '''Return a sound resource uri given the filename:
+    resources/sounds/filename.'''
+    
     if not os.path.isabs(filename):
-        file = os.path.join(defaultSoundsPath, filename)
+        which_file = os.path.join(default_sounds_path, filename)
     else:
-        file = filename
-    return os.path.abspath(file);
+        which_file = filename
+    return os.path.abspath(which_file)
+
 
 def find(search_root, patterns=None, recurse=0, return_dirs=1):
-    '''Finds files/dirs rooted in a given directory that match a pattern.
+    '''Find files/dirs rooted in a given directory that match a pattern.
     
     @param search_root: the root directory for the recursive search
     @param patterns: a list of shell-style patterns to search for
@@ -60,23 +68,24 @@ def find(search_root, patterns=None, recurse=0, return_dirs=1):
     dir_contents = os.listdir(search_root)
     # THIS isfile() only works in CWD
     for i in range(len(dir_contents)):
-    	if(os.path.isfile(dir_contents[i])):
-    		for pattern in patterns:
-    			if(fnmatch.fnmatch(dir_contents[i], pattern)):
-    				matches.append(dir_contents[i])
+        if(os.path.isfile(dir_contents[i])):
+            for pattern in patterns:
+                if(fnmatch.fnmatch(dir_contents[i], pattern)):
+                    matches.append(dir_contents[i])
     
     return matches
 
 
 def main():
-	'''Collect all the paths to Test files and runs them.'''
-	print root_path
-	
-	# filter for all [Tt]est_ python files
-	test_case_paths = find(root_path, ["Test_*.py","test_*.py"],0,1)    
-	print test_case_paths
-	nose.run(test_case_paths)
-	
+    '''Collect all the paths to Test files and runs them.'''
+    
+    print root_path
+    
+    # filter for all [Tt]est_ python files
+    test_case_paths = find(root_path, ["Test_*.py", "test_*.py"], 0, 1)
+    print test_case_paths
+    nose.run(test_case_paths)
+    
 
 if __name__ == "__main__":
     main()

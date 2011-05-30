@@ -1,6 +1,5 @@
 import color
 
-
 class Pixel(object):
     '''A pixel in an image with a color and an x and y location.'''
 
@@ -80,9 +79,18 @@ class Pixel(object):
         return color.Color(self.get_red(), self.get_green(), self.get_blue())
 
     def set_color(self, color):
-        '''Set the color values of this Pixel to those of Color object
-        color.'''
+        '''Set the color values of this Pixel to those of Color object color.'''
         
-        self.set_red(color.red)
-        self.set_green(color.green)
-        self.set_blue(color.blue)
+        self.set_red(color.get_red())
+        self.set_green(color.get_green())
+        self.set_blue(color.get_blue())
+
+    def get_x(self):
+        '''Return the x value of this Pixel.'''
+        
+        return self.x
+
+    def get_y(self):
+        '''Return the y value of this Pixel.'''
+        
+        return self.y

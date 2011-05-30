@@ -9,20 +9,20 @@ import color
 import mediawindows as mw
 import os
 import pixel
+import Tkinter as tk
 
-####################----------------------------------------------------------
+####################------------------------------------------------------------
 ## Defaults
-####################----------------------------------------------------------
+####################------------------------------------------------------------
 
 DEFAULT_FONT = ImageFont.load_default()
 IMAGE_FORMATS = ['.jpg', '.jpeg', '.bmp', '.gif', '.tif', '.tiff', '.im', \
                   '.msp', '.png', '.pcx', '.ppm']
 PIC_INITIALIZED = False
 
-####################----------------------------------------------------------
+####################------------------------------------------------------------
 ## Initializer
-####################----------------------------------------------------------
-
+####################------------------------------------------------------------
 
 def init_picture():
     '''Initialize this Picture module. Must be done before using Pictures.'''
@@ -38,16 +38,16 @@ def init_picture():
     else:
         raise Exception('Picture has already been initialized!')
     
-####################----------------------------------------------------------
+####################------------------------------------------------------------
 ## Picture class
-####################----------------------------------------------------------
+####################------------------------------------------------------------
 
 
 class Picture(object):
     '''A Picture class as a wrapper for PIL's Image class.'''
     
-    def __init__(self, w=None, h=None, col=color.white, image=None,
-            filename=None):
+    
+    def __init__(self, w=None, h=None, col=color.white, image=None, filename=None):
         '''Create a Picture object.
         
         Requires one of:
@@ -56,8 +56,7 @@ class Picture(object):
         - named str argument filename, e.g. Picture(filename='image.jpg').'''
         
         if not PIC_INITIALIZED:
-            raise Exception(
-                'Picture not initialized. Run init_picture() first.')
+            raise Exception('Picture is not initialized. Run init_picture() first.')
         
         self.set_filename_and_title(filename)
         self.win = None
@@ -77,8 +76,7 @@ class Picture(object):
             else:
                 raise ValueError('Invalid width/height specified.')
         else:
-            raise TypeError(
-                "No arguments were given to the Picture constructor.")
+            raise TypeError("No arguments were given to the Picture constructor.")
         
         self.set_image(image)
         
@@ -86,8 +84,7 @@ class Picture(object):
         self.poll_thread = None
     
     def __str__(self):
-        '''Return a str of this Picture with its filename, width, and
-        height.'''
+        '''Return a str of this Picture with its filename, width, and height.'''
         
         return "Picture, filename=" + self.filename + " height=" + \
             str(self.get_height()) + " width=" + str(self.get_width())
@@ -136,21 +133,21 @@ class Picture(object):
         '''Create a PictureWindow x pixels wide and y pixels high and
         store this window in self.win. Also, set the appropriate title.'''
         
-        filename = self.filename
+        filename = self.get_filename()
         if filename:
-            title = 'Filename: %s' % filename
+            title = 'Filename: %s' %  filename
         else:
             title = 'Filename: None'
         self.win = mw.PictureWindow(title=title, width=x, height=y)
-        self.win.set_coords(0, y - 1, x - 1, 0)
+        self.win.setCoords(0, y - 1, x - 1, 0)
     
     def _draw_image_to_win(self, win):
         '''Draw self.showimage on PictureWindow win.'''
         
-        width = win.width
-        height = win.height
-        self.showimage = mw.WindowImage(mw.WindowPoint(width / 2, height / 2),
-            ImageTk.PhotoImage(self.get_image()))
+        width = win.getWidth()
+        height = win.getHeight()
+        self.showimage = mw.WindowImage(mw.WindowPoint(width/2, height/2), \
+                                        ImageTk.PhotoImage(self.get_image()))
         self.showimage.draw(win)
  
     def show(self):
@@ -159,8 +156,7 @@ class Picture(object):
         
         if self.win:
             self.close()
-
-        # Make sure that the window is at least 150x150.
+            
         width = max(self.get_width(), 150)
         height = max(self.get_height(), 150)
         self._make_window(width, height)
@@ -175,15 +171,15 @@ class Picture(object):
     def update(self):
         '''Update an already opened internal display for this Picture.
         
-        NOTE: This does not update the window size. To do so, re-show the
+        NOTE: This does not updated the window size. To do so re-show the
         window.'''
         
-        if self.win and not self.win.is_closed and self.showimage:
+        if self.win and not self.win.is_closed() and self.showimage:
             width = self.get_width()
             height = self.get_height()
             self.showimage.undraw()
             self._draw_image_to_win(self.win)
-        elif self.win and self.win.is_closed:
+        elif self.win and self.win.is_closed():
             self.show()
             
     def close(self):
@@ -207,25 +203,14 @@ class Picture(object):
         of specific pixels is possible.'''
         
         if self.inspector:
-            if sys.platform != 'darwin':
-                mw.thread_exec(self.inspector.destroy)
-            else:
-                self.inspector.destroy()
-
-        if sys.platform != 'darwin':
-            self.inspector = mw.thread_exec_return(mw.PictureInspector, self)
-        else:
-            self.inspector = mw.PictureInspector(self)
+            mw.thread_exec(self.inspector.destroy)
+        self.inspector = mw.thread_exec_return(mw.PictureInspector, self)
 
     def close_inspect(self):
         '''Close this Picture's open PictureInspector window.'''
         
         if self.inspector:
-            if sys.platform != 'darwin':
-                mw.thread_exec(self.inspector.destroy)
-            else:
-                self.inspector.destroy()
-                
+            mw.thread_exec(self.inspector.destroy)
         self.inspector = None
     
     def get_pixel(self, x, y):
@@ -249,6 +234,16 @@ class Picture(object):
             self.filename = ''
             self.title = ''
     
+    def get_filename(self):
+        '''Return this Picture's filename.'''
+        
+        return self.filename
+    
+    def get_title(self):
+        '''Return this Picture's title.'''
+        
+        return self.title
+    
     def get_width(self):
         '''Return how many pixels wide this Picture is.'''
         
@@ -259,48 +254,43 @@ class Picture(object):
         
         return self.image.size[1]
     
-    def _assert_valid(self, x, y, w=None, h=None):
-        '''Raise an IndexError if (x, y) is not a valid coordinate.  Raise a
-        ValueError if w and h are specified and negative.'''
-
-        if not self.has_coordinates(x, y):
-            raise IndexError("Invalid coordinates specified.")
-        if w and h and w < 0 and h < 0:
-            raise ValueError('Invalid width/height specified.')
-
     def crop(self, x1, y1, x2, y2):
         '''Crop Picture pic so that only pixels inside the rectangular region
         with upper-left coordinates (x1, y1) and lower-right coordinates
         (x2, y2) remain. The new upper-left coordinate is (0, 0).'''
         
-        # Check for invalid dimensions.
-        _assert_valid(x1, y1)
-        _assert_valid(x2, y2)
-
-        if x1 > x2 or y1 > y2:
+        # Check for invalid dimensions
+        if not self.has_coordinates(x1, y1) or not self.has_coordinates(x2, y2)\
+        or x1 > x2 or y1 > y2:
             raise IndexError('Invalid coordinates specified.')
         
-        # Crop is not inclusive of the last pixel.
+        # Crop is not inclusive of the last pixel
         corners = (x1, y1, x2 + 1, y2 + 1)
         
         temp = self.image.crop(corners)
         new = temp.copy()
         self.set_image(new)
-
+    
     def add_rect_filled(self, col, x, y, w, h):
-        '''Draw a filled rectangle of Color col, width w, and height h on this
-        Picture. The upper left corner of the rectangle is at (x, y).'''
+        '''Draw a filled rectangle of Color col, width w, and height h
+        on this Picture. The upper left corner of the rectangle is at (x, y).'''
         
-        _assert_valid(x, y, w, h)
+        if not self.has_coordinates(x, y):
+            raise IndexError("Invalid coordinates specified.")
+        if w < 0 and h < 0:
+            raise ValueError('Invalid width/height specified.')
         draw = ImageDraw.Draw(self.image)
         draw.rectangle([x, y, x + w, y + h], outline=tuple(col.get_rgb()),
                        fill=tuple(col.get_rgb()))
     
     def add_rect(self, col, x, y, w, h):
-        '''Draw an empty rectangle of Color col, width w, and height h on this
-        Picture. The upper left corner of the rectangle is at (x, y).'''
+        '''Draw an empty rectangle of Color col, width w, and height h
+        on this Picture. The upper left corner of the rectangle is at (x, y).'''
         
-        _assert_valid(x, y, w, h)
+        if not self.has_coordinates(x, y):
+            raise IndexError("Invalid coordinates specified.")
+        if w < 0 and h < 0:
+            raise ValueError('Invalid width/height specified.')
         draw = ImageDraw.Draw(self.image)
         draw.rectangle([x, y, x + w, y + h], outline=tuple(col.get_rgb()))
     
@@ -314,10 +304,11 @@ class Picture(object):
         three coordinate pairs.'''
         
         i = 0
-        length = len(point_list)
+        l = len(point_list)
         
-        while i < length:
-            _assert_valid(point_list[i], point_list[i + 1])
+        while i < l:
+            if not self.has_coordinates(point_list[i], point_list[i + 1]):
+                raise IndexError("Invalid coordinates specified.")
             i += 2
         draw = ImageDraw.Draw(self.image)
         draw.polygon(point_list, outline=tuple(col.get_rgb()))
@@ -332,44 +323,54 @@ class Picture(object):
         three coordinate pairs.'''
         
         i = 0
-        length = len(point_list)
+        l = len(point_list)
         
-        while i < length:
-            _assert_valid(point_list[i], point_list[i + 1])
+        while i < l:
+            if not self.has_coordinates(point_list[i], point_list[i + 1]):
+                raise IndexError("Invalid coordinates specified.")
             i += 2
         draw = ImageDraw.Draw(self.image)
-        draw.polygon(point_list, outline=col.get_rgb(), fill=col.get_rgb())
+        draw.polygon(point_list, outline=tuple(col.get_rgb()), fill=
+                     tuple(col.get_rgb()))
     
     def add_oval_filled(self, col, x, y, w, h):
         '''Draw a filled oval of Color col, width w, and height h
         on this Picture. The upper left corner of the oval is at (x, y).'''
         
-        _assert_valid(x, y, w, h)
+        if not self.has_coordinates(x, y):
+            raise IndexError("Invalid coordinates specified.")
+        if w < 0 and h < 0:
+            raise ValueError('Invalid width/height specified.')
         draw = ImageDraw.Draw(self.image)
-        draw.ellipse([x, y, x + w, y + h], outline=col.get_rgb(),
-            fill=col.get_rgb())
+        draw.ellipse([x, y, x + w, y + h], outline=tuple(col.get_rgb()),
+                     fill=tuple(col.get_rgb()))
     
     def add_oval(self, col, x, y, w, h):
         '''Draw an empty oval of Color col, width w, and height h
         on this Picture. The upper left corner of the oval is at (x, y).'''
         
-        _assert_valid(x, y, w, h)
+        if not self.has_coordinates(x, y):
+            raise IndexError("Invalid coordinates specified.")
+        if w < 0 and h < 0:
+            raise ValueError('Invalid width/height specified.')
         draw = ImageDraw.Draw(self.image)
-        draw.ellipse([x, y, x + w, y + h], outline=col.get_rgb())
+        draw.ellipse([x, y, x + w, y + h], outline=tuple(col.get_rgb()))
     
     def add_line(self, col, x1, y1, x2, y2, width=1):
         '''Draw a line of Color col and width width from (x1, y1) to (x2, y2)
         on this Picture.'''
         
-        _assert_valid(x1, y1)
-        _assert_valid(x2, y2)
+        if not self.has_coordinates(x1, y1) or not self.has_coordinates(x2, y2):
+            raise IndexError("Invalid coordinates specified.")
         draw = ImageDraw.Draw(self.image)
-        draw.line([x1, y1, x2, y2], fill=col.get_rgb(), width=width)
+        draw.line([x1, y1, x2, y2], fill=tuple(col.get_rgb()), width=
+                  width)
     
     def add_text(self, col, x, y, s):
         '''Draw str s in Color col on this Picture starting at (x, y).'''
         
-        _assert_valid(x, y)
+        if not self.has_coordinates(x, y):
+            raise IndexError("Invalid coordinates specified.")
         global DEFAULT_FONT
         self.add_text_with_style(col, x, y, s, DEFAULT_FONT)
     
@@ -377,9 +378,11 @@ class Picture(object):
         '''Draw str s in Color col and font font on this Picture
         starting at (x, y).'''
         
-        _assert_valid(x, y)
+        if not self.has_coordinates(x, y):
+            raise IndexError("Invalid coordinates specified.")
         draw = ImageDraw.Draw(self.image)
-        draw.text((x, y), text=s, fill=col.get_rgb(), font=font)
+        draw.text((x, y), text=s, fill=tuple(col.get_rgb()),
+                  font=font)
      
     def save(self):
         '''Write this Picture back to its file. If an extension is not
@@ -405,9 +408,9 @@ class Picture(object):
                              % ext)
 
 
-####################----------------------------------------------------------
+####################------------------------------------------------------------
 ## Helper functions
-####################----------------------------------------------------------
+####################------------------------------------------------------------
 
 
 def load_image(f):
@@ -439,6 +442,6 @@ def get_short_path(filename):
 if __name__ == '__main__':
     a = Picture(filename='/Users/pgries/img1.jpg')
     
-    b = Picture(200, 300, green)
-    c = Picture(500, 500, red)
+    b = Picture(200,300,green)
+    c = Picture(500,500,red)
     b.show()

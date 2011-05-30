@@ -1,4 +1,4 @@
-'''A media-manipulation module. This contains global convenience functions
+'''The media module. This contains global convenience functions
 for manipulating PyGraphics objects, and imports all the supporting
 modules fully. 
 
@@ -7,10 +7,7 @@ IM, MSP, PNG, PCX, and PPM.
 
 Sounds support only uncompressed WAV files. For best quality use WAV files 
 with sampling rates of either 22050 or 44100. The default number of channels,
-sampling rate, encoding, and buffering can be changed in the sound.py file.
-
-The OS X version is unthreaded because of bugs in Apple's Tk implementation,
-which doesn't allow the mainloop to run in a background thread.'''
+sampling rate, encoding, and buffering can be changed in the sound.py file.'''
 
 from picture import *
 from sound import *
@@ -18,13 +15,18 @@ from color import *
 import mediawindows as mw
 import os
 
+print "version 2.1"
+
 mw.init_mediawindows()
 picture.init_picture()
 init_sound()
 
-####################----------------------------------------------------------
+def interact():
+    mw.interact()
+
+####################------------------------------------------------------------
 ## Global Picture Functions
-####################----------------------------------------------------------
+####################------------------------------------------------------------
 
 
 def load_picture(filename):
@@ -162,9 +164,9 @@ def add_polygon_filled(pic, point_list, col):
     pic.add_polygon_filled(col, point_list)
 
 
-####################----------------------------------------------------------
+####################------------------------------------------------------------
 ## Global Pixel Functions
-####################----------------------------------------------------------
+####################------------------------------------------------------------
 
 
 def set_red(pix, r):
@@ -227,9 +229,9 @@ def get_y(pix):
     return pix.get_y()
 
 
-####################----------------------------------------------------------
+####################------------------------------------------------------------
 ## Global Color Functions
-####################----------------------------------------------------------
+####################------------------------------------------------------------
 
 
 def distance(col1, col2):
@@ -257,9 +259,9 @@ def create_color(r, g, b):
     return Color(r, g, b)
 
 
-####################----------------------------------------------------------
+####################------------------------------------------------------------
 ## Global Sound Functions
-####################----------------------------------------------------------
+####################------------------------------------------------------------
 
 
 def load_sound(filename):
@@ -365,8 +367,7 @@ def get_sample(snd, i):
     return snd.get_sample(i)
 
 
-def get_waveform(snd, first=0, last=-1, width=1250, height=128,
-        theme='DEFAULT'):
+def get_waveform(snd, first=0, last=-1, width=1250, height=128, theme='DEFAULT'):
     '''Return a Picture width pixels wide and height pixels high
     of the waveform graph of Sound snd from index first to last.
     Use the color scheme denoted by the str theme. Available arguments
@@ -374,8 +375,7 @@ def get_waveform(snd, first=0, last=-1, width=1250, height=128,
     
     snd_copy = snd.copy()
     snd_copy.crop(first, last)
-    return snd_copy.get_waveform_graph(len(snd_copy) / 12500, width, height,
-        theme)
+    return snd_copy.get_waveform_graph(len(snd_copy)/12500, width, height, theme)
     
     
 def get_spectrogram(snd, width=1024, height=300):
@@ -390,10 +390,9 @@ def get_spectrum(snd, width=1024, height=300):
     pass
 
 
-####################----------------------------------------------------------
+####################------------------------------------------------------------
 ## Global Sample Functions
-####################----------------------------------------------------------
-
+####################------------------------------------------------------------
 
 def get_index(samp):
     '''Return Sample samp's index.'''
@@ -450,9 +449,9 @@ def get_right(stereo_samp):
     return stereo_samp.get_right()
 
 
-####################----------------------------------------------------------
+####################------------------------------------------------------------
 ## Global Media Object Functions
-####################----------------------------------------------------------
+####################------------------------------------------------------------
 
 
 def save_as(obj, filename=None):
@@ -470,7 +469,7 @@ def save_as(obj, filename=None):
 def save(obj):
     '''Write media.py object obj back to its previous file.'''
     
-    if obj.filename == '':
+    if obj.get_filename() == '':
         save_as(obj)
     else:
         obj.save()
@@ -496,10 +495,9 @@ def copy(obj):
     return obj.copy()
 
 
-####################----------------------------------------------------------
+####################------------------------------------------------------------
 ## Dialogs
-####################----------------------------------------------------------
-
+####################------------------------------------------------------------
 
 def choose_save_filename():
     '''Prompt user to pick a directory and filename. Return the path
@@ -508,7 +506,6 @@ def choose_save_filename():
 
     return mw.choose_save_filename()
 
-
 def choose_file():
     '''Prompt user to pick a file. Return the path to that file. 
     Change the current working directory to the directory 
@@ -516,13 +513,11 @@ def choose_file():
     
     return mw.choose_file()
 
-
 def choose_folder():
-    '''Prompt user to pick a folder. Return the path to that folder. Change
-    the current working directory to the directory chosen by the user.'''
+    '''Prompt user to pick a folder. Return the path to that folder. 
+    Change the current working directory to the directory chosen by the user.'''
 
     return mw.choose_folder()
-
 
 def choose_color():
     '''Prompt user to pick a color. Return a RGB Color object.'''
