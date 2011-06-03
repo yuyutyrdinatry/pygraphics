@@ -10,6 +10,9 @@ import mediawindows as mw
 import os
 import pixel
 
+from twisted.internet import reactor
+from twisted.internet.threads import blockingCallFromThread
+
 ####################------------------------------------------------------------
 ## Defaults
 ####################------------------------------------------------------------
