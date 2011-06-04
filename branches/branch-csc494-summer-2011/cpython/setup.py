@@ -38,5 +38,15 @@ setup(name='PyGraphics',
       ],
 
       package_dir={"": ""},
-      py_modules=['__init__', 'picture', 'color', 'media', 'mediawindows', 'pixel', 'sample', 'sound'],
+      py_modules=[
+        '__init__',
+        'picture',
+        'color',
+        'media',
+        'mediawindows',
+        'pixel',
+        'sample',
+        'sound',
+        'twisted_mediawindows',
+        'twisted_mediawindows_gui'],
       )

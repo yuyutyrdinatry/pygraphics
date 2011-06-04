@@ -131,10 +131,12 @@ def init_mediawindows():
     _THREAD_RUNNING = True
     
     # Fire up the separate Tk thread
-    thread.start_new_thread(_mediawindows_thread,())
+    ##thread.start_new_thread(_mediawindows_thread,())
     
     # Kill the tk thread at exit
-    atexit.register(_thread_shutdown)
+    def ax():
+        print "OLOLOL"
+    atexit.register(ax)
     
 
 

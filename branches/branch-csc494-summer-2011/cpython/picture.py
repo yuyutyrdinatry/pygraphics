@@ -6,7 +6,7 @@ import ImageDraw
 import ImageFont
 import ImageTk
 import color
-import mediawindows as mw
+import twisted_mediawindows as mw
 import os
 import pixel
 
@@ -63,7 +63,7 @@ class Picture(object):
         self.set_filename_and_title(filename)
         self.win = None
         self.showimage = None
-        self.inspector = None
+        self.inspector_id = None
         
         if image != None:
             image = image
@@ -204,16 +204,26 @@ class Picture(object):
         '''Inspect this Picture in a PictureInspector window, where inspection
         of specific pixels is possible.'''
         
-        if self.inspector:
-            mw.thread_exec(self.inspector.destroy)
-        self.inspector = mw.thread_exec_return(mw.PictureInspector, self)
+        self.close_inspect()
+        
+        img = self.image
+        w, h = img.size
+        
+        self.inspector_id = mw.threaded_callRemote(
+            mw.StartInspect,
+            img_data=img.tostring(),
+            img_width=w,
+            img_height=h,
+            img_mode=img.mode)
 
     def close_inspect(self):
         '''Close this Picture's open PictureInspector window.'''
         
-        if self.inspector:
-            mw.thread_exec(self.inspector.destroy)
-        self.inspector = None
+        if self.inspector_id is not None:
+            # Cast it into the fire. Destroy it!
+            mw.threaded_callRemote(
+                mw.StopInspect, inspector_id=self.inspector_id)
+        self.inspector_id = None
     
     def get_pixel(self, x, y):
         '''Return the Pixel at coordinates (x, y).'''
@@ -447,3 +457,4 @@ if __name__ == '__main__':
     b = Picture(200,300,green)
     c = Picture(500,500,red)
     b.show()
+

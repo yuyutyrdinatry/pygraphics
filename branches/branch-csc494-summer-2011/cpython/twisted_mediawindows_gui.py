@@ -294,8 +294,8 @@ class PictureInspector(_InspectorBase):
             self.v.set(rgb)
 
 def main():
-    _ROOT = tk.Tk()
-    _ROOT.withdraw()
+    root = tk.Tk()
+    root.withdraw()
     tksupport.install(root) # this handles the mainloop in Twisted
     
     # now we connect to the server
