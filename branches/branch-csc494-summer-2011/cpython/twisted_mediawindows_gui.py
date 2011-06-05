@@ -41,6 +41,17 @@ class GooeyClient(amp.AMP):
         
         return dict(inspector_id=inspector_id)
     
+    @twisted_mediawindows.UpdateInspect.responder
+    def update_inspect(self, inspector_id, img_data, img_width, img_height, img_mode):
+        # first, convert the image data to a Picture
+        size = (img_width, img_height)
+        pil_image = Image.fromstring(img_mode, size, img_data)
+        
+        inspector = self._inspector_map[inspector_id]
+        inspector.draw_image(pil_image)
+        
+        return {}
+    
     @twisted_mediawindows.StopInspect.responder
     def stop_inspect(self, inspector_id):
         inspector = self._inspector_map.pop(inspector_id)

@@ -225,6 +225,23 @@ class Picture(object):
                 mw.StopInspect, inspector_id=self.inspector_id)
         self.inspector_id = None
     
+    def update_inspect(self):
+        '''Update this Picture's open PictureInspector window'''
+        if self.inspector_id is None:
+            # this is what the original .update() does/did. Is it right?
+            # Should we not raise a ValueError or some such thing?
+            self.inspect()
+        else:
+            img = self.image
+            w, h = img.size
+            mw.threaded_callRemote(
+                mw.UpdateInspect,
+                inspector_id=self.inspector_id,
+                img_data=img.tostring(),
+                img_width=w,
+                img_height=h,
+                img_mode=img.mode)
+    
     def get_pixel(self, x, y):
         '''Return the Pixel at coordinates (x, y).'''
         

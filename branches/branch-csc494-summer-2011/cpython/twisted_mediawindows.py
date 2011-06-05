@@ -108,6 +108,15 @@ class StartInspect(amp.Command):
         ('img_mode', amp.String())]
     response = [('inspector_id', amp.Integer())]
 
+class UpdateInspect(amp.Command):
+    arguments = [
+        ('inspector_id', amp.Integer()),
+        ('img_data', amp.String()),
+        ('img_width', amp.Integer()),
+        ('img_height', amp.Integer()),
+        ('img_mode', amp.String())]
+    response = []
+
 class StopInspect(amp.Command):
     arguments = [
         ('inspector_id', amp.Integer())]
