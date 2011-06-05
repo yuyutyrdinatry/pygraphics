@@ -13,7 +13,7 @@ from twisted.internet.protocol import ClientCreator
 from twisted.protocols import amp
 from twisted.internet import tksupport, reactor
 
-from pygraphics import twisted_mediawindows, picture
+from pygraphics import twisted_mediawindows
 
 ####################------------------------------------------------------------
 ## Actual event loop stuff
@@ -32,10 +32,9 @@ class GooeyClient(amp.AMP):
         # first, convert the image data to a Picture
         size = (img_width, img_height)
         pil_image = Image.fromstring(img_mode, size, img_data)
-        pic = picture.Picture(image=pil_image)
         
         # next, create an Inspector and inspector id
-        inspector = PictureInspector(pic)
+        inspector = PictureInspector(pil_image)
         inspector_id = id(inspector)
         # note: references must be deleted to get rid of leaks
         self._inspector_map[inspector_id] = inspector
@@ -47,6 +46,8 @@ class GooeyClient(amp.AMP):
         inspector = self._inspector_map.pop(inspector_id)
         inspector.destroy()
         
+        return {}
+        
 
 ####################------------------------------------------------------------
 ## Picture Inspector
@@ -55,14 +56,11 @@ class GooeyClient(amp.AMP):
 
 class _InspectorBase(tk.Toplevel):
 
-    def __init__(self, pic):
-        '''Create an PictureWindow object with Picture pic.'''
+    def __init__(self, image):
+        '''Create an PictureWindow object with Image image'''
         
         tk.Toplevel.__init__(self)
-        self.filename = pic.get_filename()
-        self.picture = pic.copy()
-        self.image = self.picture.get_image()
-        self.orig_image = self.image
+        self.image = self.orig_image = image
         self.display()
 
     def display(self):

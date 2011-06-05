@@ -214,7 +214,7 @@ class Picture(object):
             img_data=img.tostring(),
             img_width=w,
             img_height=h,
-            img_mode=img.mode)
+            img_mode=img.mode)['inspector_id']
 
     def close_inspect(self):
         '''Close this Picture's open PictureInspector window.'''
