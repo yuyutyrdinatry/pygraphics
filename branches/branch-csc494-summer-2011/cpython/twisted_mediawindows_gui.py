@@ -21,7 +21,7 @@ from pygraphics import twisted_mediawindows, picture
 
 class GooeyClient(amp.AMP):
     def __init__(self, *args, **kwargs):
-        AMP.__init__(*args, **kwargs)
+        amp.AMP.__init__(self, *args, **kwargs)
         # no super(), this is a new-style class but doesn't use super().
         
         assert not hasattr(self, '_inspector_map')
@@ -299,7 +299,7 @@ def main():
     tksupport.install(root) # this handles the mainloop in Twisted
     
     # now we connect to the server
-    client = ClientCreator(reactor, amp.AMP).connectTCP(
+    client = ClientCreator(reactor, GooeyClient).connectTCP(
         '127.0.0.1', twisted_mediawindows.PORT)
     
     reactor.run()
