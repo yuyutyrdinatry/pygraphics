@@ -28,7 +28,7 @@ class GooeyClient(amp.AMP):
         self._inspector_map = {}
     
     @twisted_mediawindows.StartInspect.responder
-    def start_inspect(self, img_data, width, height, mode):
+    def start_inspect(self, img_data, img_width, img_height, img_mode):
         # first, convert the image data to a Picture
         size = (img_width, img_height)
         pil_image = Image.fromstring(img_mode, size, img_data)
