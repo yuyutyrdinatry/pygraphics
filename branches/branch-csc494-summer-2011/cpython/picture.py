@@ -131,67 +131,12 @@ class Picture(object):
         pic.set_filename_and_title(self.filename)
         return pic
     
-    def _make_window(self, x, y):
-        '''Create a PictureWindow x pixels wide and y pixels high and
-        store this window in self.win. Also, set the appropriate title.'''
-        
-        filename = self.get_filename()
-        if filename:
-            title = 'Filename: %s' %  filename
-        else:
-            title = 'Filename: None'
-        self.win = mw.PictureWindow(title=title, width=x, height=y)
-        self.win.setCoords(0, y - 1, x - 1, 0)
-    
-    def _draw_image_to_win(self, win):
-        '''Draw self.showimage on PictureWindow win.'''
-        
-        width = win.getWidth()
-        height = win.getHeight()
-        self.showimage = mw.WindowImage(mw.WindowPoint(width/2, height/2), \
-                                        ImageTk.PhotoImage(self.get_image()))
-        self.showimage.draw(win)
- 
-    def show(self):
-        '''Display this Picture. If it is already being displayed,
-        close the old display and re-display it.'''
-        
-        if self.win:
-            self.close()
-            
-        width = max(self.get_width(), 150)
-        height = max(self.get_height(), 150)
-        self._make_window(width, height)
-        self._draw_image_to_win(self.win)
-        
     def show_external(self):
         '''Display this Picture in an external application. The application
         used is system dependant.'''
         
         self.image.show()
-        
-    def update(self):
-        '''Update an already opened internal display for this Picture.
-        
-        NOTE: This does not updated the window size. To do so re-show the
-        window.'''
-        
-        if self.win and not self.win.is_closed() and self.showimage:
-            width = self.get_width()
-            height = self.get_height()
-            self.showimage.undraw()
-            self._draw_image_to_win(self.win)
-        elif self.win and self.win.is_closed():
-            self.show()
-            
-    def close(self):
-        '''Close this Picture's display.'''
-        
-        if self.win:
-            self.win.close()
-            self.win = None
-            self.showimage = None
-            
+    
     def is_closed(self):
         '''Return True if this Picture is not being displayed.'''
         
@@ -200,11 +145,11 @@ class Picture(object):
         else:
             return True
     
-    def inspect(self):
+    def show(self):
         '''Inspect this Picture in a PictureInspector window, where inspection
         of specific pixels is possible.'''
         
-        self.close_inspect()
+        self.close()
         
         img = self.image
         w, h = img.size
@@ -216,7 +161,7 @@ class Picture(object):
             img_height=h,
             img_mode=img.mode)['inspector_id']
 
-    def close_inspect(self):
+    def close(self):
         '''Close this Picture's open PictureInspector window.'''
         
         if self.inspector_id is not None:
@@ -225,12 +170,16 @@ class Picture(object):
                 mw.StopInspect, inspector_id=self.inspector_id)
         self.inspector_id = None
     
-    def update_inspect(self):
+    def update(self):
         '''Update this Picture's open PictureInspector window'''
+        # TODO: check if the same problem plagues this .update
+        #       that did the old: will it update it if the picture size changes?
         if self.inspector_id is None:
-            # this is what the original .update() does/did. Is it right?
+            # this is what the original .update() did. Is it right?
             # Should we not raise a ValueError or some such thing?
-            self.inspect()
+            # i.e. if not, why not just have a show() method and no
+            # update method at all? Food for thought.
+            self.show()
         else:
             img = self.image
             w, h = img.size
