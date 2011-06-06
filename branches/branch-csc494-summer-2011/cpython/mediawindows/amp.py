@@ -2,6 +2,8 @@ import sys
 import threading
 import subprocess
 import atexit
+from cStringIO import StringIO
+from itertools import count
 
 from twisted.protocols import amp
 from twisted.internet import reactor, defer
@@ -118,6 +120,48 @@ def threaded_callRemote(*args, **kwargs):
 ## AMP Protocol
 ####################------------------------------------------------------------
 
+# BigString is stolen from the AMP docs. Turns out you can't pass
+# things larger than 64k...
+# http://amp-protocol.net/Types/BigString
+
+CHUNK_MAX = 0xffff
+class BigString(amp.Argument):
+    def fromBox(self, name, strings, objects, proto):
+        value = StringIO()
+        value.write(strings.get(name))
+        for counter in count(2):
+            chunk = strings.get("%s.%d" % (name, counter))
+            if chunk is None:
+                break
+            value.write(chunk)
+        objects[name] = self.buildvalue(value.getvalue())
+ 
+    def buildvalue(self, value):
+        return value
+ 
+    def toBox(self, name, strings, objects, proto):
+        value = StringIO(self.fromvalue(objects[name]))
+        firstChunk = value.read(CHUNK_MAX)
+        strings[name] = firstChunk
+        counter = 2
+        while True:
+            nextChunk = value.read(CHUNK_MAX)
+            if not nextChunk:
+                break
+            strings["%s.%d" % (name, counter)] = nextChunk
+            counter += 1
+ 
+    def fromvalue(self, value):
+        return value
+ 
+class BigUnicode(BigString):
+    def buildvalue(self, value):
+        return value.decode('utf-8')
+    
+    def fromvalue(self, value):
+        return value.encode('utf-8')
+
+
 class PILImage(object):
     """
     This is an AMP argument converter that transforms PIL Image objects to and
@@ -140,22 +184,31 @@ class PILImage(object):
     # but that's slow and I'm lazy.
     zope.interface.implements(amp.IArgumentType)
     
+    bigstring = BigString()
+    
     def toBox(self, name, strings, objects, proto):
         img = objects[name]
         w, h = img.size
         strings.update({
-            '%s.data' % name: img.tostring(),
             '%s.width' % name: str(w),
             '%s.height' % name: str(h),
             '%s.mode' % name: img.mode})
+        
+        dataname = "%s.data" % name
+        self.bigstring.toBox(
+            dataname, strings, {dataname:img.tostring()}, proto)
     
     def fromBox(self, name, strings, objects, proto):
+        dataname = "%s.data" % name
+        tempd = {}
+        self.bigstring.fromBox(dataname, strings, tempd, proto)
+        
         objects[name] = Image.fromstring(
             strings['%s.mode' % name],
             (
                 int(strings['%s.width' % name]),
                 int(strings['%s.width' % name])),
-            strings['%s.data' % name])
+            tempd['%s.data' % name])
 
 
 class StartInspect(amp.Command):
