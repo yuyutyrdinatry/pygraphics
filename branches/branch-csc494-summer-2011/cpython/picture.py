@@ -170,6 +170,9 @@ class Picture(object):
                 mw.amp.StopInspect, inspector_id=self.inspector_id)
         self.inspector_id = None
     
+    inspect = show
+    close_inspect = close
+    
     def update(self):
         '''Update this Picture's open PictureInspector window'''
         # TODO: check if the same problem plagues this .update
