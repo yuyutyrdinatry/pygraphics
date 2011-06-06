@@ -12,7 +12,7 @@ sampling rate, encoding, and buffering can be changed in the sound.py file.'''
 from picture import *
 from sound import *
 from color import *
-import twisted_mediawindows as mw
+import mediawindows as mw
 import os
 
 mw.init_mediawindows()

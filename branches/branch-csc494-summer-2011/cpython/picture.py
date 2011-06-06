@@ -6,7 +6,7 @@ import ImageDraw
 import ImageFont
 import ImageTk
 import color
-import twisted_mediawindows as mw
+import mediawindows as mw
 import os
 import pixel
 
@@ -140,10 +140,7 @@ class Picture(object):
     def is_closed(self):
         '''Return True if this Picture is not being displayed.'''
         
-        if self.win:
-            return self.win.is_closed()
-        else:
-            return True
+        return self.inspector_id is None
     
     def show(self):
         '''Inspect this Picture in a PictureInspector window, where inspection
@@ -155,7 +152,7 @@ class Picture(object):
         w, h = img.size
         
         self.inspector_id = mw.threaded_callRemote(
-            mw.StartInspect,
+            mw.amp.StartInspect,
             img_data=img.tostring(),
             img_width=w,
             img_height=h,
@@ -167,7 +164,7 @@ class Picture(object):
         if self.inspector_id is not None:
             # Cast it into the fire. Destroy it!
             mw.threaded_callRemote(
-                mw.StopInspect, inspector_id=self.inspector_id)
+                mw.amp.StopInspect, inspector_id=self.inspector_id)
         self.inspector_id = None
     
     def update(self):
@@ -184,7 +181,7 @@ class Picture(object):
             img = self.image
             w, h = img.size
             mw.threaded_callRemote(
-                mw.UpdateInspect,
+                mw.amp.UpdateInspect,
                 inspector_id=self.inspector_id,
                 img_data=img.tostring(),
                 img_width=w,

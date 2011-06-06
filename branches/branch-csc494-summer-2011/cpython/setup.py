@@ -46,7 +46,8 @@ setup(name='PyGraphics',
         'mediawindows',
         'pixel',
         'sample',
-        'sound',
-        'twisted_mediawindows',
-        'twisted_mediawindows_gui'],
-      )
+        'sound'
+      ],
+      packages=[
+        'mediawindows'
+      ])

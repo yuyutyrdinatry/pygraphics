@@ -8,6 +8,10 @@ from twisted.internet import reactor, defer
 from twisted.internet.threads import blockingCallFromThread
 from twisted.internet.protocol import Factory
 
+import Image
+
+from pygraphics.mediawindows import gui
+
 # oh jeez we need a unique port on windows. On *nix we could use domain sockets
 PORT = 31337
 
@@ -70,7 +74,7 @@ class MediawindowsTwistedThread(object):
         
         self.reactor.listenTCP(PORT, self.factory)
         self.proc = subprocess.Popen(
-            [sys.executable, '-m', 'pygraphics.twisted_mediawindows_gui'])
+            [sys.executable, '-m', 'pygraphics.mediawindows.run_client'])
         
         # Kill the thread at exit
         atexit.register(self.shutdown)
@@ -90,12 +94,25 @@ class MediawindowsTwistedThread(object):
         self.thread.join()
 
 def init_mediawindows(*args, **kwargs):
+    import mediawindows # NOT from pygraphics import mediawindows. Guess why!
     global _THREAD_SINGLETON
-    global _THREAD_RUNNING
-    _THREAD_RUNNING = True
+    mediawindows._THREAD_RUNNING = True # this is so silly.
     _THREAD_SINGLETON = MediawindowsTwistedThread(reactor, *args, **kwargs)
     # 'cause, I mean, globals, right?
+
+# This stuff uses the global _THREAD_SINGLETON object
+
+def threaded_callRemote(*args, **kwargs):
+    """callRemote using _THREAD_SINGLETON.factory.protocol_singleton
     
+    This is a convenience function, because all that typing is annoying.
+    
+    """
+    reactor = _THREAD_SINGLETON.reactor
+    protocol = _THREAD_SINGLETON.factory.protocol_singleton
+    
+    return blockingCallFromThread(reactor, protocol.callRemote, *args, **kwargs)
+
 ####################------------------------------------------------------------
 ## AMP Protocol
 ####################------------------------------------------------------------
@@ -136,15 +153,41 @@ class GooeyHub(amp.AMP):
         self.factory.protocol_singleton = self
         self.factory.deferred_singleton.callback(self)
 
-# This stuff uses the global _THREAD_SINGLETON object
-
-def threaded_callRemote(*args, **kwargs):
-    """callRemote using _THREAD_SINGLETON.factory.protocol_singleton
+class GooeyClient(amp.AMP):
+    def __init__(self, *args, **kwargs):
+        amp.AMP.__init__(self, *args, **kwargs)
+        # no super(): AMP is a new-style class but doesn't use super().
+        
+        self._inspector_map = {}
     
-    This is a convenience function, because all that typing is annoying.
+    @StartInspect.responder
+    def start_inspect(self, img_data, img_width, img_height, img_mode):
+        # first, convert the image data to a Picture
+        size = (img_width, img_height)
+        pil_image = Image.fromstring(img_mode, size, img_data)
+        
+        # next, create an Inspector and inspector id
+        inspector = gui.PictureInspector(pil_image)
+        inspector_id = id(inspector)
+        # note: references must be deleted to get rid of leaks
+        self._inspector_map[inspector_id] = inspector
+        
+        return dict(inspector_id=inspector_id)
     
-    """
-    reactor = _THREAD_SINGLETON.reactor
-    protocol = _THREAD_SINGLETON.factory.protocol_singleton
+    @UpdateInspect.responder
+    def update_inspect(self, inspector_id, img_data, img_width, img_height, img_mode):
+        # first, convert the image data to a Picture
+        size = (img_width, img_height)
+        pil_image = Image.fromstring(img_mode, size, img_data)
+        
+        inspector = self._inspector_map[inspector_id]
+        inspector.draw_image(pil_image)
+        
+        return {}
     
-    return blockingCallFromThread(reactor, protocol.callRemote, *args, **kwargs)
+    @StopInspect.responder
+    def stop_inspect(self, inspector_id):
+        inspector = self._inspector_map.pop(inspector_id)
+        inspector.destroy()
+        
+        return {}
