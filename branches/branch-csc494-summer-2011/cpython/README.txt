@@ -33,25 +33,58 @@ media.py
     queue that the thread uses blocking until the function has completed. Perhaps
     problem is in pygamer.mixer.init()
     
-mediawindows.py
+mediawindows
 
-    This module contains the thread support and the thread that is used to run
-    the display of pictures by Tkinter and initialization of pygamer.mixer. It 
-    also contains a series of Tkinter display widgets and support classes. Namely
-    it contains the PictureWindow and associated support classes for displaying
-    Pictures in a threaded window, and it contains the PictureInspector and
-    associated support classes for displaying and inspecting Pictures.
+    This package contains the thread support, the multiprocess support, and the
+    code responsible for displaying and inspecting images. In particular,
+    PictureInspector.
     
     It also contains various choose_* functions that allow users to choose files,
     folders, save_as filenames, and colors. NOTE: These are what are called in
     media.py's equivalent choose_* functions.
     
-    TO-DO: Major clean up necessary. The code logic is inconsistent (PictureWindow
-    and PictureInspector function in vastly different ways) and documentation is
-    needed for much of the module. Also, the Tkinter code should be cleaned up
-    to make the windows behave as wanted (add scrollbars, fix proportions, etc)
+    This module is a major focus of the work in CSC494 2011, so the below TODO
+    notes might become out of date if they aren't updated.
     
-    ALSO TO-DO: Add ask and say functions for A3
+    TO-DO:Documentation is needed for much of the module. Also, the Tkinter code
+    should be cleaned up to make the windows behave as wanted (add scrollbars,
+    fix proportions, etc)
+    
+    ALSO TO-DO: Add ask and say functions for A3 (???)
+    
+    Short explanations and TO-DOs for the submodules of mediawindows:
+    
+    amp.py
+        
+        This module contains some thread-related code that probably belongs
+        elsewhere, and the AMP protocol support.
+        
+        TO-DO: move the threading code elsewhere
+    
+    exceptions.py
+        
+        This module contains an exception class and some constants. It
+        will be used somewhere, but I haven't checked.
+        
+        TO-DO: Use it or lose it.
+    
+    gui.py
+        
+        This module contains the actual Tkinter GUI classes.
+    
+    proxy.py
+        
+        This module is responsible for providing blocking, synchronous
+        interfaces around objects and functions that are implemented in the
+        other process.
+        
+        TO-DO: er, write it.
+    
+    run_client.py
+        
+        This is a script which runs an AMP client that connects back to the
+        amp server specified in amp.py. It is run as a subprocess by amp.py.
+        Everything used by it is defined in amp.py
     
 picture.py
 
