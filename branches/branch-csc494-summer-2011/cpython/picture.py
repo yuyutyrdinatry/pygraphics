@@ -140,6 +140,9 @@ class Picture(object):
     def is_closed(self):
         '''Return True if this Picture is not being displayed.'''
         
+        # FIXME: doesn't work if the inspector was closed by the user!
+        #        have to write an AMP message from the GUI display process
+        #        that says that it was closed! Or something.
         return self.inspector_id is None
     
     def show(self):
