@@ -9,6 +9,7 @@ from twisted.internet.threads import blockingCallFromThread
 from twisted.internet.protocol import Factory
 
 import Image
+import zope.interface
 
 from pygraphics.mediawindows import gui
 
@@ -117,21 +118,52 @@ def threaded_callRemote(*args, **kwargs):
 ## AMP Protocol
 ####################------------------------------------------------------------
 
+class PILImage(object):
+    """
+    This is an AMP argument converter that transforms PIL Image objects to and
+    from four string key-value pairs in the AMP message.
+    
+    keys are of the form <name>.<subkey>, and the subkeys are as follows:
+        
+        data
+            the binary blob containing the image data
+        width
+            the integer width
+        height
+            the integer height
+        mode
+            the string image mode
+    
+    """
+    zope.interface.implements(amp.IArgumentType)
+    
+    def toBox(self, name, strings, objects, proto):
+        img = objects[name]
+        w, h = img.size
+        strings.update({
+            '%s.data' % name: img.tostring(),
+            '%s.width' % name: str(w),
+            '%s.height' % name: str(h),
+            '%s.mode' % name: img.mode})
+    
+    def fromBox(self, name, strings, objects, proto):
+        objects[name] = Image.fromstring(
+            strings['%s.mode' % name],
+            (
+                int(strings['%s.width' % name]),
+                int(strings['%s.width' % name])),
+            strings['%s.data' % name])
+
+
 class StartInspect(amp.Command):
     arguments = [
-        ('img_data', amp.String()),
-        ('img_width', amp.Integer()),
-        ('img_height', amp.Integer()),
-        ('img_mode', amp.String())]
+        ('img', PILImage())]
     response = [('inspector_id', amp.Integer())]
 
 class UpdateInspect(amp.Command):
     arguments = [
         ('inspector_id', amp.Integer()),
-        ('img_data', amp.String()),
-        ('img_width', amp.Integer()),
-        ('img_height', amp.Integer()),
-        ('img_mode', amp.String())]
+        ('img', PILImage())]
     response = []
 
 class StopInspect(amp.Command):
@@ -161,13 +193,8 @@ class GooeyClient(amp.AMP):
         self._inspector_map = {}
     
     @StartInspect.responder
-    def start_inspect(self, img_data, img_width, img_height, img_mode):
-        # first, convert the image data to a Picture
-        size = (img_width, img_height)
-        pil_image = Image.fromstring(img_mode, size, img_data)
-        
-        # next, create an Inspector and inspector id
-        inspector = gui.PictureInspector(pil_image)
+    def start_inspect(self, img):
+        inspector = gui.PictureInspector(img)
         inspector_id = id(inspector)
         # note: references must be deleted to get rid of leaks
         self._inspector_map[inspector_id] = inspector
@@ -175,13 +202,9 @@ class GooeyClient(amp.AMP):
         return dict(inspector_id=inspector_id)
     
     @UpdateInspect.responder
-    def update_inspect(self, inspector_id, img_data, img_width, img_height, img_mode):
-        # first, convert the image data to a Picture
-        size = (img_width, img_height)
-        pil_image = Image.fromstring(img_mode, size, img_data)
-        
+    def update_inspect(self, inspector_id, img):
         inspector = self._inspector_map[inspector_id]
-        inspector.draw_image(pil_image)
+        inspector.draw_image(img)
         
         return {}
     

@@ -151,15 +151,9 @@ class Picture(object):
         
         self.close()
         
-        img = self.image
-        w, h = img.size
-        
         self.inspector_id = mw.threaded_callRemote(
             mw.amp.StartInspect,
-            img_data=img.tostring(),
-            img_width=w,
-            img_height=h,
-            img_mode=img.mode)['inspector_id']
+            img=self.image)['inspector_id']
 
     def close(self):
         '''Close this Picture's open PictureInspector window.'''
@@ -184,15 +178,10 @@ class Picture(object):
             # update method at all? Food for thought.
             self.show()
         else:
-            img = self.image
-            w, h = img.size
             mw.threaded_callRemote(
                 mw.amp.UpdateInspect,
                 inspector_id=self.inspector_id,
-                img_data=img.tostring(),
-                img_width=w,
-                img_height=h,
-                img_mode=img.mode)
+                img=self.image)
     
     def get_pixel(self, x, y):
         '''Return the Pixel at coordinates (x, y).'''
