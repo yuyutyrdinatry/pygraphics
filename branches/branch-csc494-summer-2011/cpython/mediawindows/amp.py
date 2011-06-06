@@ -135,6 +135,9 @@ class PILImage(object):
             the string image mode
     
     """
+    # I'm a bit iffy about creating new keys... in theory they could conflict
+    # with other keys. The alternative is packing this with json or something,
+    # but that's slow and I'm lazy.
     zope.interface.implements(amp.IArgumentType)
     
     def toBox(self, name, strings, objects, proto):
