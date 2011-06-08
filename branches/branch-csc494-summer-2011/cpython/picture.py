@@ -64,7 +64,10 @@ class Picture(object):
         self.set_filename_and_title(filename)
         self.win = None
         self.showimage = None
-        self.inspector_id = None
+        # an inspector of id=0 will never exist. This is a useful base case.
+        # imagine all the "is None" checks that'd have to be done if
+        # this defaulted to None!
+        self.inspector_id = 0
         
         if image != None:
             image = image
@@ -140,7 +143,7 @@ class Picture(object):
     
     def is_closed(self):
         '''Return True if this Picture is not being displayed.'''
-        return self.inspector_id is None or mw.threaded_callRemote(
+        return mw.threaded_callRemote(
             mw.amp.PollInspect,
             inspector_id=self.inspector_id)['is_closed']
     
@@ -157,14 +160,12 @@ class Picture(object):
     def close(self):
         '''Close this Picture's open PictureInspector window.'''
         
-        if self.inspector_id is not None:
+        try:
             # Cast it into the fire. Destroy it!
-            try:
-                mw.threaded_callRemote(
-                    mw.amp.StopInspect, inspector_id=self.inspector_id)
-            except mw.exceptions.WindowDoesNotExistError:
-                pass
-        self.inspector_id = None
+            mw.threaded_callRemote(
+                mw.amp.StopInspect, inspector_id=self.inspector_id)
+        except mw.exceptions.WindowDoesNotExistError:
+            pass
     
     inspect = show
     close_inspect = close
@@ -173,20 +174,17 @@ class Picture(object):
         '''Update this Picture's open PictureInspector window'''
         # TODO: check if the same problem plagues this .update
         #       that did the old: will it update it if the picture size changes?
-        if self.inspector_id is None:
+        try:
+            mw.threaded_callRemote(
+                mw.amp.UpdateInspect,
+                inspector_id=self.inspector_id,
+                img=self.image)
+        except mw.exceptions.WindowDoesNotExistError:
             # this is what the original .update() did. Is it right?
             # Should we not raise a ValueError or some such thing?
             # i.e. if not, why not just have a show() method and no
             # update method at all? Food for thought.
             self.show()
-        else:
-            try:
-                mw.threaded_callRemote(
-                    mw.amp.UpdateInspect,
-                    inspector_id=self.inspector_id,
-                    img=self.image)
-            except WindowDoesNotExistError:
-                self.show()
     
     def get_pixel(self, x, y):
         '''Return the Pixel at coordinates (x, y).'''
