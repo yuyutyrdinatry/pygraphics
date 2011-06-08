@@ -108,6 +108,9 @@ class OutdatedInspectorHandleTestCase(unittest.TestCase):
         outdated_inspector_id = self.picture.inspector_id
         self.picture.close()
         self.picture.inspector_id = outdated_inspector_id # oh no!
+        
+    def test_isOpen(self):
+        self.assertTrue(self.picture.is_closed())
     
     def test_update(self):
         self.picture.update() # should reopen

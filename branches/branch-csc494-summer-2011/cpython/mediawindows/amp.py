@@ -229,6 +229,11 @@ class StopInspect(amp.Command):
     response = []
     errors = {exceptions.WindowDoesNotExistError: 'WINDOW_DOES_NOT_EXIST'}
 
+class PollInspect(amp.Command):
+    arguments = [
+        ('inspector_id', amp.Integer())]
+    response = [('is_closed', amp.Boolean())]
+
 class GooeyHub(amp.AMP):
     def connectionMade(self):
         """Here we will set the global connected subprocess.
@@ -284,6 +289,10 @@ class GooeyClient(amp.AMP):
         
         inspector.draw_image(img)
         return {}
+    
+    @PollInspect.responder
+    def poll_inspect(self, inspector_id):
+        return dict(is_closed=(inspector_id not in self._inspector_map))
     
     @StopInspect.responder
     def stop_inspect(self, inspector_id):
