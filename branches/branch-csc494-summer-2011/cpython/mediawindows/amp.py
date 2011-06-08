@@ -117,7 +117,7 @@ def threaded_callRemote(*args, **kwargs):
     return blockingCallFromThread(reactor, protocol.callRemote, *args, **kwargs)
 
 ####################------------------------------------------------------------
-## AMP Protocol
+## AMP Protocol / related things
 ####################------------------------------------------------------------
 
 # BigString is stolen from the AMP docs. Turns out you can't pass
@@ -258,7 +258,7 @@ class GooeyClient(amp.AMP):
     @StartInspect.responder
     def start_inspect(self, img):
         inspector = gui.PictureInspector(img)
-        inspector_id = id(inspector)
+        inspector_id = new_id()
         # note: references must be deleted to get rid of leaks
         self._inspector_map[inspector_id] = inspector
         inspector.protocol(
@@ -303,3 +303,19 @@ class GooeyClient(amp.AMP):
         
         inspector.destroy()
         return {}
+
+def new_id(_counter=count(1)):
+    """
+    Find and return a new inspector id# for use in IPC.
+    
+    All such numbers are positive and unique.
+    
+    id() was used previously, it provides insufficiently strong uniqueness
+    guarantees that could, hypothetically speaking, cause bugs.
+    
+    Also, since all real ids will be positive, clients can feel free to use
+    a nonpositive id (especially 0) as an id that will be guaranteed to not
+    exist (so as to simplify implementation). This is also not a guarantee
+    that id() provides.
+    """
+    return _counter.next()
