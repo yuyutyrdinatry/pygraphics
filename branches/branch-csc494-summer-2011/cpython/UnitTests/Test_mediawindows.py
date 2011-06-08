@@ -93,5 +93,31 @@ class InspectorTestCase(unittest.TestCase):
         """
         self.picture.update()
 
+class OutdatedInspectorHandleTestCase(unittest.TestCase):
+    """
+    Sometimes an inspector can be updated by someone else. e.g. the user
+    can close the window, despite .close() never being called.
+    These tests simulate that, and check that the right things happen.
+    
+    we should never rely on a local understanding of what the current state
+    is.
+    """
+    def setUp(self):
+        self.picture = picture.Picture(1, 1)
+        self.picture.show()
+        outdated_inspector_id = self.picture.inspector_id
+        self.picture.close()
+        self.picture.inspector_id = outdated_inspector_id # oh no!
+    
+    def test_update(self):
+        self.picture.update() # should reopen
+        self.assertFalse(self.picture.is_closed())
+        self.picture.close()
+    
+    def test_update(self):
+        self.picture.show() # should open new window
+        self.assertFalse(self.picture.is_closed())
+        self.picture.close()
+
 if __name__ == '__main__':
     unittest.main()
