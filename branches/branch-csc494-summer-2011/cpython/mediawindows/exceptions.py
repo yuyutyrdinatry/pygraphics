@@ -1,10 +1,10 @@
-class MediaWindowsError(exceptions.Exception):
+class MediaWindowsError(Exception):
     """Generic error class for graphics module exceptions."""
-    
-    def __init__(self, args=None):
-        '''Create an Error.'''
-        
-        self.args = args
+    pass
+
+class WindowDoesNotExistError(MediaWindowsError):
+    """Error class for when an attempt is made to manipulate a closed window"""
+    pass
 
 # Error message strings
 OBJ_ALREADY_DRAWN = "Object currently drawn"

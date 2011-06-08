@@ -14,8 +14,42 @@ import unittest
 
 import media
 import picture
+import mediawindows as mw
+
+class RawClosedInspectorTestCase(unittest.TestCase):
+    """
+    Test the how the amp interface deals with closed windows behind the scenes
+    """
+    def setUp(self):
+        # too lazy to do the setup code myself
+        pict = picture.Picture(1, 1)
+        pict.show()
+        self.image = pict.image
+        self.inspector_id = pict.inspector_id
+        pict.close()
+    
+    def test_closeRaises(self):
+        """Test that closing a closed window raises an exception"""
+        self.assertRaises(
+            mw.exceptions.WindowDoesNotExistError,
+            mw.threaded_callRemote,
+            mw.amp.StopInspect,
+            inspector_id=self.inspector_id)
+    
+    def test_updateRaises(self):
+        """Test that closing a closed window raises an exception"""
+        self.assertRaises(
+            mw.exceptions.WindowDoesNotExistError,
+            mw.threaded_callRemote,
+            mw.amp.UpdateInspect,
+            inspector_id=self.inspector_id,
+            img=self.image)
 
 class InspectorTestCase(unittest.TestCase):
+    """
+    Test the high level user of the proxied inspector through the Picture class
+    """
+    # TODO: use a mocked API for this!
     def setUp(self):
         self.picture = picture.Picture(1, 1)
     

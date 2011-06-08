@@ -13,7 +13,7 @@ from twisted.internet.protocol import Factory
 import Image
 import zope.interface
 
-from pygraphics.mediawindows import gui
+from mediawindows import gui, exceptions
 
 # oh jeez we need a unique port on windows. On *nix we could use domain sockets
 PORT = 31337
@@ -221,11 +221,13 @@ class UpdateInspect(amp.Command):
         ('inspector_id', amp.Integer()),
         ('img', PILImage())]
     response = []
+    errors = {exceptions.WindowDoesNotExistError: 'WINDOW_DOES_NOT_EXIST'}
 
 class StopInspect(amp.Command):
     arguments = [
         ('inspector_id', amp.Integer())]
     response = []
+    errors = {exceptions.WindowDoesNotExistError: 'WINDOW_DOES_NOT_EXIST'}
 
 class GooeyHub(amp.AMP):
     def connectionMade(self):
@@ -254,19 +256,41 @@ class GooeyClient(amp.AMP):
         inspector_id = id(inspector)
         # note: references must be deleted to get rid of leaks
         self._inspector_map[inspector_id] = inspector
+        inspector.protocol(
+            "WM_DELETE_WINDOW",
+            self.inspector_onexit(inspector_id, inspector))
         
         return dict(inspector_id=inspector_id)
     
+    def inspector_onexit(self, inspector_id, inspector):
+        """Return a callback for WM_DELETE_WINDOW
+        
+        this callback is responsible for removing the inspector from the
+        live inspector mapping.
+        """
+        def callback():
+            del self._inspector_map[inspector_id]
+            inspector.destroy()
+        
+        return callback
+        
+    
     @UpdateInspect.responder
     def update_inspect(self, inspector_id, img):
-        inspector = self._inspector_map[inspector_id]
-        inspector.draw_image(img)
+        try:
+            inspector = self._inspector_map[inspector_id]
+        except KeyError:
+            raise exceptions.WindowDoesNotExistError
         
+        inspector.draw_image(img)
         return {}
     
     @StopInspect.responder
     def stop_inspect(self, inspector_id):
-        inspector = self._inspector_map.pop(inspector_id)
-        inspector.destroy()
+        try:
+            inspector = self._inspector_map.pop(inspector_id)
+        except KeyError:
+            raise exceptions.WindowDoesNotExistError
         
+        inspector.destroy()
         return {}

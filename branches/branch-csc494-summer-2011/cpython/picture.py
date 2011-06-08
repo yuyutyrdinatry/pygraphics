@@ -7,6 +7,7 @@ import ImageFont
 import ImageTk
 import color
 import mediawindows as mw
+import mediawindows.exceptions
 import os
 import pixel
 
@@ -160,8 +161,11 @@ class Picture(object):
         
         if self.inspector_id is not None:
             # Cast it into the fire. Destroy it!
-            mw.threaded_callRemote(
-                mw.amp.StopInspect, inspector_id=self.inspector_id)
+            try:
+                mw.threaded_callRemote(
+                    mw.amp.StopInspect, inspector_id=self.inspector_id)
+            except mw.exceptions.WindowDoesNotExistError:
+                pass
         self.inspector_id = None
     
     inspect = show
@@ -178,10 +182,13 @@ class Picture(object):
             # update method at all? Food for thought.
             self.show()
         else:
-            mw.threaded_callRemote(
-                mw.amp.UpdateInspect,
-                inspector_id=self.inspector_id,
-                img=self.image)
+            try:
+                mw.threaded_callRemote(
+                    mw.amp.UpdateInspect,
+                    inspector_id=self.inspector_id,
+                    img=self.image)
+            except WindowDoesNotExistError:
+                self.show()
     
     def get_pixel(self, x, y):
         '''Return the Pixel at coordinates (x, y).'''
