@@ -7,8 +7,8 @@ may be required.
 # It may be worth looking into an automated GUI testing tool
 # (like java.awt.Robot, but for CPython)
 
-# These tests are written in the style of vanilla unittest, because the style
-# with nose used elsewhere in the test suite requires more typing.
+# These tests are often written in the style of vanilla unittest, because the
+# style with nose used elsewhere in the test suite requires more typing.
 
 import unittest
 
@@ -105,6 +105,29 @@ class InspectorTestCase(unittest.TestCase):
         of updating a nonexistent one.
         """
         self.picture.update()
+
+class LargePictureTestCase(unittest.TestCase):
+    def setUp(self):
+        self.picture = picture.Picture(1000, 1000)
+    
+    def tearDown(self):
+        self.picture.close()
+    
+    def test_pictureIsTooLarge(self):
+        """If this fails, none of the other tests in this suite make sense
+        
+        the picture's PIL tostring should have a length not representable
+        in two bytes, making it imcompatible with amp as a single value.
+        """
+        self.assertTrue(len(self.picture.image.tostring()) > 0xFFFF)
+    
+    def test_showLargePicture(self):
+        """
+        AMP only permits up to 64 kilobyte values. Pictures can be larger than
+        that. To compensate, we use the BigString recipe from the amp wiki.
+        This test ensures that it's being used correctly.
+        """
+        self.picture.show()
 
 class OutdatedInspectorHandleTestCase(unittest.TestCase):
     """
