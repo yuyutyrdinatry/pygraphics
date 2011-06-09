@@ -207,7 +207,7 @@ class PILImage(object):
             strings['%s.mode' % name],
             (
                 int(strings['%s.width' % name]),
-                int(strings['%s.width' % name])),
+                int(strings['%s.height' % name])),
             tempd['%s.data' % name])
 
 

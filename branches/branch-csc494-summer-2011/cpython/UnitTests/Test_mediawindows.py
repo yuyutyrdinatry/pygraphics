@@ -106,6 +106,29 @@ class InspectorTestCase(unittest.TestCase):
         """
         self.picture.update()
 
+class AsymmetricalPictureTestCase(unittest.TestCase):
+    """Sometimes, silly bugs happen.
+    
+    Uses a picture of size (2, 1)"""
+    def setUp(self):
+        self.picture = picture.Picture(2, 1)
+    
+    def tearDown(self):
+        self.picture.close()
+    
+    def testShow(self):
+        self.picture.show()
+    
+    def testUpdate(self):
+        self.picture.show()
+        self.picture.update()
+
+class OtherAsymmetricalPictureTestCase(AsymmetricalPictureTestCase):
+    """Uses picture of size (1, 2)"""
+    def setUp(self):
+        self.picture = picture.Picture(1, 2)
+    
+
 class LargePictureTestCase(unittest.TestCase):
     def setUp(self):
         self.picture = picture.Picture(1000, 1000)
