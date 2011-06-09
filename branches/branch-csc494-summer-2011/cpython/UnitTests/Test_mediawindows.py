@@ -56,6 +56,19 @@ class InspectorTestCase(unittest.TestCase):
     def tearDown(self):
         self.picture.close()
     
+    def test_isClosed(self):
+        """
+        The window should start off closed.
+        """
+        self.assertTrue(self.picture.is_closed())
+    
+    def test_shownIsNotClosed(self):
+        """
+        The window should be registered as open after you show it.
+        """
+        self.picture.show()
+        self.assertFalse(self.picture.is_closed())
+    
     def test_openTwice(self):
         """
         Showing a picture twice should result in the window being closed and
