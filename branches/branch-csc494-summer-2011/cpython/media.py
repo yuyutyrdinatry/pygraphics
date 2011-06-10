@@ -18,7 +18,6 @@ import os
 mw.init_mediawindows()
 picture.init_picture()
 # init_sound()
-print "Moo"
 
 ####################------------------------------------------------------------
 ## Global Picture Functions
