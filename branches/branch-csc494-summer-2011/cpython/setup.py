@@ -43,7 +43,6 @@ setup(name='PyGraphics',
         'picture',
         'color',
         'media',
-        'mediawindows',
         'pixel',
         'sample',
         'sound'
