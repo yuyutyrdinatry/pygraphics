@@ -77,7 +77,7 @@ class MediawindowsTwistedThread(object):
         
         self.reactor.listenTCP(PORT, self.factory)
         self.proc = subprocess.Popen(
-            [sys.executable, '-m', 'pygraphics.mediawindows.run_client'])
+            [sys.executable, '-m', 'pygraphics.mediawindows.tkinter_client'])
         
         # Kill the thread at exit
         atexit.register(self.shutdown)
