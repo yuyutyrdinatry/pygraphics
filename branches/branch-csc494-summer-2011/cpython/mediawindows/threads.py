@@ -8,6 +8,7 @@ from twisted.internet.protocol import Factory
 from twisted.internet.threads import blockingCallFromThread
 
 from mediawindows import amp
+from mediawindows import tkinter_client
 
 class MediawindowsTwistedThread(object):
     """This (singleton) class represents the Twisted thread.
@@ -64,7 +65,7 @@ class MediawindowsTwistedThread(object):
         
         self.reactor.listenTCP(amp.PORT, self.factory)
         self.proc = subprocess.Popen(
-            [sys.executable, '-m', 'pygraphics.mediawindows.tkinter_client'])
+            [sys.executable, '-m', tkinter_client.__name__])
         
         # Kill the thread at exit
         atexit.register(self.shutdown)

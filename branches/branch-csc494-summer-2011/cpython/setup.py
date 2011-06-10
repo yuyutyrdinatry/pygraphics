@@ -39,7 +39,6 @@ setup(name='PyGraphics',
 
       package_dir={"": ""},
       py_modules=[
-        '__init__',
         'picture',
         'color',
         'media',
