@@ -10,7 +10,7 @@ import mediawindows
 from mediawindows import exceptions
 from mediawindows.amp import (
     StartInspect, StopInspect, UpdateInspect, PollInspect)
-from mediawindows import gui
+from mediawindows import tkinter_gui as gui
 
 
 class GooeyClient(amp.AMP):
