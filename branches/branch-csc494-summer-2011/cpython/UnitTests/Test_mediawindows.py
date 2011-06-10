@@ -16,6 +16,8 @@ import media
 import picture
 import mediawindows as mw
 
+media.init_media()
+
 class RawClosedInspectorTestCase(unittest.TestCase):
     """
     Test the how the amp interface deals with closed windows behind the scenes

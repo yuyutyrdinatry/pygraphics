@@ -15,8 +15,9 @@ from color import *
 import mediawindows as mw
 import os
 
-mw.init_mediawindows()
-picture.init_picture()
+def init_media():
+    mw.init_mediawindows()
+    picture.init_picture()
 # init_sound()
 
 ####################------------------------------------------------------------
