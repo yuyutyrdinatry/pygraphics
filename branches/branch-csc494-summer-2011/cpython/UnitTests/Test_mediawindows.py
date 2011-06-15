@@ -34,7 +34,7 @@ class RawClosedInspectorTestCase(unittest.TestCase):
         """Test that closing a closed window raises an exception"""
         self.assertRaises(
             mw.exceptions.WindowDoesNotExistError,
-            mw.threaded_callRemote,
+            mw.callRemote,
             mw.amp.StopInspect,
             inspector_id=self.inspector_id)
     
@@ -42,7 +42,7 @@ class RawClosedInspectorTestCase(unittest.TestCase):
         """Test that closing a closed window raises an exception"""
         self.assertRaises(
             mw.exceptions.WindowDoesNotExistError,
-            mw.threaded_callRemote,
+            mw.callRemote,
             mw.amp.UpdateInspect,
             inspector_id=self.inspector_id,
             img=self.image)

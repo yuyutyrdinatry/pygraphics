@@ -1,9 +1,14 @@
 from cStringIO import StringIO
 from itertools import count
 
-from twisted.protocols import amp as real_amp
-from ampy import ampy as amp
-from twisted.internet.protocol import ReconnectingClientFactory
+# temporary hack because we need different amps
+import sys
+if 'server' in sys.argv:
+    # it's the tkinter_server.py file
+    from twisted.protocols import amp
+else:
+    # it's the client
+    from ampy import ampy as amp
 
 import Image
 import zope.interface
@@ -107,28 +112,25 @@ class PILImage(object):
             tempd['%s.data' % name])
 
 
-class StartInspect(real_amp.Command):
+class StartInspect(amp.Command):
     arguments = [
         ('img', PILImage())]
     response = [('inspector_id', amp.Integer())]
 
-class UpdateInspect(real_amp.Command):
+class UpdateInspect(amp.Command):
     arguments = [
         ('inspector_id', amp.Integer()),
         ('img', PILImage())]
     response = []
     errors = {exceptions.WindowDoesNotExistError: 'WINDOW_DOES_NOT_EXIST'}
 
-class StopInspect(real_amp.Command):
+class StopInspect(amp.Command):
     arguments = [
         ('inspector_id', amp.Integer())]
     response = []
     errors = {exceptions.WindowDoesNotExistError: 'WINDOW_DOES_NOT_EXIST'}
 
-class PollInspect(real_amp.Command):
+class PollInspect(amp.Command):
     arguments = [
         ('inspector_id', amp.Integer())]
     response = [('is_closed', amp.Boolean())]
-
-class AMPClientFactory(ReconnectingClientFactory):
-    protocol = real_amp.AMP

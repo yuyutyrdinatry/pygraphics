@@ -1,9 +1,9 @@
 from __future__ import absolute_import
 
 from . import amp
-from .threads import init_mediawindows, threaded_callRemote
+from .client import init_mediawindows, callRemote
 
-_THREAD_RUNNING = False # this will get changed by threads
+_MEDIAWINDOWS_INITIALIZED = False # this will get changed later
 
 __all__ = [
     'amp',

@@ -11,9 +11,6 @@ import mediawindows.exceptions
 import os
 import pixel
 
-from twisted.internet import reactor
-from twisted.internet.threads import blockingCallFromThread
-
 ####################------------------------------------------------------------
 ## Defaults
 ####################------------------------------------------------------------
@@ -35,7 +32,7 @@ def init_picture():
         
         # All we need to know is if the thread is running. If it is it
         # it's ok to say that Picture is initialized.
-        if not mw._THREAD_RUNNING:
+        if not mw._MEDIAWINDOWS_INITIALIZED:
             mw.init_mediawindows()
         PIC_INITIALIZED = True
     else:
@@ -143,7 +140,7 @@ class Picture(object):
     
     def is_closed(self):
         '''Return True if this Picture is not being displayed.'''
-        return mw.threaded_callRemote(
+        return mw.callRemote(
             mw.amp.PollInspect,
             inspector_id=self.inspector_id)['is_closed']
     
@@ -153,7 +150,7 @@ class Picture(object):
         
         self.close()
         
-        self.inspector_id = mw.threaded_callRemote(
+        self.inspector_id = mw.callRemote(
             mw.amp.StartInspect,
             img=self.image)['inspector_id']
 
@@ -162,7 +159,7 @@ class Picture(object):
         
         try:
             # Cast it into the fire. Destroy it!
-            mw.threaded_callRemote(
+            mw.callRemote(
                 mw.amp.StopInspect, inspector_id=self.inspector_id)
         except mw.exceptions.WindowDoesNotExistError:
             pass
@@ -175,7 +172,7 @@ class Picture(object):
         # TODO: check if the same problem plagues this .update
         #       that did the old: will it update it if the picture size changes?
         try:
-            mw.threaded_callRemote(
+            mw.callRemote(
                 mw.amp.UpdateInspect,
                 inspector_id=self.inspector_id,
                 img=self.image)
