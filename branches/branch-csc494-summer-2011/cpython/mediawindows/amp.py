@@ -1,7 +1,8 @@
 from cStringIO import StringIO
 from itertools import count
 
-from twisted.protocols import amp
+from twisted.protocols import amp as real_amp
+from ampy import ampy as amp
 from twisted.internet.protocol import ReconnectingClientFactory
 
 import Image
@@ -78,7 +79,6 @@ class PILImage(object):
     # I'm a bit iffy about creating new keys... in theory they could conflict
     # with other keys. The alternative is packing this with json or something,
     # but that's slow and I'm lazy.
-    zope.interface.implements(amp.IArgumentType)
     
     bigstring = BigString()
     
@@ -107,28 +107,28 @@ class PILImage(object):
             tempd['%s.data' % name])
 
 
-class StartInspect(amp.Command):
+class StartInspect(real_amp.Command):
     arguments = [
         ('img', PILImage())]
     response = [('inspector_id', amp.Integer())]
 
-class UpdateInspect(amp.Command):
+class UpdateInspect(real_amp.Command):
     arguments = [
         ('inspector_id', amp.Integer()),
         ('img', PILImage())]
     response = []
     errors = {exceptions.WindowDoesNotExistError: 'WINDOW_DOES_NOT_EXIST'}
 
-class StopInspect(amp.Command):
+class StopInspect(real_amp.Command):
     arguments = [
         ('inspector_id', amp.Integer())]
     response = []
     errors = {exceptions.WindowDoesNotExistError: 'WINDOW_DOES_NOT_EXIST'}
 
-class PollInspect(amp.Command):
+class PollInspect(real_amp.Command):
     arguments = [
         ('inspector_id', amp.Integer())]
     response = [('is_closed', amp.Boolean())]
 
 class AMPClientFactory(ReconnectingClientFactory):
-    protocol = amp.AMP
+    protocol = real_amp.AMP
