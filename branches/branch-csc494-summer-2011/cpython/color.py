@@ -1,41 +1,42 @@
 import math
 
+
 class Color(object):
     '''An RGB color.'''
 
     def __init__(self, r, g, b):
-        '''Create a Color object representing an RGB color 
+        '''Create a Color object representing an RGB color
         with values (r, g, b).'''
-        
+
         if 0 <= int(r) < 256 and 0 <= int(g) < 256 and 0 <= int(b) < 256:
             self.r = int(r)
             self.g = int(g)
             self.b = int(b)
         else:
             raise ValueError('Color values out of range (0, 255)')
-                        
+
     def __str__(self):
         '''Return a str representation of this Color.'''
-        
+
         return "Color r=" + str(self.get_red()) + \
                     " g=" + str(self.get_green()) + \
                     " b=" + str(self.get_blue())
 
     def __repr__(self):
         '''Return an executable str representation of this Color.'''
-        
+
         return "Color(" + str(self.get_red()) + ", " \
                         + str(self.get_green()) + ", "\
                         + str(self.get_blue()) + ")"
 
     def __sub__(self, color):
-        '''Return a Color object with RGB values equal to the difference between
-        this Color and Color color.'''
+        '''Return a Color object with RGB values equal to the difference
+        between this Color and Color color.'''
 
         values = [self.r - color.r, self.g - color.g, self.b - color.b]
-        
+
         l = len(values)
-        
+
         for idx in range(l):
             if values[idx] < 0:
                 values[idx] = 0
@@ -46,34 +47,36 @@ class Color(object):
         this Color and Color color.'''
 
         values = [self.r + color.r, self.g + color.g, self.b + color.b]
-        
+
         l = len(values)
-        
+
         for idx in range(l):
             if values[idx] > 256:
                 values[idx] = 255
         return Color(values[0], values[1], values[2])
 
     def __eq__(self, newcolor):
-        '''Return True if this Color has the same RGB values as Color newcolor.'''
-        
+        '''Return True if this Color has the same RGB values as Color
+        newcolor.'''
+
         return self.get_red() == newcolor.get_red() and self.get_green() == \
             newcolor.get_green() and self.get_blue() == newcolor.get_blue()
 
     def __ne__(self, newcolor):
-        '''Return True if this Color has different value from Color newcolor.'''
-        
+        '''Return True if this Color has different value from Color
+        newcolor.'''
+
         return not self.__eq__(newcolor)
 
     def copy(self):
         '''Return a deep copy of this Color.'''
-        
+
         return Color(self.r, self.g, self.b)
 
     def distance(self, color):
-        '''Return the Euclidean distance between the RGB values of this Color 
+        '''Return the Euclidean distance between the RGB values of this Color
         and Color color.'''
-        
+
         r = pow(self.r - color.r, 2)
         g = pow(self.g - color.g, 2)
         b = pow(self.b - color.b, 2)
@@ -81,27 +84,27 @@ class Color(object):
 
     def get_rgb(self):
         '''Return a tuple of the RGB values of this Color.'''
-        
+
         return (self.r, self.g, self.b)
 
     def get_red(self):
         '''Return the red value of this Color.'''
-        
+
         return self.r
 
     def get_green(self):
         '''Return the green value of this Color.'''
-        
+
         return self.g
 
     def get_blue(self):
         '''Return the blue value of this Color.'''
-        
+
         return self.b
-    
+
     def set_red(self, value):
         '''Set the red value of this Color to int value.'''
-        
+
         if 0 <= value < 256:
             self.r = int(value)
         else:
@@ -109,7 +112,7 @@ class Color(object):
 
     def set_green(self, value):
         '''Set the green value of this Color to int value.'''
-        
+
         if 0 <= value < 256:
             self.g = int(value)
         else:
@@ -117,7 +120,7 @@ class Color(object):
 
     def set_blue(self, value):
         '''Set the blue value of this Color to int value.'''
-        
+
         if 0 <= value < 256:
             self.b = int(value)
         else:
@@ -125,14 +128,14 @@ class Color(object):
 
     def make_lighter(self):
         '''Increase the RGB values of this Color by 35%.'''
-        
+
         self.r = int((255 - self.r) * .35 + self.r)
         self.g = int((255 - self.g) * .35 + self.g)
         self.b = int((255 - self.b) * .35 + self.b)
 
     def make_darker(self):
         '''Decrease the RGB values of this Color by 35%.'''
-        
+
         self.r = int(self.r * .65)
         self.g = int(self.g * .65)
         self.b = int(self.b * .65)
