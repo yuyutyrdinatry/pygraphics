@@ -2,6 +2,7 @@ from cStringIO import StringIO
 from itertools import count
 
 from twisted.protocols import amp
+from twisted.internet.protocol import ReconnectingClientFactory
 
 import Image
 import zope.interface
@@ -129,16 +130,5 @@ class PollInspect(amp.Command):
         ('inspector_id', amp.Integer())]
     response = [('is_closed', amp.Boolean())]
 
-class GooeyHub(amp.AMP):
-    def connectionMade(self):
-        """Here we will set the global connected subprocess.
-        
-        If, in the future, multiple subprocesses will be supported, this must
-        be modified to support that. Currently the server only accepts one
-        client.
-        
-        """
-        amp.AMP.connectionMade(self)
-        
-        self.factory.protocol_singleton = self
-        self.factory.deferred_singleton.callback(self)
+class AMPClientFactory(ReconnectingClientFactory):
+    protocol = amp.AMP

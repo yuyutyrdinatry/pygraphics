@@ -1,7 +1,7 @@
 import Tkinter as tk
 
 from twisted.internet import tksupport, reactor
-from twisted.internet.protocol import ClientCreator
+from twisted.internet.protocol import Factory
 from twisted.protocols import amp
 
 import itertools
@@ -13,7 +13,7 @@ from mediawindows.amp import (
 from mediawindows import tkinter_gui as gui
 
 
-class GooeyClient(amp.AMP):
+class GooeyServer(amp.AMP):
     def __init__(self, *args, **kwargs):
         amp.AMP.__init__(self, *args, **kwargs)
         # no super(): AMP is a new-style class but doesn't use super().
@@ -91,8 +91,9 @@ def main():
     tksupport.install(root) # this handles the mainloop in Twisted
     
     # now we connect to the server
-    client = ClientCreator(reactor, GooeyClient).connectTCP(
-        '127.0.0.1', mediawindows.amp.PORT)
+    factory = Factory()
+    factory.protocol = GooeyServer
+    reactor.listenTCP(mediawindows.amp.PORT, factory)
     
     reactor.run()
 

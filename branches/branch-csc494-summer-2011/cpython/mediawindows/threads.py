@@ -6,9 +6,10 @@ import atexit
 from twisted.internet import reactor, defer
 from twisted.internet.protocol import Factory
 from twisted.internet.threads import blockingCallFromThread
+from twisted.internet.endpoints import TCP4ClientEndpoint
 
 from mediawindows import amp
-from mediawindows import tkinter_client
+from mediawindows import tkinter_server
 
 class MediawindowsTwistedThread(object):
     """This (singleton) class represents the Twisted thread.
@@ -59,22 +60,36 @@ class MediawindowsTwistedThread(object):
         Initialize everything that should probably be initialized inside the
         Twisted thread (for safety's sake)
         """
-        self.factory = Factory()
-        self.factory.protocol = amp.GooeyHub
-        self.factory.deferred_singleton = defer.Deferred()
-        
-        self.reactor.listenTCP(amp.PORT, self.factory)
         self.proc = subprocess.Popen(
-            [sys.executable, '-m', tkinter_client.__name__])
+            [sys.executable, '-m', tkinter_server.__name__])
+        
+        import time; time.sleep(1) ; # stupid race condition
+        # this will be removed when we move to ampy...
+        
+        
+        point = TCP4ClientEndpoint(
+            reactor,
+            '127.0.0.1',
+            amp.PORT)
+        client_deferred = point.connect(amp.AMPClientFactory())
+        # I don't believe the above properly restarts the
+        # protocol...
+        client_deferred.addCallback(self._register_amp_protocol)
         
         # Kill the thread at exit
         atexit.register(self.shutdown)
         
-        # this deferred is fired when the protocol_singleton attribute is set.
+        # this deferred is fired when the protocol_instance attribute is set.
         # since this is executed in a blockingCallFromThread in __init__,
-        # __init__ won't return until there is a protocol singleton (i.e. until
-        # the subprocess connects)
-        return self.factory.deferred_singleton
+        # __init__ won't return until there is a protocol instance (i.e. until
+        # we connect with the subprocess
+        return client_deferred
+    
+    def _register_amp_protocol(self, protocol_instance):
+        """When the AMP client connects, assign it to self.protocol_instance"""
+        self.protocol_instance = protocol_instance
+        
+        return protocol_instance
     
     def shutdown(self):
         """Shut down the mediawindows thread and subprocess
@@ -100,6 +115,6 @@ def threaded_callRemote(*args, **kwargs):
     
     """
     reactor = _THREAD_SINGLETON.reactor
-    protocol = _THREAD_SINGLETON.factory.protocol_singleton
+    protocol = _THREAD_SINGLETON.protocol_instance
     
     return blockingCallFromThread(reactor, protocol.callRemote, *args, **kwargs)
