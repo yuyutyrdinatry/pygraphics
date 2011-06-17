@@ -1,17 +1,10 @@
 from cStringIO import StringIO
 from itertools import count
 
-# temporary hack because we need different amps
-import sys
-if 'server' in sys.argv:
-    # it's the tkinter_server.py file
-    from twisted.protocols import amp
-else:
-    # it's the client
-    from ampy import ampy as amp
+from ampy import ampy as amp
+
 
 import Image
-import zope.interface
 
 from mediawindows import exceptions
 

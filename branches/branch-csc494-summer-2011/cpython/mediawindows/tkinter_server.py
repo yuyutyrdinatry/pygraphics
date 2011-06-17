@@ -1,8 +1,8 @@
 import Tkinter as tk
+import asyncore
 
-from twisted.internet import tksupport, reactor
-from twisted.internet.protocol import Factory
-from twisted.protocols import amp
+import ampy.async
+from ampy import ampy as amp
 
 import itertools
 
@@ -12,15 +12,43 @@ from mediawindows.amp import (
     StartInspect, StopInspect, UpdateInspect, PollInspect)
 from mediawindows import tkinter_gui as gui
 
+def appender(somelist):
+    """
+    Return an argument-taking decorator that appends its argument and decoratee
+    to a list
+    
+        >>> L = []
+        >>> a = appender(L)
+        >>> @a(1)
+        ... def foo(): pass
+        >>> L == [(1, foo)]
+        True
+    
+    """
+    def metadecorator(arg):
+        def decorator(f):
+            somelist.append((arg, f))
+            
+            return f
+        return decorator
+    return metadecorator
 
-class GooeyServer(amp.AMP):
-    def __init__(self, *args, **kwargs):
-        amp.AMP.__init__(self, *args, **kwargs)
-        # no super(): AMP is a new-style class but doesn't use super().
-        
+class GooeyServerProtocol(object):
+    """This is the protocol backend (set of responders) the Amp protocol will 
+    use. Call register_against() on an amp protocol to register its logic.
+    """
+    responders = []
+    responder = appender(responders)
+    
+    def __init__(self):
         self._inspector_map = {}
     
-    @StartInspect.responder
+    def register_against(self, server):
+        for command, responder_func in self.responders:
+            responder_method = responder_func.__get__(self, type(self))
+            server.registerResponder(command, responder_method)
+    
+    @responder(StartInspect)
     def start_inspect(self, img):
         inspector = gui.PictureInspector(img)
         inspector_id = new_id()
@@ -45,7 +73,7 @@ class GooeyServer(amp.AMP):
         return callback
         
     
-    @UpdateInspect.responder
+    @responder(UpdateInspect)
     def update_inspect(self, inspector_id, img):
         try:
             inspector = self._inspector_map[inspector_id]
@@ -55,11 +83,11 @@ class GooeyServer(amp.AMP):
         inspector.draw_image(img)
         return {}
     
-    @PollInspect.responder
+    @responder(PollInspect)
     def poll_inspect(self, inspector_id):
         return dict(is_closed=(inspector_id not in self._inspector_map))
     
-    @StopInspect.responder
+    @responder(StopInspect)
     def stop_inspect(self, inspector_id):
         try:
             inspector = self._inspector_map.pop(inspector_id)
@@ -68,6 +96,13 @@ class GooeyServer(amp.AMP):
         
         inspector.destroy()
         return {}
+
+class GooeyServer(ampy.async.AMP_Server):
+    def buildProtocol(self, conn, addr):
+        protocol_backend = GooeyServerProtocol()
+        protocol = ampy.async.AMP_Protocol(conn, addr)
+        protocol_backend.register_against(protocol)
+        return protocol
 
 def new_id(_counter=itertools.count(1)):
     """
@@ -85,17 +120,32 @@ def new_id(_counter=itertools.count(1)):
     """
     return _counter.next()
 
+def listen_and_tk(server, root):
+    """Run both the asyncore loop and the Tkinter loop.
+    
+    Inspiration taken from these sources, which may be returned to if this
+    code is wrong:
+    
+    - http://twistedmatrix.com/trac/browser/trunk/twisted/internet/tksupport.py
+    - http://mail.python.org/pipermail/chicago/2005-November/000099.html
+    - https://github.com/Supervisor/supervisor/blob/master/supervisor/medusa/docs/tkinter.txt
+    
+    """
+    while server.accepting:     
+        asyncore.loop(
+            timeout=0.01, # block for that many seconds
+            count=1, # do one iteration of select/poll
+            ) 
+        root.update()
+
 def main():
     root = tk.Tk()
     root.withdraw()
-    tksupport.install(root) # this handles the mainloop in Twisted
     
-    # now we connect to the server
-    factory = Factory()
-    factory.protocol = GooeyServer
-    reactor.listenTCP(mediawindows.amp.PORT, factory)
+    server = GooeyServer(mediawindows.amp.PORT) # automatically registered.
+    server.start_listening()
     
-    reactor.run()
+    listen_and_tk(server, root)
 
 if __name__ == '__main__':
     main()
