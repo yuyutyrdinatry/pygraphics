@@ -9,6 +9,7 @@ import atexit
 from ampy import ampy as amp
 
 import mediawindows as mw
+from mediawindows import tkinter_server
 
 class MediawindowsAmpyConnection(object):
     """This (singleton) class represents the connection to the client.
@@ -45,8 +46,7 @@ class MediawindowsAmpyConnection(object):
         #       Actually, no they don't. There are blocking calls involved.
         #       (in particular in the ask* functions).
         proc = subprocess.Popen(
-                [sys.executable, '-m', get_submodule_name('tkinter_server'),
-                 'server'], # last element is hack to get stuff working
+                [sys.executable, '-m', tkinter_server.__name__,]
                 )
         proxy = amp.Proxy('127.0.0.1', mw.amp.PORT, socketTimeout=None)
         while 1:
@@ -66,12 +66,6 @@ class MediawindowsAmpyConnection(object):
     def shutdown(self):
         """Shut down the mediawindows subprocess"""
         self.proc.terminate()
-
-def get_submodule_name(submodule):
-    return 'mediawindows.%s' % (submodule,) # eech seems risky
-    # TODO: turn this into import ... .__name__, like it was before.
-    # imports don't work atm because the server is in Twisted, not ampy.
-    # That is slated to change, of course.
 
 def callRemote(*args, **kwargs):
     return _CONNECTION_SINGLETON.proxy.callRemote(*args, **kwargs)
