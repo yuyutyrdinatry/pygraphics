@@ -35,16 +35,6 @@ class MediawindowsAmpyConnection(object):
         Doing this without incurring race conditions is hard.
         
         """
-        # TODO: add auto-incrementing ports.
-        # idea: check for the subprocess dying, restart if it does.
-        #       continue until we have a connection.
-        #       Make the server only accept one connection to counter-act
-        #       multiple ports.
-        #
-        #       OR: if there's an existing process, connect to it anyway?
-        #       background processes work fine...
-        #       Actually, no they don't. There are blocking calls involved.
-        #       (in particular in the ask* functions).
         proc = subprocess.Popen(
                 [sys.executable, '-m', tkinter_server.__name__,]
                 )
@@ -65,12 +55,7 @@ class MediawindowsAmpyConnection(object):
     
     def shutdown(self):
         """Shut down the mediawindows subprocess"""
-        try:
-            self.proc.terminate()
-        except OSError, e:
-            # Either it's already dead or we can't terminate it anymore.
-            # Either way, screw it, we are done here. Woop.
-            pass
+        self.proc.terminate()
 
 def callRemote(*args, **kwargs):
     return _CONNECTION_SINGLETON.proxy.callRemote(*args, **kwargs)

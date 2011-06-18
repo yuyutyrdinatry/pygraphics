@@ -1,5 +1,6 @@
 import Tkinter as tk
 import asyncore
+import socket
 
 import ampy.async
 from ampy import ampy as amp
@@ -131,10 +132,18 @@ class AskServerProtocol(ProtocolBackend):
     responder = appender(responders)
 
 class GooeyServer(ampy.async.AMP_Server):
+    built_protocol = False
     def buildProtocol(self, conn, addr):
+        
         protocol_backend = InspectorServerProtocol()
         protocol = ampy.async.AMP_Protocol(conn, addr)
         protocol_backend.register_against(protocol)
+        self.singleton_client = protocol
+        
+        self.close() # no more connections will be accepted
+        # TODO: RACE CONDITION
+        #       If another process tries to connect before here, they might
+        #       succeed!
         return protocol
 
 def new_id(_counter=itertools.count(1)):
@@ -164,7 +173,7 @@ def listen_and_tk(server, root):
     - https://github.com/Supervisor/supervisor/blob/master/supervisor/medusa/docs/tkinter.txt
     
     """
-    while server.accepting:     
+    while server.accepting or server.singleton_client.connected:     
         asyncore.loop(
             timeout=0.01, # block for that many seconds
             count=1, # do one iteration of select/poll

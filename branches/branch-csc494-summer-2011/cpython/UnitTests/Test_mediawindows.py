@@ -233,9 +233,6 @@ class MultipleAmpServersTestCase(unittest.TestCase):
             x = picture.Picture(1, 1)
             x.show()
             print x.inspector_id
-            # need to make sure we ended up using the subprocess
-            # (otherwise we might exit before showing its spectacular failure!)
-            media.mw.client._CONNECTION_SINGLETON.proc.wait()
             """],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
