@@ -106,11 +106,22 @@ class PILImage(object):
 
 
 class StartInspect(amp.Command):
+    """Start a new inspect window.
+    
+    This command returns an inspector handle that may be used to invoke
+    further operations on the inspector window.
+    
+    """
     arguments = [
         ('img', PILImage())]
     response = [('inspector_id', amp.Integer())]
 
 class UpdateInspect(amp.Command):
+    """Update an inspect window.
+    
+    This command may return an error indicating that no such window exists.
+    
+    """
     arguments = [
         ('inspector_id', amp.Integer()),
         ('img', PILImage())]
@@ -118,12 +129,23 @@ class UpdateInspect(amp.Command):
     errors = {exceptions.WindowDoesNotExistError: 'WINDOW_DOES_NOT_EXIST'}
 
 class StopInspect(amp.Command):
+    """Close an inspect window.
+    
+    This command may return an error indicating that no such window exists.
+    
+    """
     arguments = [
         ('inspector_id', amp.Integer())]
     response = []
     errors = {exceptions.WindowDoesNotExistError: 'WINDOW_DOES_NOT_EXIST'}
 
 class PollInspect(amp.Command):
+    """Poll an inspect window to see if it's still open.
+    
+    The result of this command may be invalid as soon as it is given.
+    Relying on the return value will result in race conditions.
+    
+    """
     arguments = [
         ('inspector_id', amp.Integer())]
     response = [('is_closed', amp.Boolean())]

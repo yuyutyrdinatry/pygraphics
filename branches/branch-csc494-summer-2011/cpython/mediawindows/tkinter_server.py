@@ -33,20 +33,44 @@ def appender(somelist):
         return decorator
     return metadecorator
 
-class GooeyServerProtocol(object):
-    """This is the protocol backend (set of responders) the Amp protocol will 
-    use. Call register_against() on an amp protocol to register its logic.
+class ProtocolBackend(object):
+    """
+    Protocol backends have a list of (Command, responder) pairs as their
+    responder attribute. register_against() registers their responders
+    against a specific AMP_Protocol instance.
+    
+    The usual pattern for defining a backend is:
+    
+        class NewProtocol(ProtocolBackend):
+            responders = []
+            responder = appender(responder)
+            
+            @responder(MyCommand)
+            def my_command(self, arg1, arg2):
+                # do command stuff
+                # ...
+                return response_dict
+            
+            # ...
+            
+    """
+    def register_against(self, server):
+        for command, responder_func in self.responders:
+            responder_method = responder_func.__get__(self, type(self))
+            server.registerResponder(command, responder_method)
+
+class InspectorServerProtocol(ProtocolBackend):
+    """
+    This is a protocol backend (set of responders) the Amp protocol will 
+    use for handling inspector commands.
+    
+    Call register_against() on an amp protocol to register its logic.
     """
     responders = []
     responder = appender(responders)
     
     def __init__(self):
         self._inspector_map = {}
-    
-    def register_against(self, server):
-        for command, responder_func in self.responders:
-            responder_method = responder_func.__get__(self, type(self))
-            server.registerResponder(command, responder_method)
     
     @responder(StartInspect)
     def start_inspect(self, img):
@@ -71,7 +95,6 @@ class GooeyServerProtocol(object):
             inspector.destroy()
         
         return callback
-        
     
     @responder(UpdateInspect)
     def update_inspect(self, inspector_id, img):
@@ -97,9 +120,19 @@ class GooeyServerProtocol(object):
         inspector.destroy()
         return {}
 
+class AskServerProtocol(ProtocolBackend):
+    """
+    This is a protocol backend (set of responders) the Amp protocol will 
+    use for handling the ask* functions
+    
+    Call register_against() on an amp protocol to register its logic.
+    """
+    responders = []
+    responder = appender(responders)
+
 class GooeyServer(ampy.async.AMP_Server):
     def buildProtocol(self, conn, addr):
-        protocol_backend = GooeyServerProtocol()
+        protocol_backend = InspectorServerProtocol()
         protocol = ampy.async.AMP_Protocol(conn, addr)
         protocol_backend.register_against(protocol)
         return protocol
