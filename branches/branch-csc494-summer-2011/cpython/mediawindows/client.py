@@ -65,7 +65,12 @@ class MediawindowsAmpyConnection(object):
     
     def shutdown(self):
         """Shut down the mediawindows subprocess"""
-        self.proc.terminate()
+        try:
+            self.proc.terminate()
+        except OSError, e:
+            # Either it's already dead or we can't terminate it anymore.
+            # Either way, screw it, we are done here. Woop.
+            pass
 
 def callRemote(*args, **kwargs):
     return _CONNECTION_SINGLETON.proxy.callRemote(*args, **kwargs)
