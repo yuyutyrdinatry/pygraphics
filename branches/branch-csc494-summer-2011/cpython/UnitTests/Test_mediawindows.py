@@ -11,10 +11,15 @@ may be required.
 # style with nose used elsewhere in the test suite requires more typing.
 
 import unittest
+import subprocess
+import sys
+import socket
 
 import media
 import picture
 import mediawindows as mw
+
+from ampy import ampy as amp
 
 class RawClosedInspectorTestCase(unittest.TestCase):
     """
@@ -137,9 +142,9 @@ class LargePictureTestCase(unittest.TestCase):
         self.picture.close()
     
     def test_pictureIsTooLarge(self):
-        """If this fails, none of the other tests in this suite make sense
+        """If this fails, none of the other tests in this suite make sense.
         
-        the picture's PIL tostring should have a length not representable
+        The picture's PIL tostring should have a length not representable
         in two bytes, making it imcompatible with amp as a single value.
         """
         self.assertTrue(len(self.picture.image.tostring()) > 0xFFFF)
@@ -158,7 +163,7 @@ class OutdatedInspectorHandleTestCase(unittest.TestCase):
     can close the window, despite .close() never being called.
     These tests simulate that, and check that the right things happen.
     
-    we should never rely on a local understanding of what the current state
+    We should never rely on a local understanding of what the current state
     is.
     """
     def setUp(self):
@@ -180,6 +185,80 @@ class OutdatedInspectorHandleTestCase(unittest.TestCase):
         self.picture.show() # should open new window
         self.assertFalse(self.picture.is_closed())
         self.picture.close()
+
+class MultipleAmpClientsTestCase(unittest.TestCase):
+    """
+    Because servers aren't safe for multiple clients (they might block at the
+    whim of the client, etc.), they shouldn't accept multiple clients. This
+    test case tests that.
+    """
+    def setUp(self):
+        self.proxy = amp.Proxy('127.0.0.1', mw.amp.PORT, socketTimeout=None)
+    
+    def test_cantConnect(self):
+        self.assertRaises(socket.error, self.proxy.connect)
+
+class MultipleAmpServersTestCase(unittest.TestCase):
+    """
+    Because Windows doesn't have sensible support for anonymous pipes,
+    a socket is used for communicating between processes. Sockets use ports
+    from a global namespace, there can only be up to 65535 (0xffff) ports
+    in use at any time, and the same port can't be used by independent
+    processes.
+    
+    What this means is that if two processes import media, they need to both
+    start a mediawindows process each, but they can't use the same process*.
+    These tests confirm that they each create different processes and
+    (presumably) work.
+    
+    [*] Note: it was mentioned that they can't use the same process. That isn't
+    obvious, however. Perhaps they could cooperate and use the same process?
+    Here are the reasons why that would be a bad idea:
+    
+    - **The processes are created as *sub*processes.** Unfortunately, due to
+      the Windows OS lacking a daemonization mechanism (double-fork), the
+      lifetime of a subprocess is inextricably linked to the lifetime of a
+      process. So if they share a server, if the host dies, the other process
+      loses all its open windows and has to start a new server.
+    - **Some calls on the server might block.** In particular, the ask* dialogs
+      are most likely blocking calls that will lock up the server entirely.
+      It just can't be used by multiple clients.
+    
+    """
+    
+    def setUp(self):
+        self.proc = subprocess.Popen([sys.executable, "-c",
+            """if 1:
+            import media, picture
+            x = picture.Picture(1, 1)
+            x.show()
+            print x.inspector_id
+            # need to make sure we ended up using the subprocess
+            # (otherwise we might exit before showing its spectacular failure!)
+            media.mw.client._CONNECTION_SINGLETON.proc.wait()
+            """],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+        
+        self.stdout, self.stderr = self.proc.communicate()
+    
+    def test_canShowPictureWithoutCrashing(self):
+        try:
+            int(self.stdout) # succeeds past the print, no extra data
+        except ValueError:
+            self.fail("stdout had non-int: %r" % (self.stdout,)) 
+        self.assertEqual(self.stderr, '') # no error messages
+        self.assertEqual(self.proc.returncode, 0) # exited with status 0
+    
+    def test_doesntUseOurServer(self):
+        """
+        It's possible that the subprocess's server crashes because the port is
+        taken, but the client succeeds in connecting to our server in the
+        current process. Let's check that this isn't true.
+        """
+        x = picture.Picture(1, 1)
+        x.inspector_id = int(self.stdout) # ewww !
+        self.assertTrue(x.is_closed())
 
 if __name__ == '__main__':
     unittest.main()
