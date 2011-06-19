@@ -10,4 +10,4 @@ Contents:
    :maxdepth: 2
    :titlesonly:
     
-   mediawindows
+   mediawindows/index
