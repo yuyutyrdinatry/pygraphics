@@ -8,5 +8,4 @@ _MEDIAWINDOWS_INITIALIZED = False # this will get changed later
 __all__ = [
     'amp',
     'init_mediawindows',
-    'threaded_callRemote',
-    '_THREAD_RUNNING']
+    'callRemote']

@@ -506,12 +506,15 @@ def ask(s, num=False, hidden=False, choices=None, multi=False):
     '''Display a dialog containing s, a text field for a response, and an "OK"
     and "CANCEL" button. The optional parameters modify the look of the dialog
     in listed priority:
-        If the optional bool num is given as True, the dialog will contain
+    
+    If the optional bool num is given as True, the dialog will contain
     a numerical input slider. Return an int of the input.
-        If the optional bool hidden is given as True, the entry box will show
+    
+    If the optional bool hidden is given as True, the entry box will show
     all text given in a manner similar to a password box. Return a str of the
     input.
-        If the optional list choices is given which is a list of strings, the
+    
+    If the optional list choices is given which is a list of strings, the
     dialog box will show a selection box from where the user may choose one
     of the given options. Return an int indicating the index of the chosen
     option in choices. If the bool multi is given as True, the user may choose
