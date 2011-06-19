@@ -9,5 +9,6 @@ Contents:
 .. toctree::
    :maxdepth: 2
    :titlesonly:
-    
+   
+   tutorials/index
    mediawindows/index
