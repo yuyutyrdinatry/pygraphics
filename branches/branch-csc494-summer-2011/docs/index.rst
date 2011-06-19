@@ -3,13 +3,21 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to PyGraphics's documentation!
-======================================
+Welcome to the PyGraphics documentation!
+========================================
+
+If you are using PyGraphics, visit :doc:`the user documentation <user/index>`
+If you are helping out with the development of PyGraphics, visit :doc:`the 
+developer documentation <developer/index>`.
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
+   :titlesonly:
+   
+   User Documentation <user/index>
+   Developer Documentation <developer/index>
 
 Indices and tables
 ==================
