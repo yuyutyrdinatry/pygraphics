@@ -137,6 +137,47 @@ def test_add():
         assert sum == expected_sum[idx], 'Unexpected sum returned.'
 
 
+def test_set_get_invalid_RGB():
+    '''Test setting and getting invalid RGB values from Color object.'''
+    
+    c = Color(0, 0, 0)
+    try:
+        c.set_red(-1)
+        assert False, "set_red(-1) did not raise a ValueError."
+    except ValueError:
+        pass
+
+    try:
+        c.set_green(-1)
+        assert False, "set_green(-1) did not raise a ValueError."
+    except ValueError:
+        pass
+        
+    try:
+        c.set_blue(-1)
+        assert False, "set_blue(-1) did not raise a ValueError."
+    except ValueError:
+        pass
+
+    try:
+        c.set_red(256)
+        assert False, "set_red(256) did not raise a ValueError."
+    except ValueError:
+        pass
+
+    try:
+        c.set_green(256)
+        assert False, "set_green(256) did not raise a ValueError."
+    except ValueError:
+        pass
+
+    try:
+        c.set_blue(256)
+        assert False, "set_blue(256) did not raise a ValueError."
+    except ValueError:
+        pass
+
+
 def test_set_get_RGB():
     '''Test setting and getting RGB values from Color object.'''
 
