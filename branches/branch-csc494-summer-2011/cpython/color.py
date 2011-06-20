@@ -108,7 +108,7 @@ class Color(object):
         if 0 <= value < 256:
             self.r = int(value)
         else:
-            raise ValueError('Color value out of range (0, 255)')
+            raise ValueError('Color value %s out of range [0, 255]' % value)
 
     def set_green(self, value):
         '''Set the green value of this Color to int value.'''
@@ -116,7 +116,7 @@ class Color(object):
         if 0 <= value < 256:
             self.g = int(value)
         else:
-            raise ValueError('Color value out of range (0, 255)')
+            raise ValueError('Color value %s out of range [0, 255]' % value)
 
     def set_blue(self, value):
         '''Set the blue value of this Color to int value.'''
@@ -124,7 +124,7 @@ class Color(object):
         if 0 <= value < 256:
             self.b = int(value)
         else:
-            raise ValueError('Color value out of range (0, 255)')
+            raise ValueError('Color value %s out of range [0, 255]' % value)
 
     def make_lighter(self):
         '''Increase the RGB values of this Color by 35%.'''
