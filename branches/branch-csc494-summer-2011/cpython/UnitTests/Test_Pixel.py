@@ -68,6 +68,15 @@ def pixel_has_XY(pixel, x, y):
 ##############################################################################
 
 @nose.with_setup(setup_function, teardown_function)
+def test_str():
+    '''Test Pixel.__str__.'''
+
+    tester_pixel = pixel.Pixel(pict.pixels, 0, 0)
+    assert str(tester_pixel) == 'Pixel (0, 0): color=Color(0, 0, 0)', \
+        'Pixel.__str__ failed.'
+
+
+@nose.with_setup(setup_function, teardown_function)
 def test_constructor():
     '''Test the constructor of Pixel on proper input.'''
     try:

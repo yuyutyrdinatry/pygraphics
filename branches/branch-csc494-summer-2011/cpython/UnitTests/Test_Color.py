@@ -139,7 +139,7 @@ def test_add():
 
 def test_set_get_invalid_RGB():
     '''Test setting and getting invalid RGB values from Color object.'''
-    
+
     c = Color(0, 0, 0)
     try:
         c.set_red(-1)
