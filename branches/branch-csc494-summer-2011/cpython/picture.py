@@ -229,6 +229,9 @@ class Picture(object):
 
         return self.image.size[1]
 
+
+    # TODO: The crop and add_* methods are not tested.
+    
     def crop(self, x1, y1, x2, y2):
         '''Crop Picture pic so that only pixels inside the rectangular region
         with upper-left coordinates (x1, y1) and lower-right coordinates
