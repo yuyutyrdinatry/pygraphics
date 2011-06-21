@@ -121,8 +121,14 @@ class RawClosedInspectorTestCase(unittest.TestCase):
         self.updateInspect()
 
 def raisable(e):
-    return (isinstance(e, BaseException) or 
-           (isinstance(e, type) and issubclass(e, BaseException)))
+    if isinstance(e, type) and issubclass(e, TypeError):
+        return True
+    try:
+        raise e
+    except TypeError:
+        return False
+    else:
+        return True
 
 class InspectorTestCase(unittest.TestCase):
     """
