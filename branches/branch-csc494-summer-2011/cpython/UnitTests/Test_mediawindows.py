@@ -13,6 +13,7 @@ may be required.
 import unittest
 import subprocess
 import sys
+import os
 import socket
 
 import media
@@ -272,6 +273,53 @@ class MultipleAmpServersTestCase(unittest.TestCase):
         # ewww !
         x.inspector_id = int(self.stdout)
         self.assertTrue(x.is_closed())
+
+def _print_loud(msg):
+    underscores = "#" * min(len(msg), 80)
+    print
+    print underscores
+    print msg
+    print underscores
+
+class AmpAskTestCase(unittest.TestCase):
+    """Tests for user interaction with Ask* Commands
+
+    Because of the nature of these tests, they require user input. They are not
+    automated, and can only be run directly. Run this test file with "--all"
+    to include AmpAskTestCase.
+
+    In the future it may be desirable to automate these tests.
+
+    """
+    # because, seriously, if we don't automate them, nobody will eeeeever run
+    # them. ~Devin
+
+    def setUp(self):
+        self.workdir = os.path.abspath(os.path.dirname(__file__))
+
+    def test_askCancel(self):
+        _print_loud("Please press Cancel.")
+        self.assertRaises(mw.exceptions.DialogCanceledException,
+            mw.callRemote,
+            mw.amp.AskDirectory,
+            initialdir=self.workdir)
+
+    def test_askInitialDir(self):
+        _print_loud("Please press OK")
+        self.assertEqual(
+            mw.callRemote(mw.amp.AskDirectory, initialdir=self.workdir)['path'],
+            self.workdir)
+
+    def test_askInitialDir2(self):
+        _print_loud("Please press OK")
+        self.assertEqual(
+            mw.callRemote(mw.amp.AskDirectory, initialdir='/')['path'],
+            '/')
+
+if '--all' in sys.argv:
+    sys.argv.remove('--all')
+else:
+    del AmpAskTestCase
 
 if __name__ == '__main__':
     unittest.main()
