@@ -498,28 +498,24 @@ def copy(obj):
 
 def choose_save_filename():
     '''Prompt user to pick a directory and filename. Return the path
-    to the new file. Change the current working directory to the directory
-    where the file chosen by the user is.'''
+    to the new file.'''
 
-    return mw.choose_save_filename()
+    return mw.proxy.choose_save_filename()
 
 
 def choose_file():
-    '''Prompt user to pick a file. Return the path to that file.
-    Change the current working directory to the directory
-    where the file chosen by the user is'''
+    '''Prompt user to pick a file. Return the path to that file.'''
 
-    return mw.choose_file()
+    return mw.proxy.choose_file()
 
 
 def choose_folder():
-    '''Prompt user to pick a folder. Return the path to that folder. Change
-    the current working directory to the directory chosen by the user.'''
+    '''Prompt user to pick a folder. Return the path to that folder.'''
 
-    return mw.choose_folder()
+    return mw.proxy.choose_folder()
 
 
 def choose_color():
     '''Prompt user to pick a color. Return a RGB Color object.'''
 
-    return mw.choose_color()
+    return mw.proxy.choose_color()

@@ -149,3 +149,28 @@ class PollInspect(amp.Command):
     arguments = [
         ('inspector_id', amp.Integer())]
     response = [('is_closed', amp.Boolean())]
+
+class _Ask(amp.Command):
+    arguments = [('initialdir', amp.String())]
+    response = [("path", amp.String())]
+    errors = {exceptions.DialogCanceledException: 'DIALOG_CANCELED'}
+
+class AskSaveasFilename(_Ask):
+    """Amp command for executing tkFileDialog.asksaveasfilename"""
+    pass
+
+class AskOpenFilename(_Ask):
+    """Amp command for executing tkFileDialog.askopenfilename"""
+    pass
+
+class AskDirectory(_Ask):
+    """Amp command for executing tkFileDialog.askdirectory"""
+    pass
+
+class AskColor(_Ask):
+    """Amp command for executing tkFileDialog.askcolor"""
+    arguments = [
+        ("r", amp.Integer()),
+        ("g", amp.Integer()),
+        ("b", amp.Integer())]
+    response = arguments # asks with start color, returns color

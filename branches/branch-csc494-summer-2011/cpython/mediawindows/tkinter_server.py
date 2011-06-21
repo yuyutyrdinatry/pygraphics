@@ -1,4 +1,5 @@
 import Tkinter as tk
+import tkFileDialog
 import asyncore
 import socket
 
@@ -6,6 +7,7 @@ import ampy.async
 from ampy import ampy as amp
 
 import itertools
+import functools
 
 import mediawindows
 from mediawindows import exceptions
@@ -40,7 +42,7 @@ class ProtocolBackend(object):
     responder attribute. register_against() registers their responders
     against a specific AMP_Protocol instance.
     
-    The usual pattern for defining a backend is:
+    The usual pattern for defining a backend is::
     
         class NewProtocol(ProtocolBackend):
             responders = []
@@ -55,10 +57,11 @@ class ProtocolBackend(object):
             # ...
             
     """
-    def register_against(self, server):
+    def register_against(self, protocol):
+        self.protocol = protocol
         for command, responder_func in self.responders:
             responder_method = responder_func.__get__(self, type(self))
-            server.registerResponder(command, responder_method)
+            protocol.registerResponder(command, responder_method)
 
 class InspectorServerProtocol(ProtocolBackend):
     """
@@ -130,14 +133,68 @@ class AskServerProtocol(ProtocolBackend):
     """
     responders = []
     responder = appender(responders)
+    command_funcs = {
+        mediawindows.amp.AskSaveasFilename: tkFileDialog.asksaveasfilename,
+        mediawindows.amp.AskOpenFilename: tkFileDialog.askopenfilename,
+        mediawindows.amp.AskDirectory: tkFileDialog.askdirectory,
+        # amp.AskColor: tkFileDialog.askcolor
+    }
+    
+    def __init__(self, root):
+        self.tkinter_root = root
+    
+    ##@responder(amp.AskColor)
+    ##def ask_color(self, r, g, b):
+    ##    pass
+    
+    def ask(self, ask_func, initialdir):
+        result = ask_func(
+            initialdir=initialdir,
+            parent=self.tkinter_root)
+        
+        if result:
+            return {"path": result}
+        else:
+            raise exceptions.DialogCanceledException
+    
+    def register_against(self, protocol):
+        super(AskServerProtocol, self).register_against(protocol)
+        for Command, func in self.command_funcs.iteritems():
+            protocol.registerResponder(
+                Command,
+                functools.partial(self.ask, func))
+        
+        
 
 class GooeyServer(ampy.async.AMP_Server):
+    def __init__(self, root, *args, **kwargs):
+        ampy.async.AMP_Server.__init__(self, *args, **kwargs)
+        self.tkinter_root = root
+    
+    def loop(self):
+        """Run both the asyncore loop and the Tkinter loop.
+        
+        Inspiration taken from these sources, which may be returned to if this
+        code is wrong:
+            
+            - http://twistedmatrix.com/trac/browser/trunk/twisted/internet/tksupport.py
+            - http://mail.python.org/pipermail/chicago/2005-November/000099.html
+            - https://github.com/Supervisor/supervisor/blob/master/supervisor/medusa/docs/tkinter.txt
+            
+        """
+        while self.accepting or self.singleton_client.connected:     
+            asyncore.loop(
+                timeout=0.01, # block for that many seconds
+                count=1, # do one iteration of select/poll
+            ) 
+            self.tkinter_root.update()
+    
     built_protocol = False
     def buildProtocol(self, conn, addr):
         
-        protocol_backend = InspectorServerProtocol()
         protocol = ampy.async.AMP_Protocol(conn, addr)
-        protocol_backend.register_against(protocol)
+        InspectorServerProtocol().register_against(protocol)
+        AskServerProtocol(self.tkinter_root).register_against(protocol)
         self.singleton_client = protocol
         
         self.close() # no more connections will be accepted
@@ -162,32 +219,14 @@ def new_id(_counter=itertools.count(1)):
     """
     return _counter.next()
 
-def listen_and_tk(server, root):
-    """Run both the asyncore loop and the Tkinter loop.
-    
-    Inspiration taken from these sources, which may be returned to if this
-    code is wrong:
-    
-    - http://twistedmatrix.com/trac/browser/trunk/twisted/internet/tksupport.py
-    - http://mail.python.org/pipermail/chicago/2005-November/000099.html
-    - https://github.com/Supervisor/supervisor/blob/master/supervisor/medusa/docs/tkinter.txt
-    
-    """
-    while server.accepting or server.singleton_client.connected:     
-        asyncore.loop(
-            timeout=0.01, # block for that many seconds
-            count=1, # do one iteration of select/poll
-            ) 
-        root.update()
-
 def main():
     root = tk.Tk()
     root.withdraw()
     
-    server = GooeyServer(mediawindows.amp.PORT) # automatically registered.
+    server = GooeyServer(root, mediawindows.amp.PORT) # automatically registered.
     server.start_listening()
     
-    listen_and_tk(server, root)
+    server.loop()
 
 if __name__ == '__main__':
     main()

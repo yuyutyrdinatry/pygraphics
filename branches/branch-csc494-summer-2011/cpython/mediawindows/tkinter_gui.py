@@ -446,61 +446,6 @@ class AskChoicesMultiDialog(AskChoicesDialog):
 ## Dialogs
 ####################------------------------------------------------------------
 
-def choose_save_filename():
-    '''Prompt user to pick a directory and filename. Return the path
-    to the new file. Change the current working directory to the directory 
-    where the file chosen by the user is.'''
-
-    path = None
-    try:
-        path = thread_exec_return(tkFileDialog.asksaveasfilename, parent=_ROOT, initialdir=os.getcwd())
-    except:
-        pass
-    if path:
-        os.chdir(os.path.dirname(path))
-        return path
-    
-
-def choose_file():
-    '''Prompt user to pick a file. Return the path to that file. 
-    Change the current working directory to the directory 
-    where the file chosen by the user is'''
-    
-    path = None
-    try: 
-        path = thread_exec_return(tkFileDialog.askopenfilename, parent=_ROOT, initialdir=os.getcwd())
-    except:
-        pass
-    if path:
-        os.chdir(os.path.dirname(path))
-        return path
-
-
-def choose_folder():
-    '''Prompt user to pick a folder. Return the path to that folder. 
-    Change the current working directory to the directory chosen by the user.'''
-
-    path = None
-    try:
-        path = thread_exec_return(tkFileDialog.askdirectory, parent=_ROOT, initialdir=os.getcwd())
-    except:
-        pass
-    if path:
-        os.chdir(os.path.dirname(path))
-        return path
-
-
-def choose_color():
-    '''Prompt user to pick a color. Return a RGB Color object.'''
-
-    color = None
-    try: 
-        color = thread_exec_return(tkFileDialog.askcolor, parent=_ROOT)
-    except:
-        pass
-    if color[0]:
-        return Color(color[0][0], color[0][1], color[0][2])
-    
 
 def ask(s, num=False, hidden=False, choices=None, multi=False):
     '''Display a dialog containing s, a text field for a response, and an "OK"
