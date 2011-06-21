@@ -19,10 +19,10 @@ mw.init_mediawindows()
 picture.init_picture()
 # init_sound()
 
+
 ####################----------------------------------------------------------
 ## Global Picture Functions
 ####################----------------------------------------------------------
-
 
 def load_picture(filename):
     '''Return a Picture object from filename filename.'''
