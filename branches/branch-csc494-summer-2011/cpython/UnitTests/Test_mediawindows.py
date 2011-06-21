@@ -120,7 +120,9 @@ class RawClosedInspectorTestCase(unittest.TestCase):
         self.startInspect()
         self.updateInspect()
 
-
+def raisable(e):
+    return (isinstance(e, BaseException) or 
+           (isinstance(e, type) and issubclass(e, BaseException)))
 
 class InspectorTestCase(unittest.TestCase):
     """
@@ -130,50 +132,122 @@ class InspectorTestCase(unittest.TestCase):
     def setUp(self):
         self.picture = picture.Picture(1, 1)
         self.old_callRemote = mw.callRemote
-        ##mw.callRemote = self.mocked_callRemote
+        mw.callRemote = self.mocked_callRemote
+        # tuples: (expected_cls, expected_kwargs return/raise value) ...
+        self.mock_actions = [] 
 
     def tearDown(self):
-        self.picture.close()
-        ##mw.callRemote = self.old_callRemote
+        mw.callRemote = self.old_callRemote
+        if self.mock_actions:
+            # this will be a test error, we probably don't really care...
+            # arguably it should be an error _and_ we should do the check
+            # in the test methods, but laziness trumps all
+            self.fail("mock actions were not all taken: %s" % self.mock_actions)
 
-    def test_openTwice(self):
-        """
-        Showing a picture twice should result in the window being closed and
-        then reopened.
-        """
+    def mocked_callRemote(self, command, **kwargs):
+        if not self.mock_actions:
+            self.fail("Ran out of mock actions for callRemote(%s, **%s)" % 
+                (command, kwargs))
+
+        (expected_Command, expected_kwargs, action) = self.mock_actions.pop(0)
+        self.assert_(issubclass(command, expected_Command))
+        self.assertEqual(expected_kwargs, kwargs)
+
+        if raisable(action):
+            raise action
+        else:
+            return action
+
+    def test_openCleanly(self):
+        """Images assign their inspector_id when they open a new window."""
+        self.mock_actions = [
+            (mw.amp.StopInspect,
+                {"inspector_id": 0},
+                {}),
+            (mw.amp.StartInspect, 
+                {"img": self.picture.image}, 
+                {"inspector_id": 1})]
         self.picture.show()
-        # any exception? no? good.
+        self.assertEqual(self.picture.inspector_id, 1)
+
+    def test_openDirty(self):
+        """
+        Images ignore errors when closing a window as part of opening a new
+        inspector window.
+        """
+        self.mock_actions = [
+            (mw.amp.StopInspect,
+                {"inspector_id": 0},
+                mw.exceptions.WindowDoesNotExistError),
+            (mw.amp.StartInspect, 
+                {"img": self.picture.image}, 
+                {"inspector_id": 1})]
+
         self.picture.show()
+        self.assertEqual(self.picture.inspector_id, 1)
+
+    def test_closeCleanly(self):
+        """Images forward close requests"""
+        self.mock_actions = [
+            (mw.amp.StopInspect,
+                {"inspector_id": 0},
+                {})]
+
+        self.picture.close()
 
     def test_closeUnopened(self):
-        """
-        Nothing should happen at all, here.
-        """
+        """Images ignore errors when closing a window."""
+        self.mock_actions = [
+            (mw.amp.StopInspect,
+                {"inspector_id": 0},
+                mw.exceptions.WindowDoesNotExistError)]
+
         self.picture.close()
 
-    def test_closeTwice(self):
-        """
-        Nothing should happen here either.
-        """
-        self.picture.show()
-        self.picture.close()
-        self.picture.close()
+    def test_updateCleanly(self):
+        """Images forward update requests"""
+        self.mock_actions = [
+            (mw.amp.UpdateInspect,
+                {"inspector_id": 0, "img": self.picture.image},
+                {})]
 
-    def test_update(self):
-        """
-        Should be able to update a picture (not testing whether it works,
-        that's really hard).
-        """
-        self.picture.show()
         self.picture.update()
 
-    def test_updateUnopened(self):
+    def test_updateDirty(self):
         """
-        Updating an unopened/closed picture should show the inspector instead
-        of updating a nonexistent one.
+        Images turn update requests into show requests if there is no inspector
+        window running.
         """
+        self.mock_actions = [
+            (mw.amp.UpdateInspect,
+                {"inspector_id": 0, "img": self.picture.image},
+                mw.exceptions.WindowDoesNotExistError),
+            (mw.amp.StopInspect,
+                {"inspector_id": 0},
+                {}),
+            (mw.amp.StartInspect, 
+                {"img": self.picture.image}, 
+                {"inspector_id": 1})]
+
         self.picture.update()
 
+    def test_isClosedYes(self):
+        """is_losed forwards the request"""
+        self.mock_actions = [
+            (mw.amp.PollInspect,
+                {"inspector_id": 0},
+                {"is_closed": True})]
+
+        self.assertTrue(self.picture.is_closed())
+
+    def test_isClosedNo(self):
+        """is_losed forwards the request"""
+        self.mock_actions = [
+            (mw.amp.PollInspect,
+                {"inspector_id": 0},
+                {"is_closed": False})]
+
+        self.assertFalse(self.picture.is_closed())
 
 class AsymmetricalPictureTestCase(unittest.TestCase):
     """Sometimes, silly bugs happen.
