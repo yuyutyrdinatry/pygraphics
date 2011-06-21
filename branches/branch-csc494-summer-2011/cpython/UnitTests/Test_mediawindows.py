@@ -32,25 +32,94 @@ class RawClosedInspectorTestCase(unittest.TestCase):
         pict = picture.Picture(1, 1)
         pict.show()
         self.image = pict.image
-        self.inspector_id = pict.inspector_id
-        pict.close()
+        self.inspector_id = 0
+    
+    def tearDown(self):
+        try:
+            self.stopInspect()
+        except mw.exceptions.MediaWindowsError:
+            pass
 
-    def test_closeRaises(self):
-        """Test that closing a closed window raises an exception"""
-        self.assertRaises(
-            mw.exceptions.WindowDoesNotExistError,
-            mw.callRemote,
-            mw.amp.StopInspect,
-            inspector_id=self.inspector_id)
+    def startInspect(self):
+        res = mw.callRemote(mw.amp.StartInspect, img=self.image)
+        self.inspector_id = res['inspector_id']
+        return res
+    
+    def stopInspect(self):
+        return mw.callRemote(mw.amp.StopInspect, inspector_id=self.inspector_id)
 
-    def test_updateRaises(self):
-        """Test that closing a closed window raises an exception"""
-        self.assertRaises(
-            mw.exceptions.WindowDoesNotExistError,
-            mw.callRemote,
-            mw.amp.UpdateInspect,
+    def updateInspect(self):
+        return mw.callRemote(mw.amp.UpdateInspect, 
             inspector_id=self.inspector_id,
             img=self.image)
+
+    def pollInspect(self):
+        return mw.callRemote(mw.amp.PollInspect,
+            inspector_id=self.inspector_id)
+
+    def test_closeUnopenedRaises(self):
+        """Closing an unopened window raises an exception"""
+        self.assertRaises(
+            self.stopInspect)
+
+    def test_closeUnopenedRaises(self):
+        """Closing a closed window raises an exception"""
+        self.startInspect()
+        self.stopInspect()
+        self.assertRaises(
+            self.stopInspect)
+
+    def test_updateUnopenedRaises(self):
+        """Updating an unopened window raises an exception"""
+        self.assertRaises(
+            self.updateInspect)
+
+    def test_updateUnopenedRaises(self):
+        """Updating a closed window raises an exception"""
+        self.startInspect()
+        self.stopInspect()
+        self.assertRaises(
+            self.updateInspect)
+
+    def test_pollUnopenedIsClosed(self):
+        """The window starts off closed."""
+        self.assertTrue(self.pollInspect()['is_closed'])
+
+    def test_pollClosedIsClosed(self):
+        """The window polls as closed after it's closed."""
+        self.startInspect()
+        self.stopInspect()
+        self.assertTrue(self.pollInspect()['is_closed'])
+
+    def test_shownIsNotClosed(self):
+        """The window is open after being shown."""
+        self.startInspect()
+        self.assertFalse(self.pollInspect()['is_closed'])
+
+    def test_show(self):
+        """Showing assigns a nonzero inspector id"""
+        self.startInspect()
+        self.assertNotEqual(self.inspector_id, 0)
+
+    def test_showTwice(self):
+        """The same image can be shown multiple times."""
+        self.startInspect()
+        id = self.inspector_id
+        self.startInspect()
+        self.assertNotEqual(self.inspector_id, id)
+        self.stopInspect()
+        self.inspector_id = id
+
+    def test_update(self):
+        """Images can be updated
+
+        This doesn't test whether they actually are, just that nothing breaks
+        terribly.
+
+        """
+        self.startInspect()
+        self.updateInspect()
+
 
 
 class InspectorTestCase(unittest.TestCase):
@@ -60,22 +129,12 @@ class InspectorTestCase(unittest.TestCase):
     # TODO: use a mocked API for this!
     def setUp(self):
         self.picture = picture.Picture(1, 1)
+        self.old_callRemote = mw.callRemote
+        ##mw.callRemote = self.mocked_callRemote
 
     def tearDown(self):
         self.picture.close()
-
-    def test_isClosed(self):
-        """
-        The window should start off closed.
-        """
-        self.assertTrue(self.picture.is_closed())
-
-    def test_shownIsNotClosed(self):
-        """
-        The window should be registered as open after you show it.
-        """
-        self.picture.show()
-        self.assertFalse(self.picture.is_closed())
+        ##mw.callRemote = self.old_callRemote
 
     def test_openTwice(self):
         """
