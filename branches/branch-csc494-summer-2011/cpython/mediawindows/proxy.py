@@ -9,7 +9,7 @@ def _choose_with_remote(command):
     global LAST_OPENED_DIRECTORY
 
     try:
-        path = mw.callRemote(command, initialdir=LAST_OPENED_DIRECTORY)
+        path = mw.callRemote(command, initialdir=LAST_OPENED_DIRECTORY)['path']
     except:
         return None
     else:
@@ -17,15 +17,15 @@ def _choose_with_remote(command):
         return path
 
 choose_save_filename = partial(
-    mw.proxy._choose_with_remote, 
+    _choose_with_remote, 
     mw.amp.AskSaveasFilename)
 
 choose_file = partial(
-    mw.proxy._choose_with_remote, 
+    _choose_with_remote, 
     mw.amp.AskOpenFilename)
 
 choose_folder = partial(
-    mw.proxy._choose_with_remote, 
+    _choose_with_remote, 
     mw.amp.AskDirectory)
 
 def choose_color():

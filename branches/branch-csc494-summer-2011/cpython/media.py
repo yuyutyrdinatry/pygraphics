@@ -500,22 +500,22 @@ def choose_save_filename():
     '''Prompt user to pick a directory and filename. Return the path
     to the new file.'''
 
-    return mw.proxy.choose_save_filename()
+    return mw.choose_save_filename()
 
 
 def choose_file():
     '''Prompt user to pick a file. Return the path to that file.'''
 
-    return mw.proxy.choose_file()
+    return mw.choose_file()
 
 
 def choose_folder():
     '''Prompt user to pick a folder. Return the path to that folder.'''
 
-    return mw.proxy.choose_folder()
+    return mw.choose_folder()
 
 
 def choose_color():
     '''Prompt user to pick a color. Return a RGB Color object.'''
 
-    return mw.proxy.choose_color()
+    return mw.choose_color()
