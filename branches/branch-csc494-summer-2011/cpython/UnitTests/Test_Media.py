@@ -87,14 +87,16 @@ class MediaCreationTests(unittest.TestCase):
         media.set_color(p, c)
         self.assert_(media.get_color(p) == media.aqua)
 
+    # Color tests.
+
     def test_darken(self):
         """Test media.darken."""
 
         c = color.Color(100, 100, 100)
         media.darken(c)
-        self.assert_(c.get_red() == 65)
-        self.assert_(c.get_green() == 65)
-        self.assert_(c.get_blue() == 65)
+        self.assert_(c.get_red() == 70)
+        self.assert_(c.get_green() == 70)
+        self.assert_(c.get_blue() == 70)
 
     def test_lighten(self):
         """Test media.lighten.  These depend on darken.  Boo."""
@@ -102,12 +104,18 @@ class MediaCreationTests(unittest.TestCase):
         c = color.Color(100, 100, 100)
         media.darken(c)
         media.lighten(c)
-        self.assert_(c.get_red() == 100)
-        self.assert_(c.get_green() == 100)
-        self.assert_(c.get_blue() == 100)
+        
+        new_red = c.get_red()
+        new_blue = c.get_blue()
+        new_green = c.get_green()
+        
+        self.assert_(new_red == 100,
+            "Expected %s but saw %s" % (100, new_red))
+        self.assert_(new_green == 100,
+                "Expected %s but saw %s" % (100, new_green))
+        self.assert_(new_blue == 100,
+                    "Expected %s but saw %s" % (100, new_blue))
 
-    # Color tests.
-    
     def test_distance(self):
         '''Test the distance function.'''
         

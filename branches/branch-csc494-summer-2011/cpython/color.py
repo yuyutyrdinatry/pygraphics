@@ -127,18 +127,20 @@ class Color(object):
             raise ValueError('Color value %s out of range [0, 255]' % value)
 
     def make_lighter(self):
-        '''Increase the RGB values of this Color by 35%.'''
+        '''Increase the RGB values of this Color by about 40%.  This should
+        be the inverse of make_darker, so the multiplier is (1 - .7) / .7.'''
 
-        self.r = int((255 - self.r) * .35 + self.r)
-        self.g = int((255 - self.g) * .35 + self.g)
-        self.b = int((255 - self.b) * .35 + self.b)
+        factor = (1 - .7) / .7
+        self.r = min(255, int(self.r + factor * self.r))
+        self.g = min(255, int(self.g + factor * self.g))
+        self.b = min(255, int(self.b + factor * self.b))
 
     def make_darker(self):
-        '''Decrease the RGB values of this Color by 35%.'''
+        '''Decrease the RGB values of this Color by 30%.'''
 
-        self.r = int(self.r * .65)
-        self.g = int(self.g * .65)
-        self.b = int(self.b * .65)
+        self.r = int(self.r * .7)
+        self.g = int(self.g * .7)
+        self.b = int(self.b * .7)
 
 
 ###############################################################################
