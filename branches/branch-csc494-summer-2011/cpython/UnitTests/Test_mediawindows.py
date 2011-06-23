@@ -23,15 +23,17 @@ import mediawindows as mw
 
 from ampy import ampy as amp
 
+def graphical_test(testcase):
+    if '--all' in sys.argv:
+        return testcase
 
-class RawClosedInspectorTestCase(unittest.TestCase):
+class RawInspectorTestCase(unittest.TestCase):
     """
     Test the how the amp interface deals with closed windows behind the scenes
     """
     def setUp(self):
         # too lazy to do the setup code myself
         pict = picture.Picture(1, 1)
-        pict.show()
         self.image = pict.image
         self.inspector_id = 0
     
@@ -350,6 +352,15 @@ class MultipleAmpClientsTestCase(unittest.TestCase):
         self.assertRaises(socket.error, self.proxy.connect)
 
 
+def _print_loud(msg):
+    underscores = "#" * min(len(msg), 80)
+    print
+    print underscores
+    print msg
+    print underscores
+
+
+@graphical_test
 class MultipleAmpServersTestCase(unittest.TestCase):
     """
     Because Windows doesn't have sensible support for anonymous pipes,
@@ -389,6 +400,7 @@ class MultipleAmpServersTestCase(unittest.TestCase):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
 
+        _print_loud("Please close the window to proceed with the tests.")
         self.stdout, self.stderr = self.proc.communicate()
 
     def test_canShowPictureWithoutCrashing(self):
@@ -414,13 +426,7 @@ class MultipleAmpServersTestCase(unittest.TestCase):
         x.inspector_id = int(self.stdout)
         self.assertTrue(x.is_closed())
 
-def _print_loud(msg):
-    underscores = "#" * min(len(msg), 80)
-    print
-    print underscores
-    print msg
-    print underscores
-
+@graphical_test
 class AmpAskTestCase(unittest.TestCase):
     """Tests for user interaction with Ask* Commands
 
@@ -459,7 +465,7 @@ class AmpAskTestCase(unittest.TestCase):
 if '--all' in sys.argv:
     sys.argv.remove('--all')
 else:
-    del AmpAskTestCase
+    pass # relevant test cases have already been deleted.
 
 class ProcessClosesCleanlyTestCase(unittest.TestCase):
     """
