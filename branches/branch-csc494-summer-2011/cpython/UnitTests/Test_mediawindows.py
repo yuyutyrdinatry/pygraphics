@@ -15,6 +15,7 @@ import subprocess
 import sys
 import os
 import socket
+import time
 
 import media
 import picture
@@ -459,6 +460,18 @@ if '--all' in sys.argv:
     sys.argv.remove('--all')
 else:
     del AmpAskTestCase
+
+class ProcessClosesCleanlyTestCase(unittest.TestCase):
+    """
+    While programs like 'import media; media.show(...)' shouldn't close until
+    all the windows are closed, programs that don't open windows should close
+    right away. This tests that.
+    """
+    def test_closesAfterOneSecond(self):
+        proc = subprocess.Popen([sys.executable, '-c', 'import media'])
+        time.sleep(1)
+        if proc.poll() is None:
+            self.fail("python -c 'import media' did not close in 1 second")
 
 if __name__ == '__main__':
     unittest.main()

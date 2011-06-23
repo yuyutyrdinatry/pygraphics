@@ -182,7 +182,10 @@ class GooeyServer(ampy.async.AMP_Server):
             - https://github.com/Supervisor/supervisor/blob/master/supervisor/medusa/docs/tkinter.txt
             
         """
-        while self.accepting or self.singleton_client.connected:     
+        while (self.accepting or
+               (self.singleton_client is not None and
+                (self.singleton_client.connected or
+                 self._inspector_prot._inspector_map))):
             asyncore.loop(
                 timeout=0.01, # block for that many seconds
                 count=1, # do one iteration of select/poll
@@ -193,8 +196,10 @@ class GooeyServer(ampy.async.AMP_Server):
     def buildProtocol(self, conn, addr):
         
         protocol = ampy.async.AMP_Protocol(conn, addr)
-        InspectorServerProtocol().register_against(protocol)
-        AskServerProtocol(self.tkinter_root).register_against(protocol)
+        self._inspector_prot = InspectorServerProtocol()
+        self._inspector_prot.register_against(protocol)
+        self._ask_prot = AskServerProtocol(self.tkinter_root)
+        self._ask_prot.register_against(protocol)
         self.singleton_client = protocol
         
         self.close() # no more connections will be accepted
