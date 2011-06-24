@@ -10,7 +10,7 @@ import media
 ##############################################################################
 
 def test_constructor_invalid():
-    '''Test that Color constructor fails with invalid RGB value input.'''
+    """Test that Color constructor fails with invalid RGB value input."""
 
     nose.tools.assert_raises(ValueError, Color, '', '', '')
     nose.tools.assert_raises(ValueError, Color, -1, -1, -1)
@@ -18,9 +18,9 @@ def test_constructor_invalid():
 
 
 def test_constructor():
-    '''Test Color constructor. Particularly, that it accepts
+    """Test Color constructor. Particularly, that it accepts
     normalized [0, 255] RGB values, non-normalized values (e.g. 1000),
-    and str values (e.g. "1")'''
+    and str values (e.g. "1")"""
 
     # Test expectedly normal function calls.
     # Color bounds to [0,255] so we must check that the new and old way are
@@ -50,7 +50,7 @@ def test_constructor():
 
 
 def test_equality():
-    '''Test the __eq__ method of Color.'''
+    """Test the __eq__ method of Color."""
 
     colors = [Color(0, 0, 0), Color(255, 255, 255), Color(50, 50, 50)]
     colors_equal = [Color(0, 0, 0), Color(255, 255, 255), Color(50, 50, 50)]
@@ -64,8 +64,8 @@ def test_equality():
 
 
 def test_distance():
-    '''Test distance method for finding the euclidean distance between two
-    colors.'''
+    """Test distance method for finding the euclidean distance between two
+    colors."""
 
     colors1 = [Color(0, 0, 0), Color(255, 255, 255), Color(0, 0, 255),
         Color(255, 255, 255)]
@@ -89,7 +89,7 @@ def test_distance():
 
 
 def test_sub():
-    '''Test Color __sub__ method.'''
+    """Test Color __sub__ method."""
 
     # test that color subtraction works
     colors1 = [Color(0, 0, 0), Color(255, 255, 255), Color(0, 0, 255),
@@ -118,7 +118,7 @@ def test_sub():
 
 
 def test_add():
-    '''Test Color __add__ method.'''
+    """Test Color __add__ method."""
 
     # test that color subtraction works
     colors1 = [Color(1, 1, 1), Color(0, 64, 255), Color(255, 255, 255),
@@ -138,7 +138,7 @@ def test_add():
 
 
 def test_set_get_invalid_RGB():
-    '''Test setting and getting invalid RGB values from Color object.'''
+    """Test setting and getting invalid RGB values from Color object."""
 
     c = Color(0, 0, 0)
     try:
@@ -179,7 +179,7 @@ def test_set_get_invalid_RGB():
 
 
 def test_set_get_RGB():
-    '''Test setting and getting RGB values from Color object.'''
+    """Test setting and getting RGB values from Color object."""
 
     # test the setters/getters of RGB components
     color_arrays = [[1, 1, 1], [0, 64, 255], [255, 255, 255], [34, 78, 12]]
@@ -202,7 +202,7 @@ def test_set_get_RGB():
 
 
 def test_eq():
-    '''Test __eq__ and __ne__ methods from Color object.'''
+    """Test __eq__ and __ne__ methods from Color object."""
 
     # test the setters/getters of RGB components
     colors = [Color(1, 1, 1), Color(0, 64, 255), Color(255, 255, 255),
@@ -218,7 +218,7 @@ def test_eq():
 
 
 def test_copy():
-    '''Test copy method from Color object.'''
+    """Test copy method from Color object."""
 
     # test the setters/getters of RGB components
     colors = [Color(1, 1, 1), Color(0, 64, 255), Color(255, 255, 255),
@@ -233,7 +233,7 @@ def test_copy():
 
 
 def test_make_lighter_darker():
-    '''Test make_lighter and make_darker methods of Color object.'''
+    """Test make_lighter and make_darker methods of Color object."""
 
     # Not quite sure how to test this other than comparing the resulting
     # color's values.
@@ -265,7 +265,7 @@ def test_make_lighter_darker():
 
 
 def test_to_string():
-    '''Test __str__ and __repr__ methods of Color object.'''
+    """Test __str__ and __repr__ methods of Color object."""
 
     color_arrays = [[1, 1, 1], [0, 64, 255], [255, 255, 255], [34, 78, 12]]
     for color_array in color_arrays:
@@ -289,8 +289,8 @@ def test_to_string():
 
 
 def test_make_new_color():
-    '''Test picture module functions create_color to ensure it creates
-    Color objects identical to ones created manually.'''
+    """Test picture module functions create_color to ensure it creates
+    Color objects identical to ones created manually."""
 
     color_arrays = [[1, 1, 1], [0, 64, 255], [255, 255, 255], [34, 78, 12]]
     for color_array in color_arrays:
@@ -304,8 +304,8 @@ def test_make_new_color():
 
 
 def test_non_color_object_call():
-    '''Test to ensure that all the picture global convenience functions fail
-    on non-Picture objects.'''
+    """Test to ensure that all the picture global convenience functions fail
+    on non-Picture objects."""
 
     nose.tools.assert_raises(AttributeError, media.distance, DummyClass(),
         DummyClass())

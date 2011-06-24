@@ -17,8 +17,8 @@ class MediaCreationTests(unittest.TestCase):
         pass
 
     def test_create_pic_default_color(self):
-        '''Create a WIDTH by HEIGHT picture and check for proper dimensions
-        and default color.'''
+        """Create a WIDTH by HEIGHT picture and check for proper dimensions
+        and default color."""
         pic = media.create_picture(WIDTH, HEIGHT)
         width = media.get_width(pic)
         height = media.get_height(pic)
@@ -33,8 +33,8 @@ class MediaCreationTests(unittest.TestCase):
             self.assert_(media.get_color(p) == media.white)
 
     def test_create_pic_color(self):
-        '''Create a WIDTH by HEIGHT picture and check for proper
-        dimensions and color.'''
+        """Create a WIDTH by HEIGHT picture and check for proper
+        dimensions and color."""
         pic = media.create_picture(WIDTH, HEIGHT, media.magenta)
         width = media.get_width(pic)
         height = media.get_height(pic)
@@ -117,7 +117,7 @@ class MediaCreationTests(unittest.TestCase):
                     "Expected %s but saw %s" % (100, new_blue))
 
     def test_distance(self):
-        '''Test the distance function.'''
+        """Test the distance function."""
         
         d = media.distance(media.black, media.white)
         expected = math.sqrt(pow(255, 2) * 3)

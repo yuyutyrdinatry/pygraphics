@@ -1,6 +1,3 @@
-#import unittest
-#import os.path
-from TestExecute import *
 from picture import *
 import nose
 # Make sure that init_picture gets called.
@@ -11,8 +8,8 @@ import media
 # Setup function
 ##############################################################################
 def setup_function():
-    '''A setup function to be called by nose at the beginning of every test.
-    Creates global variables used in most tests.'''
+    """A setup function to be called by nose at the beginning of every test.
+    Creates global variables used in most tests."""
     global black_array, white_array, black_tuple, white_tuple, pict, large_pict
     black_array, white_array = [0, 0, 0], [255, 255, 255]
     black_tuple, white_tuple = tuple(black_array), tuple(white_array)
@@ -31,15 +28,15 @@ def setup_function():
 
 
 def teardown_function():
-    '''A teardown function to be called by nose at the end of every test.
-    Destroys global variables created in setup.'''
+    """A teardown function to be called by nose at the end of every test.
+    Destroys global variables created in setup."""
 
     global black_array, white_array, black_tuple, white_tuple, pict, large_pict
     del black_array, white_array, black_tuple, white_tuple, pict, large_pict
 
 
 def pixel_has_color(pixel, color):
-    '''Return True if Pixel pixel has Color color.'''
+    """Return True if Pixel pixel has Color color."""
 
     return (pixel.get_red() == color.get_red() and
             pixel.get_green() == color.get_green() and
@@ -47,10 +44,10 @@ def pixel_has_color(pixel, color):
 
 
 def pixel_has_color_values(pixel, color_list):
-    '''Return True if Pixel pixel has RGB values of list color_list.
+    """Return True if Pixel pixel has RGB values of list color_list.
 
     Note: color_list is expected to be in the following format, [R, G, B],
-    where RGB are int values.'''
+    where RGB are int values."""
 
     return (pixel.get_red() == color_list[0] and
             pixel.get_green() == color_list[1] and
@@ -58,7 +55,7 @@ def pixel_has_color_values(pixel, color_list):
 
 
 def pixel_has_XY(pixel, x, y):
-    '''Return True if Pixel pixel has coordinates int x and int y.'''
+    """Return True if Pixel pixel has coordinates int x and int y."""
 
     return pixel.get_x() == x and pixel.get_y() == y
 
@@ -69,7 +66,7 @@ def pixel_has_XY(pixel, x, y):
 
 @nose.with_setup(setup_function, teardown_function)
 def test_str():
-    '''Test Pixel.__str__.'''
+    """Test Pixel.__str__."""
 
     tester_pixel = pixel.Pixel(pict.pixels, 0, 0)
     assert str(tester_pixel) == 'Pixel (0, 0): color=Color(0, 0, 0)', \
@@ -78,7 +75,7 @@ def test_str():
 
 @nose.with_setup(setup_function, teardown_function)
 def test_constructor():
-    '''Test the constructor of Pixel on proper input.'''
+    """Test the constructor of Pixel on proper input."""
     try:
         #positive pixel coordinates
         for x in range(pict.image.size[0]):
@@ -100,7 +97,7 @@ def test_constructor():
 
 @nose.with_setup(setup_function, teardown_function)
 def test_set_RGB_inbounds():
-    '''Test setting RGB values for Pixel.'''
+    """Test setting RGB values for Pixel."""
     # TODO: also test for Alpha if we add support for that
     tester_pixel = pixel.Pixel(pict.pixels, 0, 0)
     assert pixel_has_color_values(tester_pixel, black_array), \
@@ -136,7 +133,7 @@ def test_set_RGB_inbounds():
 
 @nose.with_setup(setup_function, teardown_function)
 def test_set_RGB_outbounds():
-    '''Test setting RGB values that are out of bounds for Pixel.'''
+    """Test setting RGB values that are out of bounds for Pixel."""
     outbounds = [-1, -10, 256, 300]
     tester_pixel = pixel.Pixel(pict.pixels, 0, 0)
     for value in outbounds:
@@ -147,7 +144,7 @@ def test_set_RGB_outbounds():
 
 @nose.with_setup(setup_function, teardown_function)
 def test_get_RGB():
-    '''Test getting Pixel RGB values methods.'''
+    """Test getting Pixel RGB values methods."""
     tester_pixel = pixel.Pixel(pict.pixels, 0, 0)
     assert pixel_has_color_values(tester_pixel, black_array), \
         'Improper color gotten'
@@ -166,7 +163,7 @@ def test_get_RGB():
 
 @nose.with_setup(setup_function, teardown_function)
 def test_set_get_color():
-    '''Test the setting and getting Color for Pixel.'''
+    """Test the setting and getting Color for Pixel."""
     colors = [color.Color(0, 0, 0), color.Color(0, 64, 32),
         color.Color(255, 255, 255)]
     tester_pixel = pixel.Pixel(pict.pixels, 0, 0)
@@ -182,10 +179,8 @@ def test_set_get_color():
 
 @nose.with_setup(setup_function, teardown_function)
 def test_get_XY():
-    '''Test that get_x and get_y return valid indices within ranges x=[0,
-    width], y=[0, height]'''
-    width = large_pict.get_width()
-    height = large_pict.get_height()
+    """Test that get_x and get_y return valid indices within ranges x=[0,
+    width], y=[0, height]"""
 
     input_coordinates = [(0, 0), (3, 3), (2, 2), (1, 1)]
     # Wrap around values will be bounded.
@@ -198,7 +193,7 @@ def test_get_XY():
     for idx in range(len(input_coordinates)):
         tester_pixel = pixel.Pixel(large_pict.pixels,
             input_coordinates[idx][0], input_coordinates[idx][1])
-        assert pixel_has_XY(tester_pixel, expected_coordinates[idx][0],\
+        assert pixel_has_XY(tester_pixel, expected_coordinates[idx][0],
             expected_coordinates[idx][1]), \
             'Improper XY coordinates (%s, %s)' % \
             (tester_pixel.get_x(), tester_pixel.get_y())

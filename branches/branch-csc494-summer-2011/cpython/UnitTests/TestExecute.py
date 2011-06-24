@@ -1,13 +1,9 @@
-import sys
-import unittest
-import os.path
-import sys
 import os
 import fnmatch
 import nose
 #import coverage
-'''Loads all the unit test files from the current directory and executes the
-test cases in each file.'''
+"""Loads all the unit test files from the current directory and executes the
+test cases in each file."""
 
 # get current working directory
 root_path = os.getcwd()
@@ -18,15 +14,15 @@ defaultSoundsPath = os.path.join(defaultResourcePath, "sounds")
 
 
 class DummyClass:
-    ''' A dummy object to pass into methods which check for class attributes.
-    '''
+    """ A dummy object to pass into methods which check for class attributes.
+    """
     def __init__(self):
-        do = None
+        pass
 
 
 def resi(filename):
-    '''Return a image resource uri given the filename:
-    resources/images/filename.'''
+    """Return a image resource uri given the filename:
+    resources/images/filename."""
     if not os.path.isabs(filename):
         file = os.path.join(defaultImagesPath, filename)
     else:
@@ -35,8 +31,8 @@ def resi(filename):
 
 
 def ress(filename):
-    '''Return a sound resource uri given the filename:
-    resources/sounds/filename.'''
+    """Return a sound resource uri given the filename:
+    resources/sounds/filename."""
     if not os.path.isabs(filename):
         file = os.path.join(defaultSoundsPath, filename)
     else:
@@ -45,7 +41,7 @@ def ress(filename):
 
 
 def find(search_root, patterns=None, recurse=0, return_dirs=1):
-    '''Find files/dirs rooted in a given directory that match a pattern.
+    """Find files/dirs rooted in a given directory that match a pattern.
 
     @param search_root: the root directory for the recursive search
     @param patterns: a list of shell-style patterns to search for
@@ -54,7 +50,7 @@ def find(search_root, patterns=None, recurse=0, return_dirs=1):
     @return: a list of files(and possibly directories) rooted in searchRoot
                 that match one of the supplied patterns or the empty list
                 if no matches are found
-    '''
+    """
 
     # default to match all files
     if patterns is None:
@@ -65,16 +61,16 @@ def find(search_root, patterns=None, recurse=0, return_dirs=1):
     dir_contents = os.listdir(search_root)
     # THIS isfile() only works in CWD
     for i in range(len(dir_contents)):
-        if(os.path.isfile(dir_contents[i])):
+        if os.path.isfile(dir_contents[i]):
             for pattern in patterns:
-                if(fnmatch.fnmatch(dir_contents[i], pattern)):
+                if fnmatch.fnmatch(dir_contents[i], pattern):
                     matches.append(dir_contents[i])
 
     return matches
 
 
 def main():
-    '''Collect all the paths to Test files and runs them.'''
+    """Collect all the paths to Test files and runs them."""
     print root_path
 
     # filter for all [Tt]est_ python files
