@@ -85,7 +85,7 @@ class Color(object):
     def get_rgb(self):
         """Return a tuple of the RGB values of this Color."""
 
-        return (self.r, self.g, self.b)
+        return self.r, self.g, self.b
 
     def get_red(self):
         """Return the red value of this Color."""
