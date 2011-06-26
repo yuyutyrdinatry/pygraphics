@@ -16,6 +16,7 @@ Contents:
    :maxdepth: 3
    :titlesonly:
    
+   install
    User Documentation <user/index>
    Developer Documentation <developer/index>
 
