@@ -27,6 +27,8 @@ def graphical_test(testcase):
     if '--all' in sys.argv:
         return testcase
 
+graphical_test.__test__ = False
+
 class RawInspectorTestCase(unittest.TestCase):
     """
     Test the how the amp interface deals with closed windows behind the scenes

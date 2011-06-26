@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 '''distutils setup for PyGraphics.
 '''
 
@@ -26,6 +28,7 @@ setup(name='PyGraphics',
         'Environment :: Win32 (MS Windows)',
         'Environment :: X11 Applications',
         'Intended Audience :: New programmers',
+        #'License :: OSI Approved :: BSD License',
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows', # XP
         'Operating System :: POSIX :: Linux',
@@ -34,6 +37,15 @@ setup(name='PyGraphics',
         'Topic :: Software Development :: Libraries :: Python Modules',
       ],
 
-      packages = ['', 'UnitTests'],
-      package_dir = {'': 'cpython'},
-      )
+      package_dir={"": "cpython"},
+      py_modules=[
+        'picture',
+        'color',
+        'media',
+        'pixel',
+        'sample',
+        'sound'
+      ],
+      packages=[
+        'mediawindows'
+      ])
