@@ -48,7 +48,7 @@ Linux
 
 If you do not already have Wing, you may wish to install it. Wing is the Python IDE that has been most thoroughly tested with PyGraphics. It is available here: http://wingware.com/downloads/wingide-101/3.2
 
-Visit the `PyGraphics Downloads page <http://code.google.com/p/pygraphics/downloads/list>`_ and download the file named `PyGraphics-1.5.tar.gz`.
+Visit the `PyGraphics Downloads page <http://code.google.com/p/pygraphics/downloads/list>`_ and download the file named ``PyGraphics-1.5.tar.gz``.
 
 Extract the file using Ark (or another archive tool).
 
@@ -56,7 +56,7 @@ Open a console window. In the main pygraphics folder, run the setup file to inst
 
     python setup.py install --user
 
-.. todo:: instructions for ampy.
+Download ``ampy-1.2.3.tar.gz`` from the `Downloads page <http://code.google.com/p/pygraphics/downloads/list>`_ , and follow the same procedure to install it as for PyGraphics.
 
 Download and install Python's imaging package, NumPy, and PyGame. They are available via apt-get::
 
