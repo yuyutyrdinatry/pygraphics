@@ -2,6 +2,9 @@
 Installing Pygraphics
 =====================
 
+.. toctree::
+    :maxdepth:1
+
 Windows
 =======
 
