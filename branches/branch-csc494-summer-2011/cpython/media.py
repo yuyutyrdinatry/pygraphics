@@ -43,6 +43,8 @@ def crop_picture(pic, x1, y1, x2, y2):
 
     pic.crop(x1, y1, x2, y2)
 
+# For backwards compatibility, including with the text.
+crop = crop_picture
 
 def get_pixel(pic, x, y):
     """Return the Pixel object at the coordinates (x, y) in Picture pic."""
