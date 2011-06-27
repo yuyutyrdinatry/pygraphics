@@ -1,6 +1,14 @@
 =====================
-Installing Pygraphics
+Installing PyGraphics
 =====================
+
+.. topic:: Editors
+    
+    To edit code and use PyGraphics, you need an editor. The official Python 
+    Wiki has a 
+    `list of programmer's editors <http://wiki.python.org/moin/PythonEditors>`_
+    and a `list of integrated development environments 
+    <http://wiki.python.org/moin/IntegratedDevelopmentEnvironments>`_ .
 
 .. toctree::
     :maxdepth: 1
@@ -33,13 +41,6 @@ Download and install the Python Imaging Library, PyGame, NumPy, and Ampy:
       
     Nose should install automatically. 
 
-.. topic:: Editors
-    
-    To edit code, you need an editor. The official Python Wiki has a 
-    `list of programmer's editors <http://wiki.python.org/moin/PythonEditors>`_
-    and a `list of integrated development environments 
-    <http://wiki.python.org/moin/IntegratedDevelopmentEnvironments>`_ .
-
 Now you should be ready to use the PyGraphics package in your code.
 
 Mac OS X
@@ -54,9 +55,7 @@ Linux
 
    These instructions are tailored to Ubuntu and Ubuntu derivatives. If you use a different Linux distribution, the commands for installing various dependencies may differ.
 
-If you do not already have Wing, you may wish to install it. Wing is the Python IDE that has been most thoroughly tested with PyGraphics. It is available here: http://wingware.com/downloads/wingide-101/3.2
-
-Visit the `PyGraphics Downloads page <http://code.google.com/p/pygraphics/downloads/list>`_ and download the file named ``PyGraphics-1.5.tar.gz``.
+Visit the `PyGraphics Downloads page <http://code.google.com/p/pygraphics/downloads/list>`_ and download the file named ``PyGraphics-2.0.tar.gz``.
 
 Extract the file using Ark (or another archive tool).
 
