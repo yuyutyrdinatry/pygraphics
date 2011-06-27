@@ -6,6 +6,9 @@ the introductory courses at the University of Toronto, and covered in the
 textbook, 
 `Practical Programming: An Introduction to Computer Science Using Python`__
 
+If you haven't yet installed PyGraphics, please follow the 
+:doc:`installation instructions </install>`.
+
 .. _pybook: http://pragprog.com/titles/gwpy/practical-programming
 
 __ pybook_
