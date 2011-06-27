@@ -148,13 +148,25 @@ class Picture(object):
 
     def show(self):
         """Inspect this Picture in a PictureInspector window, where inspection
+        of specific pixels is NOT possible."""
+
+        self.close()
+
+        self.inspector_id = mw.callRemote(
+            mw.amp.StartInspect,
+            img=self.image,
+            inspectable=False)['inspector_id']
+
+    def inspect(self):
+        """Inspect this Picture in a PictureInspector window, where inspection
         of specific pixels is possible."""
 
         self.close()
 
         self.inspector_id = mw.callRemote(
             mw.amp.StartInspect,
-            img=self.image)['inspector_id']
+            img=self.image,
+            inspectable=True)['inspector_id']
 
     def close(self):
         """Close this Picture's open PictureInspector window."""
@@ -166,7 +178,6 @@ class Picture(object):
         except mw.exceptions.WindowDoesNotExistError:
             pass
 
-    inspect = show
     close_inspect = close
 
     def update(self):

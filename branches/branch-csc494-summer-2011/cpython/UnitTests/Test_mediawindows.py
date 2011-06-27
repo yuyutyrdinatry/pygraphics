@@ -46,7 +46,8 @@ class RawInspectorTestCase(unittest.TestCase):
             pass
 
     def startInspect(self):
-        res = mw.callRemote(mw.amp.StartInspect, img=self.image)
+        res = mw.callRemote(mw.amp.StartInspect, img=self.image,
+                            inspectable=True)
         self.inspector_id = res['inspector_id']
         return res
     
@@ -176,7 +177,7 @@ class InspectorTestCase(unittest.TestCase):
                 {"inspector_id": 0},
                 {}),
             (mw.amp.StartInspect, 
-                {"img": self.picture.image}, 
+                 {"img": self.picture.image, "inspectable": False},
                 {"inspector_id": 1})]
         self.picture.show()
         self.assertEqual(self.picture.inspector_id, 1)
@@ -191,7 +192,7 @@ class InspectorTestCase(unittest.TestCase):
                 {"inspector_id": 0},
                 mw.exceptions.WindowDoesNotExistError),
             (mw.amp.StartInspect, 
-                {"img": self.picture.image}, 
+                {"img": self.picture.image, "inspectable": False},
                 {"inspector_id": 1})]
 
         self.picture.show()
@@ -236,8 +237,8 @@ class InspectorTestCase(unittest.TestCase):
             (mw.amp.StopInspect,
                 {"inspector_id": 0},
                 {}),
-            (mw.amp.StartInspect, 
-                {"img": self.picture.image}, 
+            (mw.amp.StartInspect,
+                 {"img": self.picture.image, "inspectable": False},
                 {"inspector_id": 1})]
 
         self.picture.update()

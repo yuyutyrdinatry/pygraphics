@@ -107,13 +107,14 @@ class PILImage(object):
 
 class StartInspect(amp.Command):
     """Start a new inspect window.
-    
+
     This command returns an inspector handle that may be used to invoke
     further operations on the inspector window.
-    
+
     """
     arguments = [
-        ('img', PILImage())]
+        ('img', PILImage()),
+        ('inspectable', amp.Boolean())]
     response = [('inspector_id', amp.Integer())]
 
 class UpdateInspect(amp.Command):

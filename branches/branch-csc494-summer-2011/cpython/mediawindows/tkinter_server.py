@@ -77,8 +77,8 @@ class InspectorServerProtocol(ProtocolBackend):
         self._inspector_map = {}
     
     @responder(StartInspect)
-    def start_inspect(self, img):
-        inspector = gui.PictureInspector(img)
+    def start_inspect(self, img, inspectable):
+        inspector = gui.PictureInspector(img, inspectable)
         inspector_id = new_id()
         # note: references must be deleted to get rid of leaks
         self._inspector_map[inspector_id] = inspector

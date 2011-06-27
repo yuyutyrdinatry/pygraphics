@@ -520,3 +520,7 @@ def choose_color():
     """Prompt user to pick a color. Return a RGB Color object."""
 
     return mw.choose_color()
+
+if __name__ == "__main__":
+    pic = create_picture(300, 400, lightgrey)
+    pic.inspect()

@@ -145,13 +145,19 @@ class PictureInspector(_InspectorBase):
     Less than 100% zooms out and more than 100% zooms in. The 100% zoom level will
     always return you to your orginal Picture.'''
 
+    def __init__(self, image, inspectable):
+        '''Create an PictureWindow object with Image image'''
+
+        self.inspectable = inspectable
+        _InspectorBase.__init__(self, image)
 
     def set_up_functionalities(self):
         
         self.set_up_drag()
-        self.canvas1.bind('<Double-Button-1>', self.canvas_click)
         self.set_up_zoommenu()
-        self.set_up_fields()
+        if self.inspectable:
+            self.canvas1.bind('<Double-Button-1>', self.canvas_click)
+            self.set_up_fields()
             
     def set_up_zoommenu(self):
         '''Set up the zoom menu for this OpenPictureTool.'''
