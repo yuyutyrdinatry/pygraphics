@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'PyGraphics'
-copyright = u'2011, A lot of people'
+copyright = u'2011, Jen Campbell, Paul Gries, Leo Kaliazine, Chris Maddison, Hardeep Singh, Devin Jeanpierre'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

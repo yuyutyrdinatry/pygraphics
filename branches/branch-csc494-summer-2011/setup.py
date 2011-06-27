@@ -15,7 +15,7 @@ Jython library developed by Mark Guzdial at Georgia Tech.'''
 from distutils.core import setup
 setup(name='PyGraphics',
       version=VERSION,
-      author='Jen Campbell, Paul Gries, Leo Kaliazine, Chris Maddison, Hardeep Singh',
+      author='Jen Campbell, Paul Gries, Leo Kaliazine, Chris Maddison, Hardeep Singh, Devin Jeanpierre',
       license='GPL',
       url='http://code.google.com/p/pygraphics',
       author_email='pgries@cs.toronto.edu',
