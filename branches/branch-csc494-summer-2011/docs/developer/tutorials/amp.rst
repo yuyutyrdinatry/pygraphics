@@ -243,4 +243,60 @@ AMP connection when it's created.
 First, we define our backend. Just so that we can be sure this works,
 instead of opening up a new GUI window, we'll use the print statement::
 
-    # TODO: write this part of the tutorial
+    class SayServerProtocol(ProtocolBackend):
+        """
+        This is a protocol backend (set of responders) the Amp protocol will 
+        use for handling the say function.
+        
+        Call register_against() on an amp protocol to register its logic.
+        """
+        responders = []
+        responder = appender(responders)
+        
+        @responder(Say)
+        def say(self, text):
+            print text
+            return {}
+
+There are a couple of important things to note.
+
+#. SayProtocol has a class variable `responders` and `responder`.
+   
+   `responders` is used by 
+   `:py:meth:`mediawindows.tkinter_server.ProtocolBackend.registerAgainst`
+   to register command handlers against commands.
+   
+   `responder` is a decorator only used inside the class body, which appends
+   to `responders` when called appropriately.
+   
+   When you want to define a new responder, you can decorate it with
+   @responder(CommandClass)
+
+#. say returns {}
+
+   Every responder is required to return a value, no matter if it's used by the
+   other side or not. The value is always a dictionary. In the case of
+   :py:class:`Say`, the dictionary should be empty, because there are no
+   keys defined in ``Say.response``.
+
+By itself, :py:class:`SayServerProtocol` doesn't do anything. It still needs
+to be registered against the actual connection, so the following lines need
+to be added to 
+:py:meth:`mediawindows.tkinter_server.GooeyServer.buildProtocol`::
+
+        self._say_prot = SayServerProtocol()
+        self._say_prot.register_against(protocol)
+
+So now what happens when we run try to use this?
+
+    >>> import media
+    >>> media.say("Hello, world!")
+    Hello, world!
+    >>> 
+
+Perfect!
+
+Tkinterizing
+============
+
+.. todo:: Write this

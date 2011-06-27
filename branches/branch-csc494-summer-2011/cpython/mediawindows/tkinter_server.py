@@ -12,7 +12,7 @@ import functools
 import mediawindows
 from mediawindows import exceptions
 from mediawindows.amp import (
-    StartInspect, StopInspect, UpdateInspect, PollInspect)
+    StartInspect, StopInspect, UpdateInspect, PollInspect, Say)
 from mediawindows import tkinter_gui as gui
 
 def appender(somelist):
@@ -163,8 +163,21 @@ class AskServerProtocol(ProtocolBackend):
             protocol.registerResponder(
                 Command,
                 functools.partial(self.ask, func))
-        
-        
+
+class SayServerProtocol(ProtocolBackend):
+    """
+    This is a protocol backend (set of responders) the Amp protocol will 
+    use for handling the say function.
+    
+    Call register_against() on an amp protocol to register its logic.
+    """
+    responders = []
+    responder = appender(responders)
+    
+    @responder(Say)
+    def say(self, text):
+        print text
+        return {}
 
 class GooeyServer(ampy.async.AMP_Server):
     def __init__(self, root, *args, **kwargs):
@@ -200,6 +213,8 @@ class GooeyServer(ampy.async.AMP_Server):
         self._inspector_prot.register_against(protocol)
         self._ask_prot = AskServerProtocol(self.tkinter_root)
         self._ask_prot.register_against(protocol)
+        self._say_prot = SayServerProtocol()
+        self._say_prot.register_against(protocol)
         self.singleton_client = protocol
         
         self.close() # no more connections will be accepted
