@@ -175,3 +175,8 @@ class AskColor(_Ask):
         ("g", amp.Integer()),
         ("b", amp.Integer())]
     response = arguments # asks with start color, returns color
+
+class Say(amp.Command):
+    arguments = [
+        ('text', BigString())]
+    response = []

@@ -38,3 +38,6 @@ def choose_color():
         pass
     if color[0]:
         return Color(color[0][0], color[0][1], color[0][2])
+
+def say(text):
+    mw.callRemote(mw.amp.Say, text=text)

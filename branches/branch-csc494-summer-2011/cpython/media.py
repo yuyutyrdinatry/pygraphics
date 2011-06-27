@@ -521,6 +521,14 @@ def choose_color():
 
     return mw.choose_color()
 
+####################----------------------------------------------------------
+## Other GUI Shenanigans
+####################----------------------------------------------------------
+
+def say(text):
+    """Display text to the user in a GUI window."""
+    return mw.say(text)
+
 if __name__ == "__main__":
     pic = create_picture(300, 400, lightgrey)
     pic.inspect()
