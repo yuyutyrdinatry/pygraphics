@@ -16,7 +16,13 @@ import sys, os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath(os.path.join('..', 'cpython')))
+EXTRA_PATH = os.path.abspath(os.path.join('..', 'cpython'))
+sys.path.insert(0, EXTRA_PATH)
+# because we start a subprocess, need to export an extra PYTHONPATH thing
+try:
+    os.environ['PYTHONPATH'] += ':' + EXTRA_PATH
+except KeyError:
+    os.environ['PYTHONPATH'] = EXTRA_PATH
 
 # -- General configuration -----------------------------------------------------
 
