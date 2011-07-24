@@ -176,7 +176,8 @@ class SayServerProtocol(ProtocolBackend):
     
     @responder(Say)
     def say(self, text):
-        print text
+        gui.SayDialog(text) # blocks until closed
+        # it's ok to block and return, the client is blocking too,
         return {}
 
 class GooeyServer(ampy.async.AMP_Server):

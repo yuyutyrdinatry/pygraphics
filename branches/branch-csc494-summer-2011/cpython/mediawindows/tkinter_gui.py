@@ -266,7 +266,7 @@ class SayDialog(tk.Frame):
     window_title = "Message!"
     
     def __init__(self, s=''):
-        tk.Frame.__init__(self, _ROOT)
+        tk.Frame.__init__(self, tk.Toplevel())
         
         self.s = s
         self._set_display()
@@ -277,13 +277,13 @@ class SayDialog(tk.Frame):
         self._center_window()
         self.grid()
         self._display_components()
-        self.master.wait_window(self.master)
+        self.master.wait_window(self)
         
     def _set_master_properties(self):
         self.master.title(self.window_title)
         self.master.deiconify()
         self.bind("<Return>", self.master.destroy)
-        self.bind("<Escape>", self.handle_escape)
+        self.bind("<Escape>", self.master.destroy)
         
     def _set_dimensions(self):
         self.h = 75
@@ -312,10 +312,10 @@ class SayDialog(tk.Frame):
         new_position = '%dx%d+%d+%d' % (window_width, window_height, 
                                           new_x_position, new_y_position)
         self.master.geometry(newGeometry=new_position)
-        
-    def handle_escape(self, e):
-        self.master.destroy()
-        
+
+####################------------------------------------------------------------
+## Ask and Say dialogs -- Dead Code
+####################------------------------------------------------------------
 
 class AskDialog(SayDialog):
     '''Simple Ask Dialog with a one line entry.'''
@@ -487,8 +487,3 @@ def ask(s, num=False, hidden=False, choices=None, multi=False):
         return dialog(s, choices).get_result()
     
     return AskDialog(s).get_result()
-
-
-def say(s):
-    '''Display a dialog containing the str s, and a "CLOSE" button.'''
-    SayDialog(s)

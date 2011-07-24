@@ -133,8 +133,9 @@ def raisable(e):
         raise e
     except TypeError:
         return False
-    else:
+    except:
         return True
+    raise RuntimeError("Impossible")
 
 class InspectorTestCase(unittest.TestCase):
     """
@@ -464,6 +465,14 @@ class AmpAskTestCase(unittest.TestCase):
         self.assertEqual(
             mw.callRemote(mw.amp.AskDirectory, initialdir='/')['path'],
             '/')
+
+@graphical_test
+class AmpSayTestCase(unittest.TestCase):
+    def test_Say(self):
+        _print_loud("Please enter in the contents of the following window")
+        text = "K"
+        mw.callRemote(mw.amp.Say, text="K")
+        self.assertEqual(raw_input('> '), text)
 
 if '--all' in sys.argv:
     sys.argv.remove('--all')
