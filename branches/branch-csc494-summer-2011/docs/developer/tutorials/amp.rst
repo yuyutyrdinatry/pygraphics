@@ -235,6 +235,7 @@ Because :py:mod:`ampy` doesn't have a lot of tools for writing AMP servers
 (or clients), a bit of infrastructure is provided in the form of this class:
 
 .. autoclass:: mediawindows.tkinter_server.ProtocolBackend
+    :noindex:
 
 To define a handler for our command, we need a new protocol backend for it,
 and we need to make sure the protocol backend is registered against the actual
