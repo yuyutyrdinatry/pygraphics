@@ -296,100 +296,101 @@ So now what happens when we run try to use this?
 
 Perfect!
 
-A bit more about AMP
-====================
+.. This is probably a little advanced for the target audience...
+    A bit more about AMP
+    ====================
 
-As mentioned before, AMP stands for the Asynchronous Messaging Protocol. It
-was developed by programmers at `Twisted Matrix Labs 
-<http://twistedmatrix.com/>`_ , who wanted a simple and useful implementation
-of a completely asynchronous, bidirectional, remote procedure call system.
+    As mentioned before, AMP stands for the Asynchronous Messaging Protocol. It
+    was developed by programmers at `Twisted Matrix Labs 
+    <http://twistedmatrix.com/>`_ , who wanted a simple and useful implementation
+    of a completely asynchronous, bidirectional, remote procedure call system.
 
-Asynchronous
-------------
+    Asynchronous
+    ------------
 
-.. warning:: This is complicated.
+    .. warning:: This is complicated.
 
-    You aren't really expected to understand deferred/asynchronous computation
-    after this, but it'd be nice if you had an idea about it. If you want to
-    learn more, Dave Peticolas has an 
-    `excellent series of articles <http://krondo.com/blog/?page_id=1327>`_
-    that can teach you the Twisted way.
+        You aren't really expected to understand deferred/asynchronous computation
+        after this, but it'd be nice if you had an idea about it. If you want to
+        learn more, Dave Peticolas has an 
+        `excellent series of articles <http://krondo.com/blog/?page_id=1327>`_
+        that can teach you the Twisted way.
 
-When introduced to networking, most people are taught **synchronous**
-communication. Synchronous communication is where you send a networked message,
-and you don't continue on in your program until the message is fully sent and
-has been received by the other side.
+    When introduced to networking, most people are taught **synchronous**
+    communication. Synchronous communication is where you send a networked message,
+    and you don't continue on in your program until the message is fully sent and
+    has been received by the other side.
 
-For example, the python `urllib <http://docs.python.org/library/urllib>`_
-module is synchronous. If someone wanted to write a webpage
-to a file, they might do it something like this::
+    For example, the python `urllib <http://docs.python.org/library/urllib>`_
+    module is synchronous. If someone wanted to write a webpage
+    to a file, they might do it something like this::
 
-    def download_webpage(url, f):
-        response = urllib.urlopen(url)
-        f.write(response.read())
-        f.close()
+        def download_webpage(url, f):
+            response = urllib.urlopen(url)
+            f.write(response.read())
+            f.close()
 
-This reads the entire webpage into memory. As soon as the webpage is fully in
-memory, it is written to a file, and the file is then closed.
+    This reads the entire webpage into memory. As soon as the webpage is fully in
+    memory, it is written to a file, and the file is then closed.
 
-The operating system will manage the connection and download
-the file until the connection is terminated by the HTTP server. During that
-time, Python sits waiting and can't do anything
-sle -- response.read is a **blocking call**.
+    The operating system will manage the connection and download
+    the file until the connection is terminated by the HTTP server. During that
+    time, Python sits waiting and can't do anything
+    sle -- response.read is a **blocking call**.
 
-On the other hand, an asynchronous solution using Twisted could look something
-like this::
+    On the other hand, an asynchronous solution using Twisted could look something
+    like this::
 
-    def download_webpage(url, f):
-        twisted.web.client.getPage(url).addCallback(f.write).addCallback(lambda _: f.close)
+        def download_webpage(url, f):
+            twisted.web.client.getPage(url).addCallback(f.write).addCallback(lambda _: f.close)
 
-This tells Twisted to start downloading the webpage, and when it has the whole
-thing in memory, call f.write with the page contents as the only argument 
-(i.e. write the page to the file), and then call f.close
+    This tells Twisted to start downloading the webpage, and when it has the whole
+    thing in memory, call f.write with the page contents as the only argument 
+    (i.e. write the page to the file), and then call f.close
 
-Twisted will manage the connection and download the file in pieces. Whenever
-the operating system says that the server has sent more data, Twisted grabs that
-data from the connection and stores it, until the connection is closed. During
-that time, the application can continue to make more web requests or do more
-calculations, as long as it gives the Twisted event loop time to check the
-connection status and so on every once in a while.
+    Twisted will manage the connection and download the file in pieces. Whenever
+    the operating system says that the server has sent more data, Twisted grabs that
+    data from the connection and stores it, until the connection is closed. During
+    that time, the application can continue to make more web requests or do more
+    calculations, as long as it gives the Twisted event loop time to check the
+    connection status and so on every once in a while.
 
-:py:func:`getPage` returns a `deferred <http://twistedmatrix.com/documents/current/core/howto/defer.html>`_
-value, which doesn't immediately have something to show. As soon as it does,
-though, the callbacks are told that the deferred has "fired" and a real value
-is ready.
+    :py:func:`getPage` returns a `deferred <http://twistedmatrix.com/documents/current/core/howto/defer.html>`_
+    value, which doesn't immediately have something to show. As soon as it does,
+    though, the callbacks are told that the deferred has "fired" and a real value
+    is ready.
 
-Right, but what about AMP?
-..........................
+    Right, but what about AMP?
+    ..........................
 
-In AMP, every RPC call is asynchronous. You can send multiple RPC calls off,
-and their results may arrive in any order. This is AMP's purpose, this is all
-it does: provide a way to pass dicts (values) and exceptions (errors)
-in an independent order, whenever they are ready, without ever stopping
-work just to wait for a response.
+    In AMP, every RPC call is asynchronous. You can send multiple RPC calls off,
+    and their results may arrive in any order. This is AMP's purpose, this is all
+    it does: provide a way to pass dicts (values) and exceptions (errors)
+    in an independent order, whenever they are ready, without ever stopping
+    work just to wait for a response.
 
-Well, actually...
-.................
+    Well, actually...
+    .................
 
-As you may have noticed, :py:mod:`media` is *not* asynchronous, it is 
-synchronous. You call :py:func:`media.show` and a picture is shown, and only
-*then* does it return -- there is no callback to get notified when the picture
-shows up. Not even behind the scenes.
+    As you may have noticed, :py:mod:`media` is *not* asynchronous, it is 
+    synchronous. You call :py:func:`media.show` and a picture is shown, and only
+    *then* does it return -- there is no callback to get notified when the picture
+    shows up. Not even behind the scenes.
 
-While AMP may be an asynchronous protocol on paper, *Ampy* includes a partial
-implementation of AMP that is synchronous. This greatly simplifies the
-client side of the equation. However, the server side (running the GUI etc.)
-is still asynchronous and nonblocking.
+    While AMP may be an asynchronous protocol on paper, *Ampy* includes a partial
+    implementation of AMP that is synchronous. This greatly simplifies the
+    client side of the equation. However, the server side (running the GUI etc.)
+    is still asynchronous and nonblocking.
 
-As a consequence of this, it's required that GUI servers only serve one client
-at a time. That way they can act just as blockingly as the client, without
-locking out other clients that are waiting for a chance. For example, we can
-put everything on hold while waiting for a dialog box to close.
+    As a consequence of this, it's required that GUI servers only serve one client
+    at a time. That way they can act just as blockingly as the client, without
+    locking out other clients that are waiting for a chance. For example, we can
+    put everything on hold while waiting for a dialog box to close.
 
-Bidirectional
-=============
+    Bidirectional
+    =============
 
-.. todo:: Write me! WRIIIIITE MEEEEE!
+    .. todo:: Write me! WRIIIIITE MEEEEE!
 
 Tkinterizing
 ============
