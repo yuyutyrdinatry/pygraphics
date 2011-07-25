@@ -293,7 +293,6 @@ So now what happens when we run try to use this?
     >>> import media
     >>> media.say("Hello, world!")
     Hello, world!
-    >>> 
 
 Perfect!
 
@@ -396,4 +395,33 @@ Perfect!
 Tkinterizing
 ============
 
-.. todo:: Write this
+Right now the say function only prints, of course. But we want it to do more
+than that -- all of the functions in mediawindows are for producing GUI windows.
+
+In this case, there's an existing GUI class we can adopt.
+
+.. literalinclude:: ../../../cpython/mediawindows/tkinter_gui.py
+    :pyobject: SayDialog
+
+Understanding how it works isn't particularly important.
+A :py:class:`SayDialog` instance is created and the call to create it blocks
+until the dialog is closed. So instead of::
+
+    @responder(Say)
+    def say(self, text):
+        print text
+        return {}
+
+We have::
+
+    @responder(Say)
+    def say(self, text):
+        gui.SayDialog(text) # blocks until closed
+        # it's ok to block and return, the client is blocking too,
+        return {}
+
+And that's it! From now on, if we call :samp:`media.say("{text}")`, a window
+will pop up containing :samp:`{text}`. :py:meth:`media.say` will not return
+until that window is closed.
+
+.. image:: /_static/say_example.png
