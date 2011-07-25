@@ -1,5 +1,6 @@
 import Tkinter as tk
 import tkFileDialog
+import tkColorChooser
 import asyncore
 import socket
 
@@ -12,7 +13,7 @@ import functools
 import mediawindows
 from mediawindows import exceptions
 from mediawindows.amp import (
-    StartInspect, StopInspect, UpdateInspect, PollInspect, Say)
+    StartInspect, StopInspect, UpdateInspect, PollInspect, Say, AskColor)
 from mediawindows import tkinter_gui as gui
 
 def appender(somelist):
@@ -137,15 +138,22 @@ class AskServerProtocol(ProtocolBackend):
         mediawindows.amp.AskSaveasFilename: tkFileDialog.asksaveasfilename,
         mediawindows.amp.AskOpenFilename: tkFileDialog.askopenfilename,
         mediawindows.amp.AskDirectory: tkFileDialog.askdirectory,
-        # amp.AskColor: tkFileDialog.askcolor
     }
     
     def __init__(self, root):
         self.tkinter_root = root
     
-    ##@responder(amp.AskColor)
-    ##def ask_color(self, r, g, b):
-    ##    pass
+    @responder(AskColor)
+    def ask_color(self, r, g, b):
+       (c, tk_c) = tkColorChooser.askcolor((r, g, b))
+       if c is tk_c is None:
+           raise exceptions.DialogCanceledException
+       else:
+           (new_r, new_g, new_b) = c
+           return dict(
+               r=new_r,
+               g=new_g,
+               b=new_b)
     
     def ask(self, ask_func, initialdir):
         result = ask_func(

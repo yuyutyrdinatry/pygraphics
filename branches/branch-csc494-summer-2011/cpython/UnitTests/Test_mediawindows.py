@@ -467,6 +467,35 @@ class AmpAskTestCase(unittest.TestCase):
             '/')
 
 @graphical_test
+class AmpAskColorTestCase(unittest.TestCase):
+    """Tests for user interaction with AskColor Command
+
+    Because of the nature of these tests, they require user input. They are not
+    automated, and can only be run directly. Run this test file with "--all"
+    to include AmpAskColorTestCase.
+
+    """
+    c123 = {'r': 1, 'g': 2, 'b': 3}
+    def test_askCanceled(self):
+        _print_loud("Please press Cancel.")
+        self.assertRaises(mw.exceptions.DialogCanceledException,
+            mw.callRemote,
+            mw.amp.AskColor,
+            **self.c123)
+
+    def test_askOk(self):
+        _print_loud("Please press OK.")
+        self.assertEqual(
+            mw.callRemote(mw.amp.AskColor, **self.c123),
+            self.c123)
+    
+    def test_askModify(self):
+        _print_loud("Please increase each color value by 1.")
+        self.assertEqual(
+            mw.callRemote(mw.amp.AskColor, **self.c123),
+            dict((k, v+1) for k, v in self.c123.iteritems()))
+
+@graphical_test
 class AmpSayTestCase(unittest.TestCase):
     def test_Say(self):
         _print_loud("Please enter in the contents of the following window")
