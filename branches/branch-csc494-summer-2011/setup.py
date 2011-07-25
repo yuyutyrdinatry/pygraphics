@@ -27,7 +27,7 @@ setup(name='PyGraphics',
         'Environment :: MacOS X',
         'Environment :: Win32 (MS Windows)',
         'Environment :: X11 Applications',
-        'Intended Audience :: New programmers',
+        'Intended Audience :: Developers',
         #'License :: OSI Approved :: BSD License',
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows', # XP
