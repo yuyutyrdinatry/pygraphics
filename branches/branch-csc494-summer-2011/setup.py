@@ -23,7 +23,7 @@ setup(name='PyGraphics',
       long_description=long_description,
       extra_path = "pygraphics",
       classifiers=[
-        #'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
         'Environment :: MacOS X',
         'Environment :: Win32 (MS Windows)',
         'Environment :: X11 Applications',
