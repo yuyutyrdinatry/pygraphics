@@ -31,13 +31,8 @@ choose_folder = partial(
 def choose_color():
     '''Prompt user to pick a color. Return a RGB Color object.'''
 
-    color = None
-    try: 
-        color = thread_exec_return(tkFileDialog.askcolor, parent=_ROOT)
-    except:
-        pass
-    if color[0]:
-        return Color(color[0][0], color[0][1], color[0][2])
+    colors = mw.callRemote(mw.amp.AskColor, r=255, g=255, b=255)
+    return (colors['r'], colors['g'], colors['b'])
 
 def say(text):
     mw.callRemote(mw.amp.Say, text=text)
