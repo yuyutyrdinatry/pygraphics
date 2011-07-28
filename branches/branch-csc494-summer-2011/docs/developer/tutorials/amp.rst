@@ -164,7 +164,7 @@ So say should look exactly like this::
         at once!
         """
         
-        mw.callRemote(amw.mp.Say, text=text)
+        mw.callRemote(amp.mp.Say, text=text)
 
 We would probably put this inside :py:mod:`mediawindows.proxy`, and then
 have a short stub function in :py:mod:`media` that goes as follows::
@@ -264,7 +264,7 @@ There are a couple of important things to note.
 #. SayProtocol has a class variable `responders` and `responder`.
    
    `responders` is used by 
-   `:py:meth:`mediawindows.tkinter_server.ProtocolBackend.registerAgainst`
+   `:py:meth:`mediawindows.tkinter_server.ProtocolBackend.register_against`
    to register command handlers against commands.
    
    `responder` is a decorator only used inside the class body, which appends
@@ -335,8 +335,8 @@ Perfect!
 
     The operating system will manage the connection and download
     the file until the connection is terminated by the HTTP server. During that
-    time, Python sits waiting and can't do anything
-    sle -- response.read is a **blocking call**.
+    time, Python sits waiting and can't do anything -- response.read is a
+    **blocking call**.
 
     On the other hand, an asynchronous solution using Twisted could look something
     like this::
