@@ -18,6 +18,13 @@ For more information on producing distributions, confer with the distutils
 documentation on
 `distribution <http://docs.python.org/distutils/builtdist.html>`_
 
+Versioning
+==========
+
+Before creating a release distributable, be sure to update the versions.
+Version numbers can be found in ``setup.py`` and ``docs/conf.py``.
+Update them as appropriate for the release.
+
 Installers
 ==========
 
@@ -34,6 +41,9 @@ On windows::
 On RPM Linuxes::
 
     python setup.py bdist_rpm
+
+The resulting packaged distribution will be available in the ``dist`` directory
+that ``setup.py`` creates.
 
 Source distributions
 ====================
@@ -52,8 +62,32 @@ option to setup.py::
 
     python setup.py sdist --format=zip,gztar # both .zip and .tar.gz
 
-.. Distributing the packates
-   =========================
+As with installer distributions, the resulting archives will be in the ``dist``
+directory that ``setup.py`` creates.
+
+Distributing the packages
+=========================
+
+Google Code has its own upload mechanism, if the files are to be hosted there,
+all the packages must be uploaded manually.
+
+If, on the other hand, PyPI will be the distribution host, distutils has a
+built-in mechanism for uploading packages.
+
+First, you need to be registered to PyPI, and listed on the PyGraphics
+administrators. After that, put your PyPI login information in a 
+``.pypirc`` file in your home directory, like this::
+
+    [server-login]
+    username:michael.b
+    password:mylifeforaiur
+
+You're set! In all the above ``setup.py`` commands, you can append ``upload``
+to the command. For example::
+
+    python setup.py sdist --format=zip,gztar upload
+
+This will automatically upload the resulting zip and tar.gz files to PyPI.
 
 Documentation
 =============
@@ -62,4 +96,21 @@ The documentation system is not made using distutils, but using
 `Sphinx <http://sphinx.pocoo.org/>`_ . Sphinx is also used for the official
 Python documentation.
 
-.. todo:: how-to
+In the ``docs`` directory of the PyGraphics project, you can create the html
+documentation with the following command::
+
+    make html
+
+This tells sphinx to translate the documentation to HTML, and put it in the
+``_build/html`` directory. You should manually put all the files in the html 
+directory in a zip file. (Note: these should be at the top level of the zip
+file. Do not add the html directory itself.)
+
+If you have the :command:`zip` command line utility, the command is as follows::
+
+    cd _build/html
+    zip docs.zip -R "*"
+
+Then, log in to PyPI and upload the documentation zip file.
+Once this is done, the documentation will be available for browsing at the
+PyPI website at http://packages.python.org/PyGraphics/ 
