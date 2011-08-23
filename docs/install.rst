@@ -26,7 +26,7 @@ Download and install the Python Imaging Library, PyGame, NumPy, and Ampy:
 
     * `PIL 1.1.7 <http://effbot.org/downloads/PIL-1.1.7.win32-py2.7.exe>`_
     * `Pygame 1.9.2 <http://pygame.org/ftp/pygame-1.9.2a0.win32-py2.7.msi>`_
-    * `Numpy 1.6.0 <http://sourceforge.net/projects/numpy/files/NumPy/1.6.0/numpy-1.6.0-win32-superpack-python2.7.exe/download>`_
+    * `Numpy 1.6.1 <http://sourceforge.net/projects/numpy/files/NumPy/1.6.1/numpy-1.6.1-win32-superpack-python2.7.exe/download>`_
     * `Ampy <http://pygraphics.googlecode.com/files/ampy-1.2.3.win32.exe>`_
 
 .. topic:: Nose
