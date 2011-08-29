@@ -13,7 +13,7 @@ from color import *
 import mediawindows as mw
 
 mw.init_mediawindows()
-picture.init_picture()
+init_picture()
 
 
 ####################----------------------------------------------------------
