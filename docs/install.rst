@@ -48,34 +48,6 @@ Mac OS X
 
 .. todo:: OS X installation guide.
 
-Download and install the 32bit Python 2.7 installer from `the 2.7 release page <http://www.python.org/download/releases/2.7/>`_ .
-
-Download the OS X executable for PyGraphics `here <http://pypi.python.org/packages/any/P/PyGraphics/PyGraphics-2.0.win32.exe>`_ .
- 
-Run the installer. If Python is available on your computer, you should be able to move through the install screens without changing any settings.
-
-Download and install the Python Imaging Library, PyGame, NumPy, and Ampy:
-
-    * `PIL 1.1.6 <http://pythonmac.org/packages/py25-fat/dmg/PIL-1.1.6-py2.7-macosx10.4-2007-05-18.dmg>`_
-    * `PyObjC 1.4 <http://pythonmac.org/packages/py25-fat/mpkg/pyobjc-1.4-py2.7-macosx10.4.mpkg.zip>`_
-    * `Pygame 1.8.1 <http://www.pygame.org/ftp/pygame-1.8.1release-py2.7-macosx10.5.zip>`_
-    * `Numpy 1.3 <http://sourceforge.net/project/showfiles.php?group_id=1369&package_id=175103>`_
-    * `Ampy <http://pygraphics.googlecode.com/files/ampy-1.2.3.win32.exe>`_
-
-.. topic:: Nose
-
-    If you wish to use the tests included in the PyGraphics package, you must download and install the Nose package. 
-    
-    First, `download setuptools <http://pypi.python.org/pypi/setuptools/>`_
-
-    Next, Run Terminal.app (in /Applications/Utilities) and enter this command::
-
-        easy_install nose
-        
-    Nose should install automatically.
-
-Now you should be ready to use the PyGraphics package in your code.
-
 Linux
 =====
 
