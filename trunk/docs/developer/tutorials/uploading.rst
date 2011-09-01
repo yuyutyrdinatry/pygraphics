@@ -47,23 +47,24 @@ that ``setup.py`` creates.
 
 On OS X::
 
-    easy_install bdist_mpkg
+easy_install bdist_mpkg
 
-    In the root of the pygraphics repository:
+In the root of the pygraphics repository:
 
-        bdist_mpkg
+    bdist_mpkg
 
-    PyGraphics requires a particular fork of Ampy.  You can get the
-    sources this way:
+PyGraphics requires a particular fork of Ampy. You can get the sources this
+way:
 
-        bzr export -r 14 ampy-jeanpierreda-r14 lp:~jeanpierreda/ampy/twisted-compat
+    bzr export -r 14 ampy-jeanpierreda-r14 lp:~jeanpierreda/ampy/twisted-compat
 
-    There is another setup.py file inside ampy-jeanpierreda-r14.  You can
-    build platform-specific installers using the same method above.
+There is another setup.py file inside ampy-jeanpierreda-r14. You can build
+platform-specific installers using the same method above.
 
-    On Mac OS X, you can use PackageMaker.app (part of XCode Developer
-    Tools) to combine the PyGraphics and Ampy installers into a single
-
+To distribute, place ampy-1.2.3-py2.7-macosx10.7.mpkg and
+PyGraphics-2.0-py2.7-macosx10.7.mpkg in the same folder, open Disk Utility,
+and select News->Disk Image from Folder. Name it "PyGraphicsAmpyInstaller" and
+upload it to PyPI.
 
 Source distributions
 ====================
