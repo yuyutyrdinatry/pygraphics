@@ -59,10 +59,10 @@ Download and install the Python Imaging Library, its dependencies, and NumPy:
     * `PIL 1.1.7-2 <http://www.kyngchaos.com/files/software/python/PIL-1.1.7-2-snow.dmg>`_
     * `NumPy 1.6.1-1 <http://www.kyngchaos.com/files/software/python/NumPy-1.6.1-1-snow.dmg>`_
 
-There are two separate PyGame installers, one for Lion and one for Snow Leopard.
+There are two separate PyGame installers, one for Lion (OS X 10.7) and one for Snow Leopard (OS X 10.6). Choose the appropriate one.
 
-    * `Snow Leopard (OS X 10.6): Pygame 1.9.2 <http://pygame.org/ftp/pygame-1.9.2pre-py2.7-macosx10.7.mpkg.zip>`_
-    * `Lion (OS X 10.7): Pygame 1.9.2 <http://pygame.org/ftp/pygame-1.9.2pre-py2.7-macosx10.7.mpkg.zip>`_
+    * Snow Leopard: `Pygame 1.9.1 <http://pygame.org/ftp/pygame-1.9.1release-py2.6-macosx10.5.zip>`_
+    * Lion: `Pygame 1.9.2 <http://pygame.org/ftp/pygame-1.9.2pre-py2.7-macosx10.7.mpkg.zip>`_
 
 Download and run the installation package for PyGraphics and ampy:
 
