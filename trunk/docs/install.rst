@@ -48,6 +48,37 @@ Mac OS X
 
 .. todo:: OS X installation guide.
 
+Apple includes Python with Snow Leopard (Python 2.6) and Lion (Python 2.7). These instructions assume you are using one of these versions of Python.
+
+Download and install the Python Imaging Library, its dependencies, and NumPy:
+
+    * `PROJ Framework 4.7.0-2 <http://www.kyngchaos.com/files/software/frameworks/PROJ_Framework-4.7.0-2-snow.dmg>`_
+
+    * `UnixImageIO Framework 1.3.0 <http://www.kyngchaos.com/files/software/frameworks/UnixImageIO_Framework-1.3.0-snow.dmg>`_
+    * `FreeType_Framework 2.4.6-1 <http://www.kyngchaos.com/files/software/frameworks/FreeType_Framework-2.4.6-1-snow.dmg>`_
+    * `PIL 1.1.7-2 <http://www.kyngchaos.com/files/software/python/PIL-1.1.7-2-snow.dmg>`_
+    * `NumPy 1.6.1-1 <http://www.kyngchaos.com/files/software/python/NumPy-1.6.1-1-snow.dmg>`_
+
+There are two separate PyGame installers, one for Lion and one for Snow Leopard.
+
+    * `Snow Leopard (OS X 10.6): Pygame 1.9.2 <http://pygame.org/ftp/pygame-1.9.2pre-py2.7-macosx10.7.mpkg.zip>`_
+    * `Lion (OS X 10.7): Pygame 1.9.2 <http://pygame.org/ftp/pygame-1.9.2pre-py2.7-macosx10.7.mpkg.zip>`_
+
+Download and run the installation package for PyGraphics and ampy:
+
+PyGraphics 2.0 and ampy 1.2.3
+http://pypi.python.org/packages/any/P/PyGraphics/PyGraphics-2.0-py2.7-macosx10.7.dmg
+
+.. topic:: Nose
+
+    If you wish to use the tests included in the PyGraphics package, you must download and install the Nose package.
+
+    Open Terminal.app (in Applications/Utilities) and type this:
+
+        easy_install nose
+
+        Now you should be ready to use the PyGraphics package in your code.
+
 Linux
 =====
 
