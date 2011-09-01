@@ -48,25 +48,15 @@ Mac OS X
 
 .. todo:: OS X installation guide.
 
-Apple includes Python with Snow Leopard (Python 2.6) and Lion (Python 2.7). These instructions assume you are using one of these versions of Python.
+Download and install the 32-bit Mac Installer from `the 2.7 release page <http://www.python.org/download/releases/2.7/>`_ .
 
-Download and install the Python Imaging Library, its dependencies, and NumPy:
+Download and install NumPy:
 
-    * `PROJ Framework 4.7.0-2 <http://www.kyngchaos.com/files/software/frameworks/PROJ_Framework-4.7.0-2-snow.dmg>`_
+    * `NumPy 1.6.1 <http://sourceforge.net/projects/numpy/files/NumPy/1.6.1/numpy-1.6.1-py2.7-python.org-macosx10.3.dmg/download>`_
 
-    * `UnixImageIO Framework 1.3.0 <http://www.kyngchaos.com/files/software/frameworks/UnixImageIO_Framework-1.3.0-snow.dmg>`_
-    * `FreeType_Framework 2.4.6-1 <http://www.kyngchaos.com/files/software/frameworks/FreeType_Framework-2.4.6-1-snow.dmg>`_
-    * `PIL 1.1.7-2 <http://www.kyngchaos.com/files/software/python/PIL-1.1.7-2-snow.dmg>`_
-    * `NumPy 1.6.1-1 <http://www.kyngchaos.com/files/software/python/NumPy-1.6.1-1-snow.dmg>`_
+Download and install PIL, pygame, ampy, and PyGraphics (all are on a single disk image; make sure to run all four!):
 
-There are two separate PyGame installers, one for Lion (OS X 10.7) and one for Snow Leopard (OS X 10.6). Choose the appropriate one.
-
-    * Snow Leopard: `Pygame 1.9.1 <http://pygame.org/ftp/pygame-1.9.1release-py2.6-macosx10.5.zip>`_
-    * Lion: `Pygame 1.9.2 <http://pygame.org/ftp/pygame-1.9.2pre-py2.7-macosx10.7.mpkg.zip>`_
-
-Download and run the installation package for PyGraphics and ampy:
-
-    * `PyGraphics 2.0 and ampy 1.2.3 <http://pypi.python.org/packages/any/P/PyGraphics/PyGraphics-2.0.dmg>`_
+    * `PyGraphics-2.0 <http://pypi.python.org/packages/2.7/P/PyGraphics/PyGraphics-2.0.dmg>`_
 
 .. topic:: Nose
 
@@ -76,7 +66,7 @@ Download and run the installation package for PyGraphics and ampy:
 
         easy_install nose
 
-        Now you should be ready to use the PyGraphics package in your code.
+Now you should be ready to use the PyGraphics package in your code.
 
 Linux
 =====
