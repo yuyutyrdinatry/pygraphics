@@ -45,6 +45,26 @@ On RPM Linuxes::
 The resulting packaged distribution will be available in the ``dist`` directory
 that ``setup.py`` creates.
 
+On OS X::
+
+    easy_install bdist_mpkg
+
+    In the root of the pygraphics repository:
+
+        bdist_mpkg
+
+    PyGraphics requires a particular fork of Ampy.  You can get the
+    sources this way:
+
+        bzr export -r 14 ampy-jeanpierreda-r14 lp:~jeanpierreda/ampy/twisted-compat
+
+    There is another setup.py file inside ampy-jeanpierreda-r14.  You can
+    build platform-specific installers using the same method above.
+
+    On Mac OS X, you can use PackageMaker.app (part of XCode Developer
+    Tools) to combine the PyGraphics and Ampy installers into a single
+
+
 Source distributions
 ====================
 
