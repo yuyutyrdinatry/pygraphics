@@ -75,11 +75,11 @@ Linux
 
    These instructions are tailored to Ubuntu and Ubuntu derivatives. If you use a different Linux distribution, the commands for installing various dependencies may differ.
 
-Download `PyGraphics-2.0.tar.gz <http://pypi.python.org/packages/source/P/PyGraphics/PyGraphics-2.0.tar.gz>`_ .
+Get PyGraphics:
 
-Extract the file using Ark (or another archive tool).
+    svn checkout http://pygraphics.googlecode.com/svn/trunk/ pygraphics-read-only
 
-Open a console window. In the main pygraphics folder, run the setup file to install PyGraphics to your local installation directory::
+In the main pygraphics folder, run the setup file to install PyGraphics to your local installation directory::
 
     python setup.py install --user
 
