@@ -75,7 +75,7 @@ Linux
 
    These instructions are tailored to Ubuntu and Ubuntu derivatives. If you use a different Linux distribution, the commands for installing various dependencies may differ.
 
-Visit the `PyGraphics Downloads page <http://code.google.com/p/pygraphics/downloads/list>`_ and download the file named ``PyGraphics-2.0.tar.gz``.
+Download `PyGraphics-2.0.tar.gz <http://pypi.python.org/packages/source/P/PyGraphics/PyGraphics-2.0.tar.gz>`_ .
 
 Extract the file using Ark (or another archive tool).
 
