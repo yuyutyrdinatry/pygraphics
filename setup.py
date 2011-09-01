@@ -43,7 +43,6 @@ setup(name='PyGraphics',
         'color',
         'media',
         'pixel',
-        'sample',
         'sound'
       ],
       packages=[
