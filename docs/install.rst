@@ -66,8 +66,7 @@ There are two separate PyGame installers, one for Lion (OS X 10.7) and one for S
 
 Download and run the installation package for PyGraphics and ampy:
 
-PyGraphics 2.0 and ampy 1.2.3
-http://pypi.python.org/packages/any/P/PyGraphics/PyGraphics-2.0-py2.7-macosx10.7.dmg
+    * `PyGraphics 2.0 and ampy 1.2.3 <http://pypi.python.org/packages/any/P/PyGraphics/PyGraphics-2.0.dmg>`_
 
 .. topic:: Nose
 
