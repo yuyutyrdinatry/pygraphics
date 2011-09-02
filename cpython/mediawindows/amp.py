@@ -153,7 +153,7 @@ class PollInspect(amp.Command):
 
 class _Ask(amp.Command):
     arguments = [('initialdir', amp.String())]
-    response = [("path", amp.String())]
+    response = [("path", amp.Unicode())]
     errors = {exceptions.DialogCanceledException: 'DIALOG_CANCELED'}
 
 class AskSaveasFilename(_Ask):
