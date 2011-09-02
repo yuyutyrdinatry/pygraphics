@@ -159,8 +159,9 @@ class AskServerProtocol(ProtocolBackend):
         result = ask_func(
             initialdir=initialdir,
             parent=self.tkinter_root)
-        
         if result:
+            if not isinstance(result, unicode):
+                result = result.decode('utf-8')
             return {"path": result}
         else:
             raise exceptions.DialogCanceledException
