@@ -56,7 +56,7 @@ Download and install NumPy:
 
 Download and install PIL, pygame, ampy, and PyGraphics (all are on a single disk image; make sure to run all four!):
 
-    * `PyGraphics-2.0 <http://pypi.python.org/packages/2.7/P/PyGraphics/PyGraphics-2.0.dmg>`_
+    * `PyGraphics-2.0.1 <http://pypi.python.org/packages/2.7/P/PyGraphics/PyGraphics-2.0.1-Installer.dmg>`_
 
 .. topic:: Nose
 

@@ -61,9 +61,11 @@ way:
 There is another setup.py file inside ampy-jeanpierreda-r14. You can build
 platform-specific installers using the same method above.
 
-To distribute, place ampy-1.2.3-py2.7-macosx10.7.mpkg and
+To distribute, place ampy-1.2.3-py2.7-macosx.mpkg,
+PIL-1.1.7-python.org-32bit-py2.7-macosx.mpkg,
+pygame-1.9.1release-python.org-32bit-py2.7-macosx.mpkg, and
 PyGraphics-2.0-py2.7-macosx10.7.mpkg in the same folder, open Disk Utility,
-and select News->Disk Image from Folder. Name it "PyGraphicsAmpyInstaller" and
+and select News->Disk Image from Folder. Name it "PyGraphicsInstaller" and
 upload it to PyPI.
 
 Source distributions
