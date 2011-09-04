@@ -60,11 +60,15 @@ Download and install PIL, pygame, ampy, and PyGraphics (all are on a single disk
 
 .. topic:: Nose
 
-    If you wish to use the tests included in the PyGraphics package, you must download and install the Nose package.
+    If you wish to use the tests included in the PyGraphics package, you must download and install the Nose package. 
 
-    Open Terminal.app (in Applications/Utilities) and type this:
+    First, `download setuptools <http://pypi.python.org/pypi/setuptools>`_
+
+    Next, open /Applications/Utilities/Terminal and enter this command::
 
         easy_install nose
+ 
+    Nose should install automatically. 
 
 Now you should be ready to use the PyGraphics package in your code.
 
