@@ -18,7 +18,7 @@ Windows
 
 Download and install the 32bit Python 2.7 installer from `the 2.7 release page <http://www.python.org/download/releases/2.7/>`_ .
 
-Download the Windows executable for PyGraphics `here <http://pypi.python.org/packages/any/P/PyGraphics/PyGraphics-2.0.win32.exe>`_ .
+Download the Windows executable for PyGraphics `here <http://pypi.python.org/packages/any/P/PyGraphics/PyGraphics-2.0.1.win32.exe>`_ .
  
 Run the installer. If Python is available on your computer, you should be able to move through the install screens without changing any settings.
 
