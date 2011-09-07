@@ -6,7 +6,7 @@
 __docformat__ = 'restructuredtext'
 __version__ = '$Id: setup.py 1855 2008-03-01 11:29:25Z Paul Gries $'
 
-VERSION='2.0'
+VERSION='2.1'
 
 long_description='''PyGraphics provides a set of easy-to-use procedural media
 manipulation tools and is intended for new programmers.  It is based on a
