@@ -18,7 +18,7 @@ Windows
 
 Download and install the 32bit Python 2.7 installer from `the 2.7 release page <http://www.python.org/download/releases/2.7/>`_ .
 
-Download the Windows executable for PyGraphics `here <http://pypi.python.org/packages/any/P/PyGraphics/PyGraphics-2.0.1.win32.exe>`_ .
+Download the Windows executable for PyGraphics `here <http://pypi.python.org/packages/any/P/PyGraphics/PyGraphics-2.1.win32.exe>`_ .
  
 Run the installer. If Python is available on your computer, you should be able to move through the install screens without changing any settings.
 
@@ -56,7 +56,7 @@ Download and install NumPy:
 
 Download and install PIL, pygame, ampy, and PyGraphics (all are on a single disk image; make sure to run all four!):
 
-    * `PyGraphics-2.0.1 <http://pypi.python.org/packages/2.7/P/PyGraphics/PyGraphics-2.0.1-Installer.dmg>`_
+    * `PyGraphics-2.1 <http://pypi.python.org/packages/2.7/P/PyGraphics/PyGraphics-2.1.osx.dmg>`_
 
 .. topic:: Nose
 
