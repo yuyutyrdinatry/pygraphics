@@ -18,16 +18,13 @@ Windows
 
 Download and install the 32bit Python 2.7 installer from `the 2.7 release page <http://www.python.org/download/releases/2.7/>`_ .
 
-Download the Windows executable for PyGraphics `here <http://pypi.python.org/packages/any/P/PyGraphics/PyGraphics-2.1.win32.exe>`_ .
- 
-Run the installer. If Python is available on your computer, you should be able to move through the install screens without changing any settings.
-
-Download and install the Python Imaging Library, PyGame, NumPy, and Ampy:
+Download and install the Python Imaging Library, PyGame, NumPy, Ampy, and PyGraphics:
 
     * `PIL 1.1.7 <http://effbot.org/downloads/PIL-1.1.7.win32-py2.7.exe>`_
     * `Pygame 1.9.2 <http://pygame.org/ftp/pygame-1.9.2a0.win32-py2.7.msi>`_
     * `Numpy 1.6.1 <http://sourceforge.net/projects/numpy/files/NumPy/1.6.1/numpy-1.6.1-win32-superpack-python2.7.exe/download>`_
     * `Ampy <http://pygraphics.googlecode.com/files/ampy-1.2.3.win32.exe>`_
+    * `PyGraphics <http://pypi.python.org/packages/any/P/PyGraphics/PyGraphics-2.1.win32.exe>`_
 
 .. topic:: Nose
 
