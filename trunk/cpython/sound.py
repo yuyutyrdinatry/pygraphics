@@ -90,7 +90,7 @@ class StereoSample(object):
         '''Return this StereoSample's left and right values as a tuple 
         (left, right) of two ints.'''
         
-        return (self.samp_array[self.index, 0], self.samp_array[self.index, 1])
+        return self.get_left(), self.get_right()
 
     
     def set_left(self, v):
